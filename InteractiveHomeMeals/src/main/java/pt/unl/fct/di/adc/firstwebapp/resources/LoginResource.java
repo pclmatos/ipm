@@ -21,7 +21,7 @@ public class LoginResource {
 	private static final Logger LOG = Logger.getLogger(LoginResource.class.getName());
 
 	private final Gson g = new Gson();
-
+	//
 	public LoginResource() {
 
 	}

@@ -9,7 +9,7 @@ import javax.ws.rs.ext.Provider;
 
 @Provider
 public class AdditionalResponseHeadersFilter implements ContainerResponseFilter {
-
+	//
 	public AdditionalResponseHeadersFilter() {
 	}
 

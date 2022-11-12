@@ -1,0 +1,7 @@
+.main-container {
+    background-image: url(../images/backgroundBoardImage.jpg);
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    filter:grayscale(10%)
+}

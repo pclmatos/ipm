@@ -1,7 +1,11 @@
 import logoIHMcut from "../images/logoIHMcut.png"
 import { Box, Grid, Typography, TextField, Button, Link } from "@mui/material";
 import "./style.css"
+import { useNavigate } from "react-router-dom"
+
 export default function PageRegister() {
+    let navigate = useNavigate();
+
     return (
         <Grid item xs={12} container className="main-container" >
             <Grid item xs={3.5} />
@@ -12,7 +16,9 @@ export default function PageRegister() {
                     flexDirection: 'column',
                     alignItems: 'center',
                 }} >
-
+                    <Typography sx={{ fontFamily: 'Verdana', fontSize: 18, marginBottom: 3 }}>
+                        Helping young adults by making their lives easier in the kitchen!
+                    </Typography>
                     <TextField
                         margin="normal"
                         required
@@ -34,6 +40,16 @@ export default function PageRegister() {
                         }}
                         sx={{ width: "40%" }}
                     />
+                    <TextField
+                        margin="normal"
+                        required
+                        label="Password Confirmation"
+                        color="grey"
+                        InputLabelProps={{
+                            style: { fontFamily: 'Verdana', fontSize: 18, color: "black" },
+                        }}
+                        sx={{ width: "40%" }}
+                    />
                     <Button
                         type="submit"
                         variant="outlined"
@@ -42,6 +58,10 @@ export default function PageRegister() {
                     >
                         <Typography sx={{ fontFamily: 'Verdana', fontSize: 15, color: "black" }}> Register </Typography>
                     </Button>
+                    <Typography sx={{ fontFamily: 'Verdana', fontSize: 16, color: "black", pb: 5 }}>
+                        Already have an account?
+                        <Link onClick={() => { navigate("/") }} sx={{ ml: 1, cursor: "pointer" }}>Login now!</Link>
+                    </Typography>
                 </Box>
             </Grid>
         </Grid>

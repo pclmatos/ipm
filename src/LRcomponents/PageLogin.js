@@ -33,7 +33,9 @@ export default function PageLogin() {
                     flexDirection: 'column',
                     alignItems: 'center',
                 }} >
-                    <Typography sx={{ fontFamily: 'Verdana', fontSize: 18, marginBottom: 3 }} >Helping young adults by making their life easier in the kitchen!</Typography>
+                    <Typography sx={{ fontFamily: 'Verdana', fontSize: 18, marginBottom: 3 }}>
+                        Helping young adults by making their lives easier in the kitchen!
+                    </Typography>
                     <TextField
                         margin="normal"
                         required
@@ -65,10 +67,10 @@ export default function PageLogin() {
                     </Button>
                     <Typography sx={{ fontFamily: 'Verdana', fontSize: 16, color: "black", mb: 3 }}>
                         Don't have an account?
-                        <Link onClick={() => {navigate("/register")}} sx={{ ml: 1 }}>Register now!</Link>
+                        <Link onClick={() => { navigate("/register") }} sx={{ ml: 1, cursor: "pointer" }}>Register now!</Link>
                     </Typography>
-                    <Typography sx={{ fontFamily: 'Verdana', fontSize: 18 }} >- Search for various recipes and upload your own!</Typography>
-                    <Typography sx={{ fontFamily: 'Verdana', fontSize: 18, pb: 6 }} >- Efficiently manage your pantry!</Typography>
+                    <Typography sx={{ fontFamily: 'Verdana', fontSize: 18 }}>Search for various recipes and upload your own!</Typography>
+                    <Typography sx={{ fontFamily: 'Verdana', fontSize: 18, pb: 5 }}>Efficiently manage your pantry!</Typography>
                 </Box>
             </Grid>
             <Grid item xs={3.5} />

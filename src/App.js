@@ -1,14 +1,14 @@
-import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
-import PageLR from "./LRcomponents/PageLR"
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import PageLogin from "./LRcomponents/PageLogin"
+import PageRegister from "./LRcomponents/PageRegister";
 
 export default function App() {
     return (
         <Router>
-            <Switch>
-                <Route exact path="/">
-                    <PageLR />
-                </Route>
-            </Switch>
+            <Routes>
+                <Route path="/" element={<PageLogin />} />
+                <Route path="/register" element={<PageRegister />}/>
+            </Routes>
         </Router>
     )
 }

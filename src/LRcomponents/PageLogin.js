@@ -1,8 +1,28 @@
 import logoIHMcut from "../images/logoIHMcut.png"
-import { Box, Grid, Typography, TextField, Button } from "@mui/material";
+import { Box, Grid, Typography, TextField, Button, Link } from "@mui/material";
+import { useNavigate } from "react-router-dom"
+import { useState } from "react"
 import "./style.css"
 
-export default function PageLR() {
+export default function PageLogin() {
+    let navigate = useNavigate();
+
+    const [username, setUsername] = useState("");
+    const [password, setPassword] = useState("");
+
+    function usernameHandler(e) {
+        setUsername(e.target.value);
+    }
+
+    function passwordHandler(e) {
+        setPassword(e.target.value);
+    }
+
+    function loginManager(e) {
+        e.preventDefault();
+
+    }
+
     return (
         <Grid item xs={12} container className="main-container" >
             <Grid item xs={3.5} />
@@ -20,10 +40,10 @@ export default function PageLR() {
                         label="Username"
                         color="grey"
                         InputLabelProps={{
-                            style: { fontFamily: 'Verdana', fontSize: 18, color:"black"},
+                            style: { fontFamily: 'Verdana', fontSize: 18, color: "black" },
                         }}
                         sx={{ width: "40%" }}
-                        
+
                     />
                     <TextField
                         margin="normal"
@@ -31,7 +51,7 @@ export default function PageLR() {
                         label="Password"
                         color="grey"
                         InputLabelProps={{
-                            style: { fontFamily: 'Verdana', fontSize: 18, color:"black" },
+                            style: { fontFamily: 'Verdana', fontSize: 18, color: "black" },
                         }}
                         sx={{ width: "40%" }}
                     />
@@ -39,12 +59,16 @@ export default function PageLR() {
                         type="submit"
                         variant="outlined"
                         color='inherit'
-                        sx={{ mt: 3, mb: 6, height: "40px", width: "40%" }}
+                        sx={{ mt: 2, mb: 1, height: "40px", width: "40%" }}
                     >
-                        <Typography sx={{ fontFamily: 'Verdana', fontSize: 15, color: "black" }}> Submit </Typography>
+                        <Typography sx={{ fontFamily: 'Verdana', fontSize: 15, color: "black" }}> Login </Typography>
                     </Button>
+                    <Typography sx={{ fontFamily: 'Verdana', fontSize: 16, color: "black", mb: 3 }}>
+                        Don't have an account?
+                        <Link onClick={() => {navigate("/register")}} sx={{ ml: 1 }}>Register now!</Link>
+                    </Typography>
                     <Typography sx={{ fontFamily: 'Verdana', fontSize: 18 }} >- Search for various recipes and upload your own!</Typography>
-                    <Typography sx={{ fontFamily: 'Verdana', fontSize: 18, pb: 8 }} >- Efficiently manage your pantry!</Typography>
+                    <Typography sx={{ fontFamily: 'Verdana', fontSize: 18, pb: 6 }} >- Efficiently manage your pantry!</Typography>
                 </Box>
             </Grid>
             <Grid item xs={3.5} />

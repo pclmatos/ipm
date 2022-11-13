@@ -3,5 +3,5 @@
     background-size: cover;
     background-repeat: no-repeat;
     background-attachment: fixed;
-    filter:grayscale(10%)
+    opacity: 75%;
 }

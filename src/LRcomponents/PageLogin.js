@@ -2,6 +2,7 @@ import logoIHMcut from "../images/logoIHMcut.png"
 import { Box, Grid, Typography, TextField, Button, Link } from "@mui/material";
 import { useNavigate } from "react-router-dom"
 import { useState } from "react"
+import restCalls from "../restCalls"
 import "./style.css"
 
 export default function PageLogin() {
@@ -20,8 +21,9 @@ export default function PageLogin() {
 
     function loginManager(e) {
         e.preventDefault();
-
+        restCalls.login(username, password)
     }
+
 
     return (
         <Grid item xs={12} container className="main-container" >
@@ -45,23 +47,26 @@ export default function PageLogin() {
                             style: { fontFamily: 'Verdana', fontSize: 18, color: "black" },
                         }}
                         sx={{ width: "40%" }}
-
+                        onChange={usernameHandler}
                     />
                     <TextField
                         margin="normal"
                         required
                         label="Password"
                         color="grey"
+                        type="password"
                         InputLabelProps={{
                             style: { fontFamily: 'Verdana', fontSize: 18, color: "black" },
                         }}
                         sx={{ width: "40%" }}
+                        onChange={passwordHandler}
                     />
                     <Button
                         type="submit"
                         variant="outlined"
                         color='inherit'
                         sx={{ mt: 2, mb: 1, height: "40px", width: "40%" }}
+                        onClick={(e) => { loginManager(e) }}
                     >
                         <Typography sx={{ fontFamily: 'Verdana', fontSize: 15, color: "black" }}> Login </Typography>
                     </Button>

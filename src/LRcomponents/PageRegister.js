@@ -2,9 +2,32 @@ import logoIHMcut from "../images/logoIHMcut.png"
 import { Box, Grid, Typography, TextField, Button, Link } from "@mui/material";
 import "./style.css"
 import { useNavigate } from "react-router-dom"
+import { useState } from "react"
+import restCalls from "../restCalls"
 
 export default function PageRegister() {
     let navigate = useNavigate();
+
+    const [username, setUsername] = useState("");
+    const [password, setPassword] = useState("");
+    const [passwordConfirmation, setPasswordConfirmation] = useState("");
+
+    function usernameHandler(e) {
+        setUsername(e.target.value);
+    }
+
+    function passwordHandler(e) {
+        setPassword(e.target.value);
+    }
+
+    function passwordConfirmationHandler(e) {
+        setPasswordConfirmation(e.target.value);
+    }
+
+    function registerManager(e) {
+        e.preventDefault();
+        restCalls.register(username, password, passwordConfirmation)
+    }
 
     return (
         <Grid item xs={12} container className="main-container" >
@@ -28,33 +51,38 @@ export default function PageRegister() {
                             style: { fontFamily: 'Verdana', fontSize: 18, color: "black" },
                         }}
                         sx={{ width: "40%" }}
-
+                        onChange={usernameHandler}
                     />
                     <TextField
                         margin="normal"
                         required
                         label="Password"
                         color="grey"
+                        type="password"
                         InputLabelProps={{
                             style: { fontFamily: 'Verdana', fontSize: 18, color: "black" },
                         }}
                         sx={{ width: "40%" }}
+                        onChange={passwordHandler}
                     />
                     <TextField
                         margin="normal"
                         required
                         label="Password Confirmation"
                         color="grey"
+                        type="password"
                         InputLabelProps={{
                             style: { fontFamily: 'Verdana', fontSize: 18, color: "black" },
                         }}
                         sx={{ width: "40%" }}
+                        onChange={passwordConfirmationHandler}
                     />
                     <Button
                         type="submit"
                         variant="outlined"
                         color='inherit'
                         sx={{ mt: 2, mb: 1, height: "40px", width: "40%" }}
+                        onClick={(e) => { registerManager(e) }}
                     >
                         <Typography sx={{ fontFamily: 'Verdana', fontSize: 15, color: "black" }}> Register </Typography>
                     </Button>

@@ -1,7 +1,7 @@
 class restCalls {
     login(username, password) {
         return fetch("https://silent-blade-368222.appspot.com/rest/user/login", {
-            method: 'PUT',
+            method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
             },

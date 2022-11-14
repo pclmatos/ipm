@@ -1,6 +1,7 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import PageLogin from "./LRcomponents/PageLogin"
-import PageRegister from "./LRcomponents/PageRegister";
+import Navbar from "./pages/Navbar";
+import PageLogin from "./pages/PageLogin"
+import PageRegister from "./pages/PageRegister";
 
 export default function App() {
     return (
@@ -8,6 +9,7 @@ export default function App() {
             <Routes>
                 <Route path="/" element={<PageLogin />} />
                 <Route path="/register" element={<PageRegister />}/>
+                <Route path="/loggedin" element={<Navbar/>}/>
             </Routes>
         </Router>
     )

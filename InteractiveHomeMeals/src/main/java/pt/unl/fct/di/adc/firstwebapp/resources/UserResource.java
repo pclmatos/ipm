@@ -50,6 +50,10 @@ public class UserResource {
 	private static final String ISVEGAN = "isVegan";
 	private static final String ISKOSHER = "isKosher";
 	private static final String ISGLUTENFREE = "isGlutenFree";
+	private static final String ISLACTOSEFREE = "isLactoseFree";
+	private static final String CATEGORY = "category";
+	private static final String CALORIES = "calories";
+	private static final String DIFFICULTY = "difficulty";
 	
 	public UserResource() {}
 	
@@ -138,7 +142,7 @@ public class UserResource {
 	public Response shareRecipe(RecipeData data) {
 		LOG.fine("Share recipe attempt by: " + data.author);
 
-		boolean isVegetarian = true, isVegan = true, isKosher = true, isGlutenFree = true;
+		boolean isVegetarian = true, isVegan = true, isKosher = true, isGlutenFree = true, isLactoseFree = true;
 		Key recipeKey = datastore.newKeyFactory().setKind(RECIPE).newKey(getUniqueId());
 		Key userKey = datastore.newKeyFactory().setKind(USER).newKey(data.author);
 		
@@ -161,8 +165,8 @@ public class UserResource {
 				return Response.status(Status.FORBIDDEN).entity("User: " + data.author +" does not exist.").build();
 			}
 			else {
-				for(int i = 0; i < data.ingredientsToFilter.length; i++) {
-					ingredientKey = datastore.newKeyFactory().setKind(INGREDIENT).newKey(data.ingredientsToFilter[i]);
+				for(int i = 1; i < data.ingredients.length; i+=2) {
+					ingredientKey = datastore.newKeyFactory().setKind(INGREDIENT).newKey(data.ingredients[i]);
 					ingredient = datastore.get(ingredientKey);
 					
 					if(ingredient != null) {
@@ -178,6 +182,9 @@ public class UserResource {
 						if(!ingredient.getBoolean(ISGLUTENFREE)) {
 							isGlutenFree = false;
 						}
+						if(!ingredient.getBoolean(ISLACTOSEFREE)) {
+							isLactoseFree = false;
+						}
 					}
 				}
 				
@@ -185,11 +192,15 @@ public class UserResource {
 					.set(RECIPENAME, data.recipeName)
 					.set(AUTHOR, data.author)
 					.set(DESCRIPTION, data.description)
-					.set(INGREDIENTS, data.ingredients)
 					.set(ISVEGETARIAN, isVegetarian)
 					.set(ISVEGAN, isVegan)
 					.set(ISKOSHER, isKosher)
 					.set(ISGLUTENFREE, isGlutenFree)
+					.set(ISLACTOSEFREE, isLactoseFree)
+					.set(CATEGORY, data.category)
+					.set(CALORIES, data.calories)
+					.set(DIFFICULTY, data.difficulty)
+					.set(INGREDIENTS, ingredientsToString(data.ingredients))
 					.build();
 			
 				txn.add(recipe);
@@ -209,7 +220,7 @@ public class UserResource {
 	public Response addExistingIngredients() {
 		LOG.fine("Adding all ingredients to db");
 		
-		String fruits[] = {"apple", "banana", "pear", "strawberry", "grape", "watermelon", "orange", "blueberry", "lemon", "peach", "avocado", "pineapple", "cherry", "cantaloupe", "raspberry", "lime", "blackberry", "clementine", "mango", "plum"};
+		String fruits[] = {"apple", "banana", "pear", "strawberry", "grape", "watermelon", "orange", "blueberry", "lemon", "peach", "avocado", "pineapple", "cherry", "cantaloupe", "raspberry", "lime", "blackberry", "clementine", "mango", "plum", "kiwi"};
 		String vegetables[] = {"potato", "tomato", "onion", "carrot", "bell pepper", "broccoli", "cucumber", "lettuce", "celery", "mushroom", "garlic", "spinach", "green bean", "cabbage", "sweet potato", "green onion", "cauliflower", "aspargo", "peas", "basil"};
 		String meat[] = {"pork meat", "chicken meat", "beef", "lamb meat", "goat meat", "turkey", "duck meat", "buffalo meat", "goose meat", "rabbit meat"};
 		String seaFood[] = {"shrimp", "tuna", "salmon", "tilapia", "catfish", "crab", "cod", "clam", "pangasius"};
@@ -231,6 +242,7 @@ public class UserResource {
 						.set(ISVEGAN, true)
 						.set(ISKOSHER, true)
 						.set(ISGLUTENFREE, true)
+						.set(ISLACTOSEFREE, true)
 						.build();
 			
 					txn.add(ingredient);
@@ -247,6 +259,7 @@ public class UserResource {
 						.set(ISVEGAN, true)
 						.set(ISKOSHER, true)
 						.set(ISGLUTENFREE, true)
+						.set(ISLACTOSEFREE, true)
 						.build();
 				
 					txn.add(ingredient);
@@ -263,6 +276,7 @@ public class UserResource {
 						.set(ISVEGAN, false)
 						.set(ISKOSHER, true)
 						.set(ISGLUTENFREE, true)
+						.set(ISLACTOSEFREE, true)
 						.build();
 				
 					txn.add(ingredient);
@@ -278,7 +292,8 @@ public class UserResource {
 						.set(ISVEGETARIAN, false)
 						.set(ISVEGAN, false)
 						.set(ISKOSHER, true)
-						.set(ISGLUTENFREE, false)
+						.set(ISGLUTENFREE, true)
+						.set(ISLACTOSEFREE, true)
 						.build();
 				
 					txn.add(ingredient);
@@ -295,6 +310,7 @@ public class UserResource {
 						.set(ISVEGAN, true)
 						.set(ISKOSHER, true)
 						.set(ISGLUTENFREE, false)
+						.set(ISLACTOSEFREE, true)
 						.build();
 				
 					txn.add(ingredient);
@@ -311,6 +327,7 @@ public class UserResource {
 						.set(ISVEGAN, true)
 						.set(ISKOSHER, true)
 						.set(ISGLUTENFREE, false)
+						.set(ISLACTOSEFREE, true)
 						.build();
 				
 					txn.add(ingredient);
@@ -324,7 +341,19 @@ public class UserResource {
 				txn.rollback();
 		}
 	}
-
+	
+	public String ingredientsToString(String[] ingredients) {
+		String aux = "";
+		for(int i = 0; i < ingredients.length; i++) {
+			if(i != ingredients.length-1) {
+				aux += ingredients[i] + " ";
+			}
+			else {
+				aux += ingredients[i];
+			}
+		}
+		return aux;
+	}
 	
 	public String getUniqueId() {
 		String uniqueId = UUID.randomUUID().toString();

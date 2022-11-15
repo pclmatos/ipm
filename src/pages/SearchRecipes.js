@@ -9,7 +9,7 @@ export default function SearchRecipesPage() {
                     flexDirection: 'column',
                     alignItems: 'center',
                 }} >
-                    <Typography sx={{ fontFamily: 'Verdana', fontSize: 20, color: "black" }}>Filtros</Typography>
+                    <Typography sx={{ fontFamily: 'Verdana', fontSize: 20, color: "black" }}>Filtros123</Typography>
                 </Box>
             </Grid>
             <Grid item xs={9}>

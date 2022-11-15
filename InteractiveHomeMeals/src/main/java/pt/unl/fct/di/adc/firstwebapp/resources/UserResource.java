@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.UUID;
 import java.util.logging.Logger;
 
+import javax.print.attribute.standard.Media;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -13,6 +14,7 @@ import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.ResponseBuilder;
 import javax.ws.rs.core.Response.Status;
 
 import org.apache.commons.codec.digest.DigestUtils;
@@ -36,6 +38,7 @@ import pt.unl.fct.di.adc.firstwebapp.util.LoginData;
 import pt.unl.fct.di.adc.firstwebapp.util.RecipeData;
 import pt.unl.fct.di.adc.firstwebapp.util.RegisterData;
 import pt.unl.fct.di.adc.firstwebapp.util.info.RecipeInfo;
+import pt.unl.fct.di.adc.firstwebapp.util.SearchRecipeData;
 
 @Path("/user")
 @Produces(MediaType.APPLICATION_JSON + ";charset=utf-8")
@@ -409,7 +412,32 @@ public class UserResource {
 				txn.rollback();
 		}
 	}
-	
+
+	@GET
+	@Path("/home")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response searchRecipe(SearchRecipeData data){
+		LOG.fine("Searching for recipe " + data.searchKey);
+
+		Transaction txn = datastore.newTransaction();
+
+		Key searchKey = datastore.newKeyFactory().setKind(RECIPE).newKey(data.searchKey);
+
+		try{
+			Entity recipe = datastore.get(searchKey);
+
+			if(recipe != null){
+				return Response.ok(recipe).build();
+			} else {
+				return Response.status(Status.NOT_FOUND).build();
+			}
+		} finally {
+			if(txn.isActive())
+				txn.rollback();
+		}
+	}
+
 	public String ingredientsToString(String[] ingredients) {
 		String aux = "";
 		for(int i = 0; i < ingredients.length; i++) {

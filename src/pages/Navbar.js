@@ -3,6 +3,7 @@ import { Box, Grid, Tabs, Tab, Typography } from "@mui/material";
 import logoIHMcut from "../images/logoIHMcut.png"
 import SearchRecipesPage from "./SearchRecipes";
 import ShareRecipe from "./ShareRecipe";
+import ConsultPantry from "./ConsultPantry";
 
 export default function Navbar() {
     const [selectedLeftTab, setSelectedLeftTab] = useState(0);
@@ -39,6 +40,7 @@ export default function Navbar() {
             </Grid>
             {selectedLeftTab == 0 && <SearchRecipesPage/> }
             {selectedLeftTab == 1 && <ShareRecipe/> }
+            {selectedLeftTab == 3 && <ConsultPantry/>}
         </>
     )
 }

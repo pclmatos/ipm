@@ -86,9 +86,9 @@ export default function ShareRecipe() {
                             color="grey"
                             onChange={categoryHandler}
                         >
-                            <MenuItem value="" label="">Ten</MenuItem>
-                            <MenuItem value="" label="">Twenty</MenuItem>
-                            <MenuItem value="" label="">Thirty</MenuItem>
+                            <MenuItem value="" label="">Breakfast</MenuItem>
+                            <MenuItem value="" label="">Lunch</MenuItem>
+                            <MenuItem value="" label="">Dinner</MenuItem>
                         </Select>
                     </FormControl>
                     <TextField

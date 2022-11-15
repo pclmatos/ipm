@@ -1,5 +1,8 @@
 package pt.unl.fct.di.adc.firstwebapp.resources;
 
+import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.UUID;
 import java.util.logging.Logger;
 
@@ -14,16 +17,25 @@ import javax.ws.rs.core.Response.Status;
 
 import org.apache.commons.codec.digest.DigestUtils;
 
+import com.google.appengine.api.datastore.Query.FilterOperator;
 import com.google.cloud.datastore.Datastore;
 import com.google.cloud.datastore.DatastoreOptions;
 import com.google.cloud.datastore.Entity;
+import com.google.cloud.datastore.EntityQuery.Builder;
 import com.google.cloud.datastore.Key;
+import com.google.cloud.datastore.Query;
+import com.google.cloud.datastore.QueryResults;
+import com.google.cloud.datastore.StructuredQuery.CompositeFilter;
+import com.google.cloud.datastore.StructuredQuery.Filter;
+import com.google.cloud.datastore.StructuredQuery.PropertyFilter;
 import com.google.cloud.datastore.Transaction;
 import com.google.gson.Gson;
 
+import pt.unl.fct.di.adc.firstwebapp.util.FilterData;
 import pt.unl.fct.di.adc.firstwebapp.util.LoginData;
 import pt.unl.fct.di.adc.firstwebapp.util.RecipeData;
 import pt.unl.fct.di.adc.firstwebapp.util.RegisterData;
+import pt.unl.fct.di.adc.firstwebapp.util.info.RecipeInfo;
 
 @Path("/user")
 @Produces(MediaType.APPLICATION_JSON + ";charset=utf-8")
@@ -213,6 +225,62 @@ public class UserResource {
 			if(txn.isActive())
 				txn.rollback();
 		}
+	}
+	
+	@GET
+	@Path("/filterSearching")
+	@Consumes(MediaType.APPLICATION_JSON)
+	public Response filterSearching(FilterData data) {
+		
+		Query<Entity> recipeQuery = Query.newEntityQueryBuilder().setKind(RECIPE).build();
+		QueryResults<Entity> recipes = datastore.run(recipeQuery);
+		List<RecipeInfo> recipeList = new ArrayList<>();
+
+		recipes.forEachRemaining(recipe -> {
+			recipeList.add(recipeInfoBuilder(recipe));
+		});
+		
+		List<RecipeInfo> filteredRecipes = filtering(recipeList, data.vegetarian, data.vegan, data.kosher, data.lactoseFree, data.glutenFree); 
+		
+		return Response.ok(g.toJson(filteredRecipes)).build();
+	}
+	
+	public List<RecipeInfo> filtering(List<RecipeInfo> recipes, boolean vegetarian, boolean vegan, boolean kosher, 
+			boolean lactoseFree, boolean glutenFree) {
+		if(recipes.size() == 0) {
+			return recipes;
+		}
+		
+		recipes.forEach((recipe) -> {
+			if(vegetarian && !recipe.isVegetarian) {
+				recipes.remove(recipe);
+			}
+			if(vegan && !recipe.isVegan) {
+				recipes.remove(recipe);
+			}
+			if(kosher && !recipe.isKosher) {
+				recipes.remove(recipe);
+			}
+			if(lactoseFree && !recipe.isLactoseFree) {
+				recipes.remove(recipe);
+			}
+			if(glutenFree && !recipe.isGlutenFree) {
+				recipes.remove(recipe);
+			}
+		});
+		
+		return recipes;
+	}
+	
+	public RecipeInfo recipeInfoBuilder(Entity recipe) {
+		RecipeInfo recipeInfo;
+		
+		recipeInfo = new RecipeInfo(recipe.getString(AUTHOR), recipe.getString(CALORIES), recipe.getString(CATEGORY), recipe.getString(DESCRIPTION), 
+				recipe.getString(DIFFICULTY), recipe.getString(INGREDIENTS), recipe.getString(RECIPENAME), recipe.getBoolean(ISGLUTENFREE), recipe.getBoolean(ISKOSHER), recipe.getBoolean(ISLACTOSEFREE),
+				recipe.getBoolean(ISVEGAN), recipe.getBoolean(ISVEGETARIAN));
+		
+		return recipeInfo;
+		
 	}
 	
 	@POST

@@ -33,7 +33,37 @@ class restCalls {
             body: JSON.stringify({
                 username: username,
                 password: password,
-                confirmation: confirmation,
+                confirmation: confirmation
+            })
+        }).then(function (response) {
+            if (!response.ok) {
+                return response.text().then((text) => {
+                    const error = new Error(text)
+                    error.code = response.status;
+                    throw error
+                })
+            }
+            return response.text()
+        }).then(function (text) {
+            return text;
+        })
+    }
+
+    shareRecipe(author, recipeName, description, ingredients, difficulty, category, calories) {
+        return fetch("https://silent-blade-368222.appspot.com/rest/user/shareRecipe", {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json; charset=UTF-8',
+            },
+            body: JSON.stringify({
+                author: author,
+                recipeName: recipeName,
+                description: description,
+                ingredients: ingredients,
+                difficulty: difficulty,
+                category: category,
+                calories: calories
+
             })
         }).then(function (response) {
             if (!response.ok) {

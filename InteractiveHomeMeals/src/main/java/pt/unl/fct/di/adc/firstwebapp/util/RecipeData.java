@@ -10,12 +10,12 @@ public class RecipeData {
 	public RecipeData() {}
 	
 	public RecipeData(String recipeName, String description, String author, String difficulty, String category, String calories, String[] ingredients) {
-		author = this.author;
-		recipeName = this.recipeName;
-		description = this.description;
-		ingredients = this.ingredients;
-		difficulty = this.difficulty;
-		category = this.category;
-		calories = this.calories;
+		this.author = author;
+		this.recipeName = recipeName;
+		this.description = description;
+		this.ingredients = ingredients;
+		this.difficulty = difficulty;
+		this.category = category;
+		this.calories = calories;
 	}
 }

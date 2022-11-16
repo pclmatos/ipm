@@ -1,8 +1,10 @@
 package pt.unl.fct.di.adc.firstwebapp.resources;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 import java.util.logging.Logger;
 
@@ -18,8 +20,11 @@ import javax.ws.rs.core.Response.ResponseBuilder;
 import javax.ws.rs.core.Response.Status;
 
 import org.apache.commons.codec.digest.DigestUtils;
+import org.w3c.dom.stylesheets.MediaList;
 
 import com.google.appengine.api.datastore.Query.FilterOperator;
+import com.google.appengine.repackaged.com.google.common.base.Pair;
+import com.google.appengine.repackaged.com.google.protobuf.ListValue;
 import com.google.cloud.datastore.Datastore;
 import com.google.cloud.datastore.DatastoreOptions;
 import com.google.cloud.datastore.Entity;
@@ -31,14 +36,20 @@ import com.google.cloud.datastore.StructuredQuery.CompositeFilter;
 import com.google.cloud.datastore.StructuredQuery.Filter;
 import com.google.cloud.datastore.StructuredQuery.PropertyFilter;
 import com.google.cloud.datastore.Transaction;
+import com.google.cloud.datastore.Value;
 import com.google.gson.Gson;
 
 import pt.unl.fct.di.adc.firstwebapp.util.FilterData;
+import pt.unl.fct.di.adc.firstwebapp.util.GetPantryData;
 import pt.unl.fct.di.adc.firstwebapp.util.LoginData;
 import pt.unl.fct.di.adc.firstwebapp.util.RecipeData;
 import pt.unl.fct.di.adc.firstwebapp.util.RegisterData;
+import pt.unl.fct.di.adc.firstwebapp.util.info.PantryEntry;
 import pt.unl.fct.di.adc.firstwebapp.util.info.RecipeInfo;
 import pt.unl.fct.di.adc.firstwebapp.util.SearchRecipeData;
+import pt.unl.fct.di.adc.firstwebapp.util.UpdatePantry;
+import pt.unl.fct.di.adc.firstwebapp.util.entity.Ingredient;
+import pt.unl.fct.di.adc.firstwebapp.util.entity.User;
 
 @Path("/user")
 @Produces(MediaType.APPLICATION_JSON + ";charset=utf-8")
@@ -49,14 +60,15 @@ public class UserResource {
 
 	private final Gson g = new Gson();
 
-	//kinds of the database
+	// kinds of the database
 	private static final String USER = "User";
 	private static final String RECIPE = "Recipe";
 	private static final String INGREDIENT = "Ingredient";
-	
-	//attributes
-	private static final String USERNAME= "username";
+
+	// attributes
+	private static final String USERNAME = "username";
 	private static final String PASSWORD = "password";
+	private static final String PANTRY = "pantry";
 	private static final String AUTHOR = "author";
 	private static final String DESCRIPTION = "description";
 	private static final String INGREDIENTS = "ingredients";
@@ -69,45 +81,48 @@ public class UserResource {
 	private static final String CATEGORY = "category";
 	private static final String CALORIES = "calories";
 	private static final String DIFFICULTY = "difficulty";
-	
-	public UserResource() {}
-	
+
+	public UserResource() {
+	}
+
 	@POST
 	@Path("/register")
 	@Consumes(MediaType.APPLICATION_JSON)
 	public Response doRegister(RegisterData data) {
-		
+
 		Transaction txn = datastore.newTransaction();
 
-		Key userKey = datastore.newKeyFactory().setKind("User").newKey(data.username);
+		User u = new User(data.username,data.password);
+
+		Key userKey = datastore.newKeyFactory().setKind(USER).newKey(data.username);
 
 		try {
 			Entity user = txn.get(userKey);
-			
-			if(user != null) {
+
+			if (user != null) {
 				txn.rollback();
 				LOG.fine(data.username + " already has registered");
 				return Response.status(Status.FORBIDDEN).build();
-			}
-			else if(!data.password.equals(data.confirmation)) {
+			} else if (!data.password.equals(data.confirmation)) {
 				txn.rollback();
 				LOG.fine("incorrect confirmation password");
 				return Response.status(Status.FORBIDDEN).build();
-			}
-			else {
-				user = Entity.newBuilder(userKey)
-						.set(USERNAME, data.username)
-						.set(PASSWORD, DigestUtils.sha512Hex(data.password))
-						.build();
+			} else {
 				
+				String pantryJson = g.toJson(u.getPantry());
+				user = Entity.newBuilder(userKey)
+						.set(USERNAME, u.getUsername())
+						.set(PASSWORD, DigestUtils.sha512Hex(u.getPassword()))
+						.set(PANTRY, pantryJson)
+						.build();
+
 				txn.add(user);
 				txn.commit();
 				LOG.fine("Successful registration");
 				return Response.ok("valid registration").build();
 			}
-		}
-		finally {
-			if(txn.isActive()) {
+		} finally {
+			if (txn.isActive()) {
 				txn.rollback();
 			}
 		}
@@ -120,37 +135,37 @@ public class UserResource {
 		LOG.fine("Login attempt by user: " + data.username);
 
 		Key userKey = datastore.newKeyFactory().setKind(USER).newKey(data.username);
-		
+
 		Transaction txn = datastore.newTransaction();
-		
-		try{
+
+		try {
 			Entity user = datastore.get(userKey);
-			
-			if (user != null){
+
+			if (user != null) {
 				String hashedPwd = user.getString(PASSWORD);
 
-				if(hashedPwd.equals(DigestUtils.sha512Hex(data.password))) {            
-						
-						txn.commit();
-						LOG.info("User logged in: " + data.username);
-						return Response.ok("valid login").build();
+				if (hashedPwd.equals(DigestUtils.sha512Hex(data.password))) {
 
-				}else {
+					txn.commit();
+					LOG.info("User logged in: " + data.username);
+					return Response.ok("valid login").build();
+
+				} else {
 					LOG.warning("Wrong password for user:" + data.username);
 					txn.rollback();
 					return Response.status(Status.FORBIDDEN).entity("Wrong password.").build();
 				}
-			}else{
-				LOG.warning("User: " + data.username +" does not exist");
+			} else {
+				LOG.warning("User: " + data.username + " does not exist");
 				txn.rollback();
-				return Response.status(Status.FORBIDDEN).entity("User: " + data.username +" does not exist.").build();
+				return Response.status(Status.FORBIDDEN).entity("User: " + data.username + " does not exist.").build();
 			}
-		}finally{
+		} finally {
 			if (txn.isActive())
-				txn.rollback();		
+				txn.rollback();
 		}
 	}
-	
+
 	@POST
 	@Path("/shareRecipe")
 	@Consumes(MediaType.APPLICATION_JSON)
@@ -160,81 +175,80 @@ public class UserResource {
 		boolean isVegetarian = true, isVegan = true, isKosher = true, isGlutenFree = true, isLactoseFree = true;
 		Key recipeKey = datastore.newKeyFactory().setKind(RECIPE).newKey(getUniqueId());
 		Key userKey = datastore.newKeyFactory().setKind(USER).newKey(data.author);
-		
+
 		Transaction txn = datastore.newTransaction();
-		
+
 		try {
 			Key ingredientKey;
 			Entity ingredient;
 			Entity user = datastore.get(userKey);
 			Entity recipe = datastore.get(recipeKey);
-			
-			while(recipe != null) {
+
+			while (recipe != null) {
 				recipeKey = datastore.newKeyFactory().setKind(RECIPE).newKey(getUniqueId());
 				recipe = datastore.get(recipeKey);
 			}
-			
-			if(user == null) {
-				LOG.warning("User: " + data.author +" does not exist");
+
+			if (user == null) {
+				LOG.warning("User: " + data.author + " does not exist");
 				txn.rollback();
-				return Response.status(Status.FORBIDDEN).entity("User: " + data.author +" does not exist.").build();
-			}
-			else {
-				for(int i = 1; i < data.ingredients.length; i+=2) {
+				return Response.status(Status.FORBIDDEN).entity("User: " + data.author + " does not exist.").build();
+			} else {
+				for (int i = 1; i < data.ingredients.length; i += 2) {
 					ingredientKey = datastore.newKeyFactory().setKind(INGREDIENT).newKey(data.ingredients[i]);
 					ingredient = datastore.get(ingredientKey);
-					
-					if(ingredient != null) {
-						if(!ingredient.getBoolean(ISVEGETARIAN)) {
+
+					if (ingredient != null) {
+						if (!ingredient.getBoolean(ISVEGETARIAN)) {
 							isVegetarian = false;
 						}
-						if(!ingredient.getBoolean(ISVEGAN)) {
+						if (!ingredient.getBoolean(ISVEGAN)) {
 							isVegan = false;
 						}
-						if(!ingredient.getBoolean(ISKOSHER)) {
+						if (!ingredient.getBoolean(ISKOSHER)) {
 							isKosher = false;
 						}
-						if(!ingredient.getBoolean(ISGLUTENFREE)) {
+						if (!ingredient.getBoolean(ISGLUTENFREE)) {
 							isGlutenFree = false;
 						}
-						if(!ingredient.getBoolean(ISLACTOSEFREE)) {
+						if (!ingredient.getBoolean(ISLACTOSEFREE)) {
 							isLactoseFree = false;
 						}
 					}
 				}
-				
+
 				recipe = Entity.newBuilder(recipeKey)
-					.set(RECIPENAME, data.recipeName)
-					.set(AUTHOR, data.author)
-					.set(DESCRIPTION, data.description)
-					.set(ISVEGETARIAN, isVegetarian)
-					.set(ISVEGAN, isVegan)
-					.set(ISKOSHER, isKosher)
-					.set(ISGLUTENFREE, isGlutenFree)
-					.set(ISLACTOSEFREE, isLactoseFree)
-					.set(CATEGORY, data.category)
-					.set(CALORIES, data.calories)
-					.set(DIFFICULTY, data.difficulty)
-					.set(INGREDIENTS, ingredientsToString(data.ingredients))
-					.build();
-			
+						.set(RECIPENAME, data.recipeName)
+						.set(AUTHOR, data.author)
+						.set(DESCRIPTION, data.description)
+						.set(ISVEGETARIAN, isVegetarian)
+						.set(ISVEGAN, isVegan)
+						.set(ISKOSHER, isKosher)
+						.set(ISGLUTENFREE, isGlutenFree)
+						.set(ISLACTOSEFREE, isLactoseFree)
+						.set(CATEGORY, data.category)
+						.set(CALORIES, data.calories)
+						.set(DIFFICULTY, data.difficulty)
+						.set(INGREDIENTS, ingredientsToString(data.ingredients))
+						.build();
+
 				txn.add(recipe);
 				LOG.info(data.recipeName + " was successfully shared");
 				txn.commit();
 				return Response.ok("Recipe shared").build();
 			}
-			
-		}finally {
-			if(txn.isActive())
+
+		} finally {
+			if (txn.isActive())
 				txn.rollback();
 		}
 	}
-	
+
 	@GET
 	@Path("/filterSearching")
 	@Consumes(MediaType.APPLICATION_JSON)
 	public Response filterSearching(FilterData data) {
-		
+
 		Query<Entity> recipeQuery = Query.newEntityQueryBuilder().setKind(RECIPE).build();
 		QueryResults<Entity> recipes = datastore.run(recipeQuery);
 		List<RecipeInfo> recipeList = new ArrayList<>();
@@ -242,215 +256,302 @@ public class UserResource {
 		recipes.forEachRemaining(recipe -> {
 			recipeList.add(recipeInfoBuilder(recipe));
 		});
-		
-		List<RecipeInfo> filteredRecipes = filtering(recipeList, data.vegetarian, data.vegan, data.kosher, data.lactoseFree, data.glutenFree); 
-		
+
+		List<RecipeInfo> filteredRecipes = filtering(recipeList, data.vegetarian, data.vegan, data.kosher,
+				data.lactoseFree, data.glutenFree);
+
 		return Response.ok(g.toJson(filteredRecipes)).build();
 	}
-	
-	public List<RecipeInfo> filtering(List<RecipeInfo> recipes, boolean vegetarian, boolean vegan, boolean kosher, 
+
+	public List<RecipeInfo> filtering(List<RecipeInfo> recipes, boolean vegetarian, boolean vegan, boolean kosher,
 			boolean lactoseFree, boolean glutenFree) {
-		if(recipes.size() == 0) {
+		if (recipes.size() == 0) {
 			return recipes;
 		}
-		
+
 		recipes.forEach((recipe) -> {
-			if(vegetarian && !recipe.isVegetarian) {
+			if (vegetarian && !recipe.isVegetarian) {
 				recipes.remove(recipe);
 			}
-			if(vegan && !recipe.isVegan) {
+			if (vegan && !recipe.isVegan) {
 				recipes.remove(recipe);
 			}
-			if(kosher && !recipe.isKosher) {
+			if (kosher && !recipe.isKosher) {
 				recipes.remove(recipe);
 			}
-			if(lactoseFree && !recipe.isLactoseFree) {
+			if (lactoseFree && !recipe.isLactoseFree) {
 				recipes.remove(recipe);
 			}
-			if(glutenFree && !recipe.isGlutenFree) {
+			if (glutenFree && !recipe.isGlutenFree) {
 				recipes.remove(recipe);
 			}
 		});
-		
+
 		return recipes;
 	}
-	
+
 	public RecipeInfo recipeInfoBuilder(Entity recipe) {
 		RecipeInfo recipeInfo;
-		
-		recipeInfo = new RecipeInfo(recipe.getString(AUTHOR), recipe.getString(CALORIES), recipe.getString(CATEGORY), recipe.getString(DESCRIPTION), 
-				recipe.getString(DIFFICULTY), recipe.getString(INGREDIENTS), recipe.getString(RECIPENAME), recipe.getBoolean(ISGLUTENFREE), recipe.getBoolean(ISKOSHER), recipe.getBoolean(ISLACTOSEFREE),
+
+		recipeInfo = new RecipeInfo(recipe.getString(AUTHOR), recipe.getString(CALORIES), recipe.getString(CATEGORY),
+				recipe.getString(DESCRIPTION),
+				recipe.getString(DIFFICULTY), recipe.getString(INGREDIENTS), recipe.getString(RECIPENAME),
+				recipe.getBoolean(ISGLUTENFREE), recipe.getBoolean(ISKOSHER), recipe.getBoolean(ISLACTOSEFREE),
 				recipe.getBoolean(ISVEGAN), recipe.getBoolean(ISVEGETARIAN));
-		
+
 		return recipeInfo;
-		
+
 	}
-	
+
 	@POST
 	@Path("/addExistingIngredients")
 	public Response addExistingIngredients() {
 		LOG.fine("Adding all ingredients to db");
-		
-		String fruits[] = {"apple", "banana", "pear", "strawberry", "grape", "watermelon", "orange", "blueberry", "lemon", "peach", "avocado", "pineapple", "cherry", "cantaloupe", "raspberry", "lime", "blackberry", "clementine", "mango", "plum", "kiwi"};
-		String vegetables[] = {"potato", "tomato", "onion", "carrot", "bell pepper", "broccoli", "cucumber", "lettuce", "celery", "mushroom", "garlic", "spinach", "green bean", "cabbage", "sweet potato", "green onion", "cauliflower", "aspargo", "peas", "basil"};
-		String meat[] = {"pork meat", "chicken meat", "beef", "lamb meat", "goat meat", "turkey", "duck meat", "buffalo meat", "goose meat", "rabbit meat"};
-		String seaFood[] = {"shrimp", "tuna", "salmon", "tilapia", "catfish", "crab", "cod", "clam", "pangasius"};
-		String others[] = {"egg", "milk", "chocolate", "sugar", "salt", "pepper", "cinnamon", "cream", "olive oil", "tomato sauce", "soy sauce", "hot sauce", "oregano", "paprika", "curry", "cheese", "butter", "yogurt"};
-		String cereals[] = {"bread", "croissant", "grain", "oat", "rice", "pasta", "quinoa", "corn", "lentils"};
-		
+
+		String fruits[] = { "apple", "banana", "pear", "strawberry", "grape", "watermelon", "orange", "blueberry",
+				"lemon", "peach", "avocado", "pineapple", "cherry", "cantaloupe", "raspberry", "lime", "blackberry",
+				"clementine", "mango", "plum", "kiwi" };
+		String vegetables[] = { "potato", "tomato", "onion", "carrot", "bell pepper", "broccoli", "cucumber", "lettuce",
+				"celery", "mushroom", "garlic", "spinach", "green bean", "cabbage", "sweet potato", "green onion",
+				"cauliflower", "aspargo", "peas", "basil" };
+		String meat[] = { "pork meat", "chicken meat", "beef", "lamb meat", "goat meat", "turkey", "duck meat",
+				"buffalo meat", "goose meat", "rabbit meat" };
+		String seaFood[] = { "shrimp", "tuna", "salmon", "tilapia", "catfish", "crab", "cod", "clam", "pangasius" };
+		String others[] = { "egg", "milk", "chocolate", "sugar", "salt", "pepper", "cinnamon", "cream", "olive oil",
+				"tomato sauce", "soy sauce", "hot sauce", "oregano", "paprika", "curry", "cheese", "butter", "yogurt" };
+		String cereals[] = { "bread", "croissant", "grain", "oat", "rice", "pasta", "quinoa", "corn", "lentils" };
+
 		Transaction txn = datastore.newTransaction();
-		
+
 		try {
 			Key ingredientKey;
 			Entity ingredient;
-			
-			for(int i = 0; i < fruits.length; i++) {
+
+			for (int i = 0; i < fruits.length; i++) {
 				ingredientKey = datastore.newKeyFactory().setKind(INGREDIENT).newKey(fruits[i]);
 				ingredient = datastore.get(ingredientKey);
-				if(ingredient == null) {
+				if (ingredient == null) {
 					ingredient = Entity.newBuilder(ingredientKey)
-						.set(ISVEGETARIAN, true)
-						.set(ISVEGAN, true)
-						.set(ISKOSHER, true)
-						.set(ISGLUTENFREE, true)
-						.set(ISLACTOSEFREE, true)
-						.build();
-			
+							.set(ISVEGETARIAN, true)
+							.set(ISVEGAN, true)
+							.set(ISKOSHER, true)
+							.set(ISGLUTENFREE, true)
+							.set(ISLACTOSEFREE, true)
+							.build();
+
 					txn.add(ingredient);
 				}
 			}
-			
-			for(int i = 0; i < vegetables.length; i++) {
+
+			for (int i = 0; i < vegetables.length; i++) {
 				ingredientKey = datastore.newKeyFactory().setKind(INGREDIENT).newKey(vegetables[i]);
 				ingredient = datastore.get(ingredientKey);
-				
-				if(ingredient == null) {
+
+				if (ingredient == null) {
 					ingredient = Entity.newBuilder(ingredientKey)
-						.set(ISVEGETARIAN, true)
-						.set(ISVEGAN, true)
-						.set(ISKOSHER, true)
-						.set(ISGLUTENFREE, true)
-						.set(ISLACTOSEFREE, true)
-						.build();
-				
+							.set(ISVEGETARIAN, true)
+							.set(ISVEGAN, true)
+							.set(ISKOSHER, true)
+							.set(ISGLUTENFREE, true)
+							.set(ISLACTOSEFREE, true)
+							.build();
+
 					txn.add(ingredient);
 				}
 			}
-			
-			for(int i = 0; i < meat.length; i++) {
+
+			for (int i = 0; i < meat.length; i++) {
 				ingredientKey = datastore.newKeyFactory().setKind(INGREDIENT).newKey(meat[i]);
 				ingredient = datastore.get(ingredientKey);
-				
-				if(ingredient == null) {
+
+				if (ingredient == null) {
 					ingredient = Entity.newBuilder(ingredientKey)
-						.set(ISVEGETARIAN, false)
-						.set(ISVEGAN, false)
-						.set(ISKOSHER, true)
-						.set(ISGLUTENFREE, true)
-						.set(ISLACTOSEFREE, true)
-						.build();
-				
+							.set(ISVEGETARIAN, false)
+							.set(ISVEGAN, false)
+							.set(ISKOSHER, true)
+							.set(ISGLUTENFREE, true)
+							.set(ISLACTOSEFREE, true)
+							.build();
+
 					txn.add(ingredient);
 				}
 			}
-			
-			for(int i = 0; i < seaFood.length; i++) {
+
+			for (int i = 0; i < seaFood.length; i++) {
 				ingredientKey = datastore.newKeyFactory().setKind(INGREDIENT).newKey(seaFood[i]);
 				ingredient = datastore.get(ingredientKey);
-				
-				if(ingredient == null) {
+
+				if (ingredient == null) {
 					ingredient = Entity.newBuilder(ingredientKey)
-						.set(ISVEGETARIAN, false)
-						.set(ISVEGAN, false)
-						.set(ISKOSHER, true)
-						.set(ISGLUTENFREE, true)
-						.set(ISLACTOSEFREE, true)
-						.build();
-				
+							.set(ISVEGETARIAN, false)
+							.set(ISVEGAN, false)
+							.set(ISKOSHER, true)
+							.set(ISGLUTENFREE, true)
+							.set(ISLACTOSEFREE, true)
+							.build();
+
 					txn.add(ingredient);
 				}
 			}
-			
-			for(int i = 0; i < cereals.length; i++) {
+
+			for (int i = 0; i < cereals.length; i++) {
 				ingredientKey = datastore.newKeyFactory().setKind(INGREDIENT).newKey(cereals[i]);
 				ingredient = datastore.get(ingredientKey);
-				
-				if(ingredient == null) {
+
+				if (ingredient == null) {
 					ingredient = Entity.newBuilder(ingredientKey)
-						.set(ISVEGETARIAN, true)
-						.set(ISVEGAN, true)
-						.set(ISKOSHER, true)
-						.set(ISGLUTENFREE, false)
-						.set(ISLACTOSEFREE, true)
-						.build();
-				
+							.set(ISVEGETARIAN, true)
+							.set(ISVEGAN, true)
+							.set(ISKOSHER, true)
+							.set(ISGLUTENFREE, false)
+							.set(ISLACTOSEFREE, true)
+							.build();
+
 					txn.add(ingredient);
 				}
 			}
-			
-			for(int i = 0; i < others.length; i++) {
+
+			for (int i = 0; i < others.length; i++) {
 				ingredientKey = datastore.newKeyFactory().setKind(INGREDIENT).newKey(others[i]);
 				ingredient = datastore.get(ingredientKey);
-				
-				if(ingredient == null) {
+
+				if (ingredient == null) {
 					ingredient = Entity.newBuilder(ingredientKey)
-						.set(ISVEGETARIAN, true)
-						.set(ISVEGAN, true)
-						.set(ISKOSHER, true)
-						.set(ISGLUTENFREE, false)
-						.set(ISLACTOSEFREE, true)
-						.build();
-				
+							.set(ISVEGETARIAN, true)
+							.set(ISVEGAN, true)
+							.set(ISKOSHER, true)
+							.set(ISGLUTENFREE, false)
+							.set(ISLACTOSEFREE, true)
+							.build();
+
 					txn.add(ingredient);
 				}
 			}
-			
+
 			txn.commit();
 			return Response.ok("All ingredients added").build();
-		}finally {
-			if(txn.isActive())
+		} finally {
+			if (txn.isActive())
 				txn.rollback();
 		}
 	}
 
 	@GET
-	@Path("/home")
+	@Path("/")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response searchRecipe(SearchRecipeData data){
+	public Response searchRecipe(SearchRecipeData data) {
 		LOG.fine("Searching for recipe " + data.searchKey);
 
 		Transaction txn = datastore.newTransaction();
 
 		Key searchKey = datastore.newKeyFactory().setKind(RECIPE).newKey(data.searchKey);
 
-		try{
+		try {
 			Entity recipe = datastore.get(searchKey);
 
-			if(recipe != null){
+			if (recipe != null) {
+				txn.commit();
 				return Response.ok(recipe).build();
 			} else {
+				txn.rollback();
 				return Response.status(Status.NOT_FOUND).build();
 			}
 		} finally {
-			if(txn.isActive())
+			if (txn.isActive())
 				txn.rollback();
 		}
 	}
 
+	@GET
+	@Path("/pantry")
+	@Produces(MediaType.APPLICATION_JSON)
+	@SuppressWarnings("unchecked")
+	public Response getMyPantry(GetPantryData data) {
+
+		Transaction txn = datastore.newTransaction();
+
+		Key userKey = datastore.newKeyFactory().setKind(USER).newKey(data.username);
+
+		try {
+			Entity user = datastore.get(userKey);
+
+			if (user != null) {
+				List<PantryEntry> pantry = g.fromJson(user.getString(PANTRY), List.class);
+				txn.commit();
+				return Response.ok(pantry).build();
+			} else {
+				txn.rollback();
+				return Response.status(Status.NOT_FOUND).build();
+			}
+
+		} finally {
+			if (txn.isActive())
+				txn.rollback();
+		}
+	}
+
+	@POST
+	@Path("/pantry/update")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	@SuppressWarnings("unchecked")
+	public Response updatePantry(UpdatePantry data){
+
+		Transaction txn = datastore.newTransaction();
+
+		Key userKey = datastore.newKeyFactory().setKind(USER).newKey(data.username);
+
+		try{
+
+			Entity user = datastore.get(userKey);
+
+			if(user != null){
+				List<PantryEntry> pantry = g.fromJson(user.getString(PANTRY), List.class);
+				for(PantryEntry entry: data.entries){
+					for(PantryEntry e: pantry){
+						if(entry.getIngredient().equals(e.getIngredient())){
+							e.setCount(e.getCount() + entry.getCount());
+						}
+					}
+				}
+
+				String updatedPantry = g.toJson(pantry);
+
+				Entity updatedUser = Entity.newBuilder(userKey)
+										.set(USERNAME, data.username)
+										.set(PASSWORD, DigestUtils.sha512Hex(user.getString(PASSWORD)))
+										.set(PANTRY, updatedPantry)
+										.build();
+
+				txn.commit();
+				LOG.fine("Pantry updated successfully");
+				return Response.ok(updatedUser).build();
+			} else {
+				txn.rollback();
+				LOG.fine("Something wrong happened. Update failed.");
+				return Response.status(Status.BAD_REQUEST).build();
+			}
+
+		}finally{
+			if(txn.isActive())
+				txn.rollback();
+		}
+
+	}
+
 	public String ingredientsToString(String[] ingredients) {
 		String aux = "";
-		for(int i = 0; i < ingredients.length; i++) {
-			if(i != ingredients.length-1) {
+		for (int i = 0; i < ingredients.length; i++) {
+			if (i != ingredients.length - 1) {
 				aux += ingredients[i] + " ";
-			}
-			else {
+			} else {
 				aux += ingredients[i];
 			}
 		}
 		return aux;
 	}
-	
+
 	public String getUniqueId() {
 		String uniqueId = UUID.randomUUID().toString();
 		return uniqueId;

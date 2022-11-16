@@ -230,60 +230,79 @@ public class UserResource {
 		}
 	}
 	
-	@GET
+	@POST
 	@Path("/filterSearching")
 	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
 	public Response filterSearching(FilterData data) {
+		LOG.info("filtering recipes");
 		
 		Query<Entity> recipeQuery = Query.newEntityQueryBuilder().setKind(RECIPE).build();
 		QueryResults<Entity> recipes = datastore.run(recipeQuery);
 		List<RecipeInfo> recipeList = new ArrayList<>();
-
-		recipes.forEachRemaining(recipe -> {
+		List<RecipeInfo> filteredRecipes = new ArrayList<>();
+		
+		
+		recipes.forEachRemaining((recipe) -> {
 			recipeList.add(recipeInfoBuilder(recipe));
 		});
 		
-		List<RecipeInfo> filteredRecipes = filtering(recipeList, data.vegetarian, data.vegan, data.kosher, data.lactoseFree, data.glutenFree); 
+		filteredRecipes = filtering(recipeList, data.vegetarian, data.vegan, data.kosher, data.lactoseFree, data.glutenFree); 
 		
 		return Response.ok(g.toJson(filteredRecipes)).build();
 	}
 	
+	
 	public List<RecipeInfo> filtering(List<RecipeInfo> recipes, boolean vegetarian, boolean vegan, boolean kosher, 
 			boolean lactoseFree, boolean glutenFree) {
+		List<RecipeInfo> temp = recipes;
 		if(recipes.size() == 0) {
 			return recipes;
 		}
-		
+		/*
 		recipes.forEach((recipe) -> {
 			if(vegetarian && !recipe.isVegetarian) {
-				recipes.remove(recipe);
+				temp.remove(i);
 			}
-			if(vegan && !recipe.isVegan) {
-				recipes.remove(recipe);
+			else if(vegan && !recipe.isVegan) {
+				temp.remove(i);
 			}
-			if(kosher && !recipe.isKosher) {
-				recipes.remove(recipe);
+			else if(kosher && !recipe.isKosher) {
+				temp.remove(i);
 			}
-			if(lactoseFree && !recipe.isLactoseFree) {
-				recipes.remove(recipe);
+			else if(lactoseFree && !recipe.isLactoseFree) {
+				temp.remove(i);
 			}
-			if(glutenFree && !recipe.isGlutenFree) {
-				recipes.remove(recipe);
+			else if(glutenFree && !recipe.isGlutenFree) {
+				temp.remove(i);
 			}
-		});
+		});*/
 		
-		return recipes;
+		for(int i = 0; i < recipes.size(); i++) {
+			if(vegetarian && !recipes.get(i).isVegetarian) {
+				temp.remove(i);
+			}
+			else if(vegan && !recipes.get(i).isVegan) {
+				temp.remove(i);
+			}
+			else if(kosher && !recipes.get(i).isKosher) {
+				temp.remove(i);
+			}
+			else if(lactoseFree && !recipes.get(i).isLactoseFree) {
+				temp.remove(i);
+			}
+			else if(glutenFree && !recipes.get(i).isGlutenFree) {
+				temp.remove(i);
+			}
+		}
+		
+		return temp;
 	}
 	
 	public RecipeInfo recipeInfoBuilder(Entity recipe) {
-		RecipeInfo recipeInfo;
-		
-		recipeInfo = new RecipeInfo(recipe.getString(AUTHOR), recipe.getString(CALORIES), recipe.getString(CATEGORY), recipe.getString(DESCRIPTION), 
-				recipe.getString(DIFFICULTY), recipe.getString(INGREDIENTS), recipe.getString(RECIPENAME), recipe.getBoolean(ISGLUTENFREE), recipe.getBoolean(ISKOSHER), recipe.getBoolean(ISLACTOSEFREE),
-				recipe.getBoolean(ISVEGAN), recipe.getBoolean(ISVEGETARIAN));
-		
-		return recipeInfo;
-		
+		return new RecipeInfo(recipe.getString(AUTHOR), recipe.getString(CALORIES), recipe.getString(CATEGORY), recipe.getString(DESCRIPTION), 
+				recipe.getString(DIFFICULTY), recipe.getString(INGREDIENTS), recipe.getString(RECIPENAME), recipe.getBoolean(ISGLUTENFREE), 
+				recipe.getBoolean(ISKOSHER), recipe.getBoolean(ISLACTOSEFREE),recipe.getBoolean(ISVEGAN), recipe.getBoolean(ISVEGETARIAN));	
 	}
 	
 	@POST

@@ -11,8 +11,8 @@ public class RegisterData {
 	}
 	
 	public RegisterData(String username, String password, String confirmation) {
-		username = this.username;
-		password = this.password;
-		confirmation = this.confirmation;
+		this.username = username;
+		this.password = password;
+		this.confirmation = confirmation;
 	}
 }

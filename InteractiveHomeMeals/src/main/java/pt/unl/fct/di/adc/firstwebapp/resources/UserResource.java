@@ -247,47 +247,59 @@ public class UserResource {
 			recipeList.add(recipeInfoBuilder(recipe));
 		});
 		
-		filteredRecipes = filtering(recipeList, data.vegetarian, data.vegan, data.kosher, data.lactoseFree, data.glutenFree); 
+		filteredRecipes = filtering(recipeList, data.ingredients, data.vegetarian, data.vegan, data.kosher, data.lactoseFree, data.glutenFree); 
 		
 		return Response.ok(g.toJson(filteredRecipes)).build();
 	}
 	
 	
-	public List<RecipeInfo> filtering(List<RecipeInfo> recipes, boolean vegetarian, boolean vegan, boolean kosher, 
+	public List<RecipeInfo> filtering(List<RecipeInfo> recipes, List<String> ingredients, boolean vegetarian, boolean vegan, boolean kosher, 
 			boolean lactoseFree, boolean glutenFree) {
-		List<RecipeInfo> temp = recipes;
 		if(recipes.size() == 0) {
 			return recipes;
 		}
 		
 		for(int i = 0; i < recipes.size(); i++) {
 			if(vegetarian && !recipes.get(i).isVegetarian) {
-				temp.remove(i);
+				recipes.remove(i);
 				i--;
 			}
 			else if(vegan && !recipes.get(i).isVegan) {
-				temp.remove(i);
+				recipes.remove(i);
 				i--;
 			}
 			else if(kosher && !recipes.get(i).isKosher) {
-				temp.remove(i);
+				recipes.remove(i);
 				i--;
 			}
 			else if(lactoseFree && !recipes.get(i).isLactoseFree) {
-				temp.remove(i);
+				recipes.remove(i);
 				i--;
 			}
 			else if(glutenFree && !recipes.get(i).isGlutenFree) {
-				temp.remove(i);
+				recipes.remove(i);
+				i--;
+			}
+			
+		}
+		
+		for(int i=0; i<recipes.size(); i++) {
+			String[] auxIngredients = recipes.get(i).ingredients.split(" ");
+			List<String> tempIngredients = new ArrayList<>();
+			for(int j=0; j<auxIngredients.length; j++) {
+				tempIngredients.add(auxIngredients[j]);
+			}
+			if(!tempIngredients.containsAll(ingredients)) {
+				recipes.remove(i);
 				i--;
 			}
 		}
 		
-		return temp;
+		return recipes;
 	}
 	
 	public RecipeInfo recipeInfoBuilder(Entity recipe) {
-		return new RecipeInfo(recipe.getString(AUTHOR), recipe.getString(CALORIES), recipe.getString(CATEGORY), recipe.getString(DESCRIPTION), 
+		return new RecipeInfo(recipe.getKey().getName(), recipe.getString(AUTHOR), recipe.getString(CALORIES), recipe.getString(CATEGORY), recipe.getString(DESCRIPTION), 
 				recipe.getString(DIFFICULTY), recipe.getString(INGREDIENTS), recipe.getString(RECIPENAME), recipe.getBoolean(ISGLUTENFREE), 
 				recipe.getBoolean(ISKOSHER), recipe.getBoolean(ISLACTOSEFREE),recipe.getBoolean(ISVEGAN), recipe.getBoolean(ISVEGETARIAN));	
 	}
@@ -298,10 +310,10 @@ public class UserResource {
 		LOG.fine("Adding all ingredients to db");
 		
 		String fruits[] = {"apple", "banana", "pear", "strawberry", "grape", "watermelon", "orange", "blueberry", "lemon", "peach", "avocado", "pineapple", "cherry", "cantaloupe", "raspberry", "lime", "blackberry", "clementine", "mango", "plum", "kiwi"};
-		String vegetables[] = {"potato", "tomato", "onion", "carrot", "bell pepper", "broccoli", "cucumber", "lettuce", "celery", "mushroom", "garlic", "spinach", "green bean", "cabbage", "sweet potato", "green onion", "cauliflower", "aspargo", "peas", "basil"};
-		String meat[] = {"pork meat", "chicken meat", "beef", "lamb meat", "goat meat", "turkey", "duck meat", "buffalo meat", "goose meat", "rabbit meat"};
+		String vegetables[] = {"potato", "tomato", "onion", "carrot", "bell_pepper", "broccoli", "cucumber", "lettuce", "celery", "mushroom", "garlic", "spinach", "green_bean", "cabbage", "sweet_potato", "green_onion", "cauliflower", "aspargo", "peas", "basil"};
+		String meat[] = {"pork_meat", "chicken_meat", "beef", "lamb_meat", "goat_meat", "turkey", "duck_meat", "buffalo_meat", "goose_meat", "rabbit_meat"};
 		String seaFood[] = {"shrimp", "tuna", "salmon", "tilapia", "catfish", "crab", "cod", "clam", "pangasius"};
-		String others[] = {"egg", "milk", "chocolate", "sugar", "salt", "pepper", "cinnamon", "cream", "olive oil", "tomato sauce", "soy sauce", "hot sauce", "oregano", "paprika", "curry", "cheese", "butter", "yogurt"};
+		String others[] = {"egg", "milk", "chocolate", "sugar", "salt", "pepper", "cinnamon", "cream", "olive_oil", "tomato_sauce", "soy_sauce", "hot_sauce", "oregano", "paprika", "curry", "cheese", "butter", "yogurt"};
 		String cereals[] = {"bread", "croissant", "grain", "oat", "rice", "pasta", "quinoa", "corn", "lentils"};
 		
 		Transaction txn = datastore.newTransaction();

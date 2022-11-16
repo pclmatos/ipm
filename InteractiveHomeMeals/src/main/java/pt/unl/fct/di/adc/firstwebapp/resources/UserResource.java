@@ -259,40 +259,27 @@ public class UserResource {
 		if(recipes.size() == 0) {
 			return recipes;
 		}
-		/*
-		recipes.forEach((recipe) -> {
-			if(vegetarian && !recipe.isVegetarian) {
-				temp.remove(i);
-			}
-			else if(vegan && !recipe.isVegan) {
-				temp.remove(i);
-			}
-			else if(kosher && !recipe.isKosher) {
-				temp.remove(i);
-			}
-			else if(lactoseFree && !recipe.isLactoseFree) {
-				temp.remove(i);
-			}
-			else if(glutenFree && !recipe.isGlutenFree) {
-				temp.remove(i);
-			}
-		});*/
 		
 		for(int i = 0; i < recipes.size(); i++) {
 			if(vegetarian && !recipes.get(i).isVegetarian) {
 				temp.remove(i);
+				i--;
 			}
 			else if(vegan && !recipes.get(i).isVegan) {
 				temp.remove(i);
+				i--;
 			}
 			else if(kosher && !recipes.get(i).isKosher) {
 				temp.remove(i);
+				i--;
 			}
 			else if(lactoseFree && !recipes.get(i).isLactoseFree) {
 				temp.remove(i);
+				i--;
 			}
 			else if(glutenFree && !recipes.get(i).isGlutenFree) {
 				temp.remove(i);
+				i--;
 			}
 		}
 		

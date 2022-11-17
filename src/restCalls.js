@@ -78,7 +78,37 @@ class restCalls {
             return text;
         })
     }
+
+    searchRecipe(ingredients) {
+        return fetch("https://silent-blade-368222.appspot.com/rest/user/filterSearching", {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json; charset=UTF-8',
+            },
+            body: JSON.stringify({
+                vegetarian: false,
+                vegan: false,
+                kosher: false,
+                glutenFree: false,
+                lactoseFree: false,
+                ingredients: ingredients
+            })
+        }).then(function (response) {
+            if (!response.ok) {
+                return response.text().then((text) => {
+                    const error = new Error(text)
+                    error.code = response.status;
+                    throw error
+                })
+            }
+            return response.text()
+        }).then(function (text) {
+            return text;
+        })
+    }
 }
+
+
 
 const restCallsExport = new restCalls();
 export default restCallsExport;

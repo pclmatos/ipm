@@ -37,6 +37,12 @@ import com.google.cloud.datastore.StructuredQuery.Filter;
 import com.google.cloud.datastore.StructuredQuery.PropertyFilter;
 import com.google.cloud.datastore.Transaction;
 import com.google.cloud.datastore.Value;
+import com.google.cloud.storage.Acl;
+import com.google.cloud.storage.Blob;
+import com.google.cloud.storage.BlobId;
+import com.google.cloud.storage.BlobInfo;
+import com.google.cloud.storage.Storage;
+import com.google.cloud.storage.StorageOptions;
 import com.google.gson.Gson;
 
 import pt.unl.fct.di.adc.firstwebapp.util.FilterData;
@@ -81,6 +87,14 @@ public class UserResource {
 	private static final String CATEGORY = "category";
 	private static final String CALORIES = "calories";
 	private static final String DIFFICULTY = "difficulty";
+	private static final String PHOTO = "photo";
+	private static final String COMPLETEMEAL = "complete meal";
+	private static final String LIGHTMEAL = "light meal";
+	
+	//Bucket info
+	private static final String URL = "https://storage.googleapis.com/silent-blade-368222.appspot.com/";
+	private static final String PROJECT_ID = "Interactive Home Meals";
+	private static final String BUCKET_NAME = "silent-blade-368222.appspot.com";
 
 	public UserResource() {
 	}
@@ -148,8 +162,7 @@ public class UserResource {
 
 					txn.commit();
 					LOG.info("User logged in: " + data.username);
-					return Response.ok("valid login").build();
-
+					return Response.ok(data.username).build();
 				} else {
 					LOG.warning("Wrong password for user:" + data.username);
 					txn.rollback();
@@ -183,9 +196,10 @@ public class UserResource {
 			Entity ingredient;
 			Entity user = datastore.get(userKey);
 			Entity recipe = datastore.get(recipeKey);
+			String uniqueId = getUniqueId();
 
 			while (recipe != null) {
-				recipeKey = datastore.newKeyFactory().setKind(RECIPE).newKey(getUniqueId());
+				recipeKey = datastore.newKeyFactory().setKind(RECIPE).newKey(uniqueId);
 				recipe = datastore.get(recipeKey);
 			}
 
@@ -230,6 +244,7 @@ public class UserResource {
 						.set(CALORIES, data.calories)
 						.set(DIFFICULTY, data.difficulty)
 						.set(INGREDIENTS, ingredientsToString(data.ingredients))
+						.set(PHOTO, uploadPhoto(uniqueId, data.photo))
 						.build();
 
 				txn.add(recipe);
@@ -244,6 +259,19 @@ public class UserResource {
 		}
 	}
 	
+	public String uploadPhoto(String id, byte[] data){
+		if (data == null || data.length == 0)
+			return "undefined";
+
+		Storage storage = StorageOptions.newBuilder().setProjectId(PROJECT_ID).build().getService();
+		BlobId blobId = BlobId.of(BUCKET_NAME, id);
+		BlobInfo blobInfo = BlobInfo.newBuilder(blobId).setContentType("image/jpeg").build();
+		storage.create(blobInfo, data);
+		storage.createAcl(blobId, Acl.of(Acl.User.ofAllUsers(), Acl.Role.READER));
+		
+		return URL + id;
+	}
+	
 	@POST
 	@Path("/filterSearching")
 	@Consumes(MediaType.APPLICATION_JSON)
@@ -255,19 +283,43 @@ public class UserResource {
 		QueryResults<Entity> recipes = datastore.run(recipeQuery);
 		List<RecipeInfo> recipeList = new ArrayList<>();
 		List<RecipeInfo> filteredRecipes = new ArrayList<>();
+		List<RecipeInfo> filteredRecipesFinal = new ArrayList<>();
 		
 		
 		recipes.forEachRemaining((recipe) -> {
 			recipeList.add(recipeInfoBuilder(recipe));
 		});
 		
-		filteredRecipes = filtering(recipeList, data.ingredients, data.vegetarian, data.vegan, data.kosher, data.lactoseFree, data.glutenFree); 
+		filteredRecipes = mainFilter(recipeList, data.ingredients, data.vegetarian, data.vegan, data.kosher, data.lactoseFree, data.glutenFree);
+		
+		if(!(data.lightMeal && data.completeMeal)) {
+			filteredRecipesFinal = filterCategory(filteredRecipes, data.completeMeal, data.lightMeal);
+			return Response.ok(g.toJson(filteredRecipesFinal)).build();
+		}
 		
 		return Response.ok(g.toJson(filteredRecipes)).build();
 	}
 	
+	public List<RecipeInfo> filterCategory(List<RecipeInfo> recipes, boolean completeMeal, boolean lightMeal) {
+		for(int i=0; i<recipes.size(); i++) {
+			if(!completeMeal && !lightMeal) {
+				recipes.remove(i);
+				i--;
+			}
+			else if(!lightMeal && recipes.get(i).category.equals(LIGHTMEAL)) {
+				recipes.remove(i);
+				i--;
+			}
+			else if(!completeMeal && recipes.get(i).category.equals(COMPLETEMEAL)) {
+				recipes.remove(i);
+				i--;
+			}
+		}
+		return recipes;
+	}
 	
-	public List<RecipeInfo> filtering(List<RecipeInfo> recipes, List<String> ingredients, boolean vegetarian, boolean vegan, boolean kosher, 
+	
+	public List<RecipeInfo> mainFilter(List<RecipeInfo> recipes, List<String> ingredients, boolean vegetarian, boolean vegan, boolean kosher, 
 			boolean lactoseFree, boolean glutenFree) {
 		if (recipes.size() == 0) {
 			return recipes;
@@ -313,8 +365,8 @@ public class UserResource {
 	}
 
 	public RecipeInfo recipeInfoBuilder(Entity recipe) {
-		return new RecipeInfo(recipe.getKey().getName(), recipe.getString(AUTHOR), recipe.getString(CALORIES), recipe.getString(CATEGORY), recipe.getString(DESCRIPTION), 
-				recipe.getString(DIFFICULTY), recipe.getString(INGREDIENTS), recipe.getString(RECIPENAME), recipe.getBoolean(ISGLUTENFREE), 
+		return new RecipeInfo(recipe.getKey().getName(), recipe.getString(AUTHOR), recipe.getLong(CALORIES), recipe.getString(CATEGORY), recipe.getString(DESCRIPTION), 
+				recipe.getLong(DIFFICULTY), recipe.getString(INGREDIENTS), recipe.getString(RECIPENAME), recipe.getBoolean(ISGLUTENFREE), 
 				recipe.getBoolean(ISKOSHER), recipe.getBoolean(ISLACTOSEFREE),recipe.getBoolean(ISVEGAN), recipe.getBoolean(ISVEGETARIAN));	
 	}
 
@@ -325,7 +377,7 @@ public class UserResource {
 		
 		String fruits[] = {"apple", "banana", "pear", "strawberry", "grape", "watermelon", "orange", "blueberry", "lemon", "peach", "avocado", "pineapple", "cherry", "cantaloupe", "raspberry", "lime", "blackberry", "clementine", "mango", "plum", "kiwi"};
 		String vegetables[] = {"potato", "tomato", "onion", "carrot", "bell_pepper", "broccoli", "cucumber", "lettuce", "celery", "mushroom", "garlic", "spinach", "green_bean", "cabbage", "sweet_potato", "green_onion", "cauliflower", "aspargo", "peas", "basil"};
-		String meat[] = {"pork_meat", "chicken_meat", "beef", "lamb_meat", "goat_meat", "turkey", "duck_meat", "buffalo_meat", "goose_meat", "rabbit_meat"};
+		String meat[] = {"pork", "chicken", "beef", "lamb", "goat", "turkey", "duck", "buffalo", "goose", "rabbit"};
 		String seaFood[] = {"shrimp", "tuna", "salmon", "tilapia", "catfish", "crab", "cod", "clam", "pangasius"};
 		String others[] = {"egg", "milk", "chocolate", "sugar", "salt", "pepper", "cinnamon", "cream", "olive_oil", "tomato_sauce", "soy_sauce", "hot_sauce", "oregano", "paprika", "curry", "cheese", "butter", "yogurt"};
 		String cereals[] = {"bread", "croissant", "grain", "oat", "rice", "pasta", "quinoa", "corn", "lentils"};

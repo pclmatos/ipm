@@ -2,6 +2,7 @@ import { Box, Grid, TextField, Typography, Card, CardMedia, CardContent, RadioGr
 import Select from "react-select"
 import logoIHMcut from "../images/logoIHMcut.png"
 import { useState } from "react"
+import "./style.css"
 
 export default function SearchRecipesPage() {
     const [vegetarian, setVegetarian] = useState("false")
@@ -172,7 +173,8 @@ export default function SearchRecipesPage() {
     });
 
     return (
-        <Grid container>
+
+        <Grid container className="container"  >
             <Grid item xs={3}>
                 <Box sx={{
                     display: 'flex',

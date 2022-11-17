@@ -1,6 +1,7 @@
 import { Box, Grid, TextField, Typography, InputLabel, MenuItem, FormControl, Select } from "@mui/material";
 import { useState } from "react"
 import restCalls from "../restCalls"
+import "./style.css"
 
 export default function ShareRecipe() {
 
@@ -46,7 +47,7 @@ export default function ShareRecipe() {
     }
 
     return (
-        <Grid container>
+        <Grid item xs={12} container className="container2">
             <Grid item xs={4}>
                 <Box sx={{
                     display: 'flex',

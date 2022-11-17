@@ -9,6 +9,8 @@ export default function SearchRecipesPage() {
     const [kosher, setKosher] = useState("false")
     const [glutenFree, setGlutenFree] = useState("false")
     const [lactoseFree, setLactoseFree] = useState("false")
+    const [completeMeal, setCompleteMeal] = useState("true")
+    const [lightMeal, setLightMeal] = useState("true")
     const [selectedMeatFishEggsIngredients, setSelectedMeatFishEggsIngredients] = useState()
 
     function vegetarianHandler(e) {
@@ -48,6 +50,22 @@ export default function SearchRecipesPage() {
             setLactoseFree("false");
         } else {
             setLactoseFree(e.target.value);
+        }
+    }
+
+    function completeMealHandler(e) {
+        if (completeMeal === "true") {
+            setCompleteMeal("false");
+        } else {
+            setCompleteMeal(e.target.value);
+        }
+    }
+
+    function lightMealHandler(e) {
+        if (lightMeal === "true") {
+            setLightMeal("false");
+        } else {
+            setLightMeal(e.target.value);
         }
     }
 
@@ -188,6 +206,21 @@ export default function SearchRecipesPage() {
                                 value={lactoseFree}
                                 onClick={lactoseFreeHandler}>
                                 <FormControlLabel value="true" control={<Radio />} label={<Typography sx={{ fontFamily: 'Verdana', fontSize: 18 }}>Lactose Free</Typography>} />
+                            </RadioGroup>
+                        </ThemeProvider>
+                    </Box>
+                    <Typography sx={{ fontFamily: 'Verdana', fontSize: 25, color: "black", pt: "6%", pb: "1%" }}>Meal Filtering</Typography>
+                    <Box sx={{ pl: "9%" }}>
+                        <ThemeProvider theme={theme}>
+                            <RadioGroup
+                                value={completeMeal}
+                                onClick={completeMealHandler}>
+                                <FormControlLabel value="true" control={<Radio />} label={<Typography sx={{ fontFamily: 'Verdana', fontSize: 18 }}>Compete Meal</Typography>} />
+                            </RadioGroup>
+                            <RadioGroup
+                                value={lightMeal}
+                                onClick={lightMealHandler}>
+                                <FormControlLabel value="true" control={<Radio />} label={<Typography sx={{ fontFamily: 'Verdana', fontSize: 18 }}>Light Meal</Typography>} />
                             </RadioGroup>
                         </ThemeProvider>
                     </Box>

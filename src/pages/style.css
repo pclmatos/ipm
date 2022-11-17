@@ -1,15 +1,16 @@
 * {
-    box-sizing: border-box;
-  }
-  
-  body {
-    margin: 0;
-  }
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background-color: #F8F8F8;
+}
 
 .main-container {
-    background-image: url(../images/backgroundBoardImage.jpg);
-    background-size: cover;
-    background-repeat: no-repeat;
-    background-attachment: fixed;
-    opacity: 75%;
+  background-image: url(../images/backgroundBoardImage.jpg);
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+  opacity: 75%;
 }

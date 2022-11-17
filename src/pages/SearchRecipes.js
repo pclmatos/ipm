@@ -1,8 +1,10 @@
-import { Box, Grid, TextField, Typography, Card, CardMedia, CardContent, RadioGroup, FormControlLabel, Radio, ThemeProvider, createTheme } from "@mui/material";
+import { Box, Grid, TextField, Typography, Card, CardMedia, CardContent, RadioGroup, FormControlLabel, Radio, ThemeProvider, createTheme, Button, Divider } from "@mui/material";
 import Select from "react-select"
 import logoIHMcut from "../images/logoIHMcut.png"
 import { useState } from "react"
+import restCalls from "../restCalls"
 import "./style.css"
+
 
 export default function SearchRecipesPage() {
     const [vegetarian, setVegetarian] = useState("false")
@@ -72,6 +74,11 @@ export default function SearchRecipesPage() {
 
     function selectedMeatFishEggsIngredientsHandler(data) {
         setSelectedMeatFishEggsIngredients(data);
+    }
+
+    function searchRecipeManager(e) {
+        e.preventDefault();
+        restCalls.searchRecipe();
     }
 
     const meatFishEggsOptionList = [
@@ -175,7 +182,7 @@ export default function SearchRecipesPage() {
     return (
 
         <Grid container className="container"  >
-            <Grid item xs={3}>
+            <Grid item xs={2.95}>
                 <Box sx={{
                     display: 'flex',
                     flexDirection: 'column',
@@ -226,7 +233,7 @@ export default function SearchRecipesPage() {
                             </RadioGroup>
                         </ThemeProvider>
                     </Box>
-                    <Typography sx={{ fontFamily: 'Verdana', fontSize: 25, color: "black", pt: "5%", pb: "2%" }}>Ingredient Filtering</Typography>
+                    <Typography sx={{ fontFamily: 'Verdana', fontSize: 25, color: "black", pt: "5%", pb: "3%" }}>Ingredient Filtering</Typography>
                     <Select
                         options={meatFishEggsOptionList}
                         placeholder="Select ingredients"
@@ -235,9 +242,22 @@ export default function SearchRecipesPage() {
                         isSearchable={true}
                         isMulti
                     />
+                    <Button
+                        type="submit"
+                        variant="outlined"
+                        color='inherit'
+                        sx={{ mt: "8%", width: "20%" }}
+                        onClick={(e) => { searchRecipeManager(e) }}
+                    >
+                        <Typography sx={{ fontFamily: 'Verdana', fontSize: 16, color: "black" }}> Filter! </Typography>
+                    </Button>
                 </Box>
             </Grid>
+            <Grid container item xs={0.05} direction="column" alignItems="center" justifyContent="center">
+                <Divider orientation="vertical"  sx={{bgcolor: "#FFC86E", width: "20%"}} />
+            </Grid>
             <Grid container item xs={9} direction="row">
+
                 <Box sx={{ p: 1, width: "33.3%" }}>
                     <Card variant="outlined" sx={{ p: 1 }}>
                         <CardContent >

@@ -79,7 +79,7 @@ class restCalls {
         })
     }
 
-    searchRecipe(ingredients) {
+    searchRecipe() {
         return fetch("https://silent-blade-368222.appspot.com/rest/user/filterSearching", {
             method: 'POST',
             headers: {
@@ -91,7 +91,7 @@ class restCalls {
                 kosher: false,
                 glutenFree: false,
                 lactoseFree: false,
-                ingredients: ingredients
+                ingredients: []
             })
         }).then(function (response) {
             if (!response.ok) {

@@ -491,7 +491,6 @@ public class UserResource {
 		Key userKey = datastore.newKeyFactory().setKind(USER).newKey(data.username);
 
 		try {
-
 			Entity user = datastore.get(userKey);
 
 			if (user != null) {
@@ -524,6 +523,7 @@ public class UserResource {
 						.set(PANTRY, updatedPantry)
 						.build();
 
+				txn.put(updatedUser);
 				txn.commit();
 				LOG.fine("Pantry updated successfully");
 				return Response.ok(updatedUser).build();

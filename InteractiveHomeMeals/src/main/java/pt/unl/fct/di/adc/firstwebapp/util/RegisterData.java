@@ -2,9 +2,7 @@ package pt.unl.fct.di.adc.firstwebapp.util;
 
 public class RegisterData {
 	
-	public String username;
-	public String password;
-	public String confirmation;
+	public String username, password, confirmation;
 	
 	public RegisterData() {
 		

@@ -605,15 +605,17 @@ public class UserResource {
 			
 		}
 		
-		for(int i=0; i<recipes.size(); i++) {
-			String[] auxIngredients = recipes.get(i).ingredients.split(" ");
-			List<String> tempIngredients = new ArrayList<>();
-			for(int j=0; j<auxIngredients.length; j++) {
-				tempIngredients.add(auxIngredients[j]);
-			}
-			if(!tempIngredients.containsAll(ingredients)) {
-				recipes.remove(i);
-				i--;
+		if(ingredients != null) {
+			for(int i=0; i<recipes.size(); i++) {
+				String[] auxIngredients = recipes.get(i).ingredients.split(" ");
+				List<String> tempIngredients = new ArrayList<>();
+				for(int j=0; j<auxIngredients.length; j++) {
+					tempIngredients.add(auxIngredients[j]);
+				}
+				if(!tempIngredients.containsAll(ingredients)) {
+					recipes.remove(i);
+					i--;
+				}
 			}
 		}
 		

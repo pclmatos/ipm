@@ -1,7 +1,7 @@
 import { Box, Grid, TextField, Typography, Card, CardMedia, CardContent, RadioGroup, FormControlLabel, Radio, ThemeProvider, createTheme, Button, Divider } from "@mui/material";
 import Select from "react-select"
 import logoIHMcut from "../images/logoIHMcut.png"
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import restCalls from "../restCalls"
 import "./style.css"
 
@@ -14,7 +14,9 @@ export default function SearchRecipesPage() {
     const [lactoseFree, setLactoseFree] = useState("false")
     const [completeMeal, setCompleteMeal] = useState("true")
     const [lightMeal, setLightMeal] = useState("true")
-    const [selectedMeatFishEggsIngredients, setSelectedMeatFishEggsIngredients] = useState()
+    const [ingredients, setIngredients] = useState()
+
+    var recipes = JSON.parse(localStorage.getItem('recipes'))
 
     function vegetarianHandler(e) {
         if (vegetarian === "true") {
@@ -72,16 +74,21 @@ export default function SearchRecipesPage() {
         }
     }
 
-    function selectedMeatFishEggsIngredientsHandler(data) {
-        setSelectedMeatFishEggsIngredients(data);
+    function ingredientsHandler(data) {
+        setIngredients(data);
     }
 
     function searchRecipeManager(e) {
         e.preventDefault();
-        restCalls.searchRecipe();
+        //restCalls.searchRecipe(vegetarian, vegan, kosher, glutenFree, lactoseFree, completeMeal, lightMeal, ingredients);
+        restCalls.searchRecipe(vegetarian, vegan, kosher, glutenFree, lactoseFree, completeMeal, lightMeal, ingredients)
+            .then(() => {
+                recipes = JSON.parse(localStorage.getItem('recipes'))
+                    .then(() => { showRecipes() })
+            })
     }
 
-    const meatFishEggsOptionList = [
+    const ingredientsList = [
         { value: "apple", label: "Apple" },
         { value: "banana", label: "Banana" },
         { value: "pear", label: "Pear" },
@@ -179,6 +186,32 @@ export default function SearchRecipesPage() {
         },
     });
 
+    function showRecipes() {
+        const recipeCards = []
+        for (var i = 0; i < recipes.length; i++) {
+            recipeCards.push(
+                <>
+                    <Box sx={{ p: 1, width: "33.3%" }}>
+                        <Card variant="outlined" sx={{ p: 1 }}>
+                            <CardContent >
+                                <Typography sx={{ fontFamily: 'Verdana', fontSize: 20, color: "black" }}>
+                                    {recipes[i].name}
+                                </Typography>
+                            </CardContent>
+                            <CardMedia
+                                component="img"
+                                image={logoIHMcut}
+                                height="320"
+                                alt="green iguana"
+                            />
+                        </Card>
+                    </Box>
+                </>
+            )
+        }
+        return recipeCards;
+    }
+
     return (
 
         <Grid container className="container"  >
@@ -235,10 +268,10 @@ export default function SearchRecipesPage() {
                     </Box>
                     <Typography sx={{ fontFamily: 'Verdana', fontSize: 25, color: "black", pt: "5%", pb: "3%" }}>Ingredient Filtering</Typography>
                     <Select
-                        options={meatFishEggsOptionList}
+                        options={ingredientsList}
                         placeholder="Select ingredients"
-                        value={selectedMeatFishEggsIngredients}
-                        onChange={selectedMeatFishEggsIngredientsHandler}
+                        value={ingredients}
+                        onChange={ingredientsHandler}
                         isSearchable={true}
                         isMulti
                     />
@@ -247,17 +280,18 @@ export default function SearchRecipesPage() {
                         variant="outlined"
                         color='inherit'
                         sx={{ mt: "8%", width: "20%" }}
-                        onClick={(e) => { searchRecipeManager(e) }}
+                        onClick={(e) => { searchRecipeManager(e); }}
                     >
                         <Typography sx={{ fontFamily: 'Verdana', fontSize: 16, color: "black" }}> Filter! </Typography>
                     </Button>
                 </Box>
             </Grid>
             <Grid container item xs={0.05} direction="column" alignItems="center" justifyContent="center">
-                <Divider orientation="vertical"  sx={{bgcolor: "#FFC86E", width: "20%"}} />
+                <Divider orientation="vertical" sx={{ bgcolor: "#FFC86E", width: "20%" }} />
             </Grid>
             <Grid container item xs={9} direction="row">
-
+                {showRecipes()}
+                {/*
                 <Box sx={{ p: 1, width: "33.3%" }}>
                     <Card variant="outlined" sx={{ p: 1 }}>
                         <CardContent >
@@ -273,6 +307,7 @@ export default function SearchRecipesPage() {
                         />
                     </Card>
                 </Box>
+                
                 <Box sx={{ p: 1, width: "33.3%" }}>
                     <Card variant="outlined" sx={{ p: 1 }}>
                         <CardContent>
@@ -333,6 +368,7 @@ export default function SearchRecipesPage() {
                         />
                     </Card>
                 </Box>
+            */}
             </Grid>
         </Grid>
     )

@@ -21,7 +21,7 @@ export default function PageLogin() {
 
     function loginManager(e) {
         e.preventDefault();
-        restCalls.login(username, password).then(() => {navigate("/loggedin")})
+        restCalls.login(username, password).then(() => { restCalls.allRecipes().then(() => { navigate("/loggedin") }) })
     }
 
 

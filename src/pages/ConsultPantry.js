@@ -1,4 +1,5 @@
-import { Grid,Box, Typography, Card, CardContent, CardMedia, createTheme, ThemeProvider, FormControlLabel,RadioGroup, Radio } from "@mui/material";
+import { Grid,Box, Typography, Card, CardContent, CardMedia, createTheme, ThemeProvider, FormControlLabel,RadioGroup, Radio, Divider } from "@mui/material";
+import Select from "react-select"
 import leite from "../images/leite.jpg"
 import { useState } from "react"
 import restCalls from "../restCalls"
@@ -17,6 +18,8 @@ export default function ConsultPantry() {
     const [fatsOils, setfatsOils] = useState("false")
     const [herbs, setherbs] = useState("false")
     const [rice, setRice] = useState("false")
+    const [seasonings, setSeasoning] = useState("false")
+    const [ingredients, setIngredients] = useState()
 
     function vegetablesHandler(e) {
         if (vegetables === "true") {
@@ -95,11 +98,118 @@ export default function ConsultPantry() {
             setRice(e.target.value);
         }
     }
+    function seasoningHandler(e) {
+        if (seasonings === "true") {
+            setSeasoning("false");
+        } else {
+            setSeasoning(e.target.value);
+        }
+    }
+    function ingredientsHandler(data) {
+        setIngredients(data);
+    }
+    const ingredientsList = [
+        { value: "apple", label: "Apple" },
+        { value: "banana", label: "Banana" },
+        { value: "pear", label: "Pear" },
+        { value: "strawberry", label: "Strawberry" },
+        { value: "grape", label: "Grape" },
+        { value: "watermelon", label: "Watermelon" },
+        { value: "orange", label: "Orange" },
+        { value: "blueberry", label: "Blueberry" },
+        { value: "lemon", label: "Lemon" },
+        { value: "peach", label: "Peach" },
+        { value: "avocado", label: "Avocado" },
+        { value: "pineapple", label: "Pineapple" },
+        { value: "cherry", label: "Cherry" },
+        { value: "cantaloupe", label: "Cantaloupe" },
+        { value: "raspberry", label: "Raspberry" },
+        { value: "lime", label: "Lime" },
+        { value: "blackberry", label: "Blackberry" },
+        { value: "clementine", label: "Clementine" },
+        { value: "mango", label: "Mango" },
+        { value: "plum", label: "Plum" },
+        { value: "kiwi", label: "Kiwi" },
+        { value: "potato", label: "Potato" },
+        { value: "tomato", label: "Tomato" },
+        { value: "onion", label: "Onion" },
+        { value: "carrot", label: "Carrot" },
+        { value: "bell_pepper", label: "Bell Pepper" },
+        { value: "broccoli", label: "Broccoli" },
+        { value: "cucumber", label: "Cucumber" },
+        { value: "lettuce", label: "Lettuce" },
+        { value: "celery", label: "Celery" },
+        { value: "mushroom", label: "Mushroom" },
+        { value: "garlic", label: "Garlic" },
+        { value: "spinach", label: "Spinach" },
+        { value: "green_bean", label: "Green Bean" },
+        { value: "cabbage", label: "Cabbage" },
+        { value: "sweet_potato", label: "Sweet Potato" },
+        { value: "green_onion", label: "Green Onion" },
+        { value: "cauliflower", label: "Cauliflower" },
+        { value: "aspargo", label: "Aspargo" },
+        { value: "peas", label: "Peas" },
+        { value: "basil", label: "Basil" },
+        { value: "pork", label: "Pork" },
+        { value: "chicken", label: "Chicken" },
+        { value: "beef", label: "Beef" },
+        { value: "lamb", label: "Lamb" },
+        { value: "goat", label: "Goat" },
+        { value: "turkey", label: "Turkey" },
+        { value: "duck", label: "Duck" },
+        { value: "buffalo", label: "Buffalo" },
+        { value: "goose", label: "Goose" },
+        { value: "rabbit", label: "Rabbit" },
+        { value: "shrimp", label: "Shrimp" },
+        { value: "tuna", label: "Tuna" },
+        { value: "salmon", label: "Salmon" },
+        { value: "tilapia", label: "Tilapia" },
+        { value: "catfish", label: "Catfish" },
+        { value: "crab", label: "Crab" },
+        { value: "cod", label: "Cod" },
+        { value: "clam", label: "Clam" },
+        { value: "pangasius", label: "Pangasius" },
+        { value: "egg", label: "Egg" },
+        { value: "milk", label: "Milk" },
+        { value: "chocolate", label: "Chocolate" },
+        { value: "sugar", label: "Sugar" },
+        { value: "salt", label: "Salt" },
+        { value: "pepper", label: "Pepper" },
+        { value: "cinnamon", label: "Cinnamon" },
+        { value: "cream", label: "Cream" },
+        { value: "olive_oil", label: "Olive Oil" },
+        { value: "tomato_sauce", label: "Tomato Sauce" },
+        { value: "soy_sauce", label: "Soy Sauce" },
+        { value: "hot_sauce", label: "Hot Sauce" },
+        {value : 'barbecue_sauce', label: 'Barbecue Sauce'},
+        { value: "oregano", label: "Oregano" },
+        { value: "paprika", label: "Paprika" },
+        { value: "curry", label: "Curry" },
+        { value: "cheese", label: "Cheese" },
+        { value: "butter", label: "Butter" },
+        { value: "yogurt", label: "Yogurt" },
+        { value: "bread", label: "Bread" },
+        { value: "croissant", label: "Croissant" },
+        { value: "grain", label: "Grain" },
+        { value: "oat", label: "Oat" },
+        { value: "rice", label: "Rice" },
+        { value: "pasta", label: "Pasta" },
+        { value: "quinoa", label: "Quinoa" },
+        { value: "corn", label: "Corn" },
+        { value: "lentils", label: "Lentils" },
+    ];
+
+
+
+
+    /* FALTA LIGAR A BASE DE DADOS E IR BUSCAR O NECESSARIO
+
+
     function searchRecipeManager(e) {
         e.preventDefault();
         restCalls.ConsultPantry();
     }
-
+    */
     const theme = createTheme({
         palette: {
             primary: {
@@ -107,6 +217,9 @@ export default function ConsultPantry() {
             },
         },
     });
+
+
+
 
     return (
         <Grid container> 
@@ -116,20 +229,85 @@ export default function ConsultPantry() {
                 flexDirection : 'column',
                 alignItems: 'center'
             }}>
-               <Typography sx={{ fontFamily: 'Verdana', fontSize: 25, color: "black", pt: "6%", pb: "1%" }}>Diet Filtering</Typography>
+               <Typography sx={{ fontFamily: 'Verdana', fontSize: 25, color: "black", pt: "6%", pb: "1%" }}>Types of ingredients</Typography>
                 <Box sx = {{pl: '6%'}}>
                     <ThemeProvider theme = {theme}>
                         <RadioGroup
                             value = {vegetables}
                             onClick = {vegetablesHandler}>
-                            <FormControlLabel value="true" control={<Radio />} label={<Typography sx={{ fontFamily: 'Verdana', fontSize: 18 }}>Vegetarian</Typography>} />
+                            <FormControlLabel value="true" control={<Radio />} label={<Typography sx={{ fontFamily: 'Verdana', fontSize: 18 }}>Vegetables</Typography>} />
+                        </RadioGroup>
+                        <RadioGroup
+                            value = {meat}
+                            onClick = {meatHandler}>
+                            <FormControlLabel value="true" control={<Radio />} label={<Typography sx={{ fontFamily: 'Verdana', fontSize: 18 }}>Meats</Typography>} />
+                        </RadioGroup> 
+                        <RadioGroup
+                            value = {fish}
+                            onClick = {fishHandler}>
+                            <FormControlLabel value="true" control={<Radio />} label={<Typography sx={{ fontFamily: 'Verdana', fontSize: 18 }}>Fishes</Typography>} />
+                        </RadioGroup>
+                        <RadioGroup
+                            value = {fruits}
+                            onClick = {fruitsHandler}>
+                            <FormControlLabel value="true" control={<Radio />} label={<Typography sx={{ fontFamily: 'Verdana', fontSize: 18 }}>Fruits</Typography>} />
+                        </RadioGroup>
+                        <RadioGroup
+                            value = {dairy}
+                            onClick = {dairyHandler}>
+                            <FormControlLabel value="true" control={<Radio />} label={<Typography sx={{ fontFamily: 'Verdana', fontSize: 18 }}>Dairy products</Typography>} />
+                        </RadioGroup>
+                        <RadioGroup
+                            value = {driedFruits}
+                            onClick = {driedFruitsHandler}>
+                            <FormControlLabel value="true" control={<Radio />} label={<Typography sx={{ fontFamily: 'Verdana', fontSize: 18 }}>Dried Fruits</Typography>} />
+                        </RadioGroup>
+                        <RadioGroup
+                            value = {sauces}
+                            onClick = {saucesHandler}>
+                            <FormControlLabel value="true" control={<Radio />} label={<Typography sx={{ fontFamily: 'Verdana', fontSize: 18 }}>Sauces</Typography>} />
+                        </RadioGroup>
+                        <RadioGroup
+                            value = {pastas}
+                            onClick = {pastasHandler}>
+                            <FormControlLabel value="true" control={<Radio />} label={<Typography sx={{ fontFamily: 'Verdana', fontSize: 18 }}>Pastas</Typography>} />
+                        </RadioGroup>
+                        <RadioGroup
+                            value = {fatsOils}
+                            onClick = {fatsOilsHandler}>
+                            <FormControlLabel value="true" control={<Radio />} label={<Typography sx={{ fontFamily: 'Verdana', fontSize: 18 }}>Fats and Oils</Typography>} />
+                        </RadioGroup>
+                        <RadioGroup
+                            value = {herbs}
+                            onClick = {herbsHandler}>
+                            <FormControlLabel value="true" control={<Radio />} label={<Typography sx={{ fontFamily: 'Verdana', fontSize: 18 }}>Herbs and Spices</Typography>} />
+                        </RadioGroup>
+                        <RadioGroup
+                            value = {rice}
+                            onClick = {riceHandler}>
+                            <FormControlLabel value="true" control={<Radio />} label={<Typography sx={{ fontFamily: 'Verdana', fontSize: 18 }}>Rice</Typography>} />
+                        </RadioGroup>
+                        <RadioGroup
+                            value = {seasonings}
+                            onClick = {seasoningHandler}>
+                            <FormControlLabel value="true" control={<Radio />} label={<Typography sx={{ fontFamily: 'Verdana', fontSize: 18 }}>Seasonings</Typography>} />
                         </RadioGroup>
                     </ThemeProvider>
                 </Box>
-
+                <Typography sx={{ fontFamily: 'Verdana', fontSize: 25, color: "black", pt: "5%", pb: "3%" }}>Search </Typography>
+               <Select 
+                 options={ingredientsList}
+                 placeholder="Select ingredients"
+                 value={ingredients}
+                 onChange={ingredientsHandler}
+                 isSearchable={true}
+                 isMulti
+            />
             </Box>
-            
-            </Grid>       
+            </Grid>  
+            <Grid container item xs={0.05} direction="column" alignItems="center" justifyContent="center">
+                <Divider orientation="vertical" sx={{ bgcolor: "#FFC86E", width: "20%" }} />
+            </Grid>     
         <Grid container item xs = {9} direction= 'row'>
             <Box sx = {{ p:1, width : '20%'}}>
                     <Card variant='outlined' sx = {{p:1}}>

@@ -80,12 +80,12 @@ class restCalls {
     }
 
     searchRecipe(vegetarian, vegan, kosher, glutenFree, lactoseFree, completeMeal, lightMeal, ingredients) {
-        console.log(ingredients)
         const ingredients2 = [];
-        for (var i = 0; i < ingredients.length; i++) {
-            ingredients2.push(ingredients[i].value)
+        if (ingredients != undefined) {
+            for (var i = 0; i < ingredients.length; i++) {
+                ingredients2.push(ingredients[i].value)
+            }
         }
-        console.log(ingredients2)
         return fetch("https://silent-blade-368222.appspot.com/rest/user/filterSearching", {
             method: 'POST',
             headers: {

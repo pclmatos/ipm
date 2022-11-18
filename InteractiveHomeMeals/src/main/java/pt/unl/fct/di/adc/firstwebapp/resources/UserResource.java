@@ -640,32 +640,6 @@ public class UserResource {
 		
 	}
 
-	@GET
-	@Path("/pantry/ingredient")
-	@Produces(MediaType.APPLICATION_JSON)
-	@SuppressWarnings("unchecked")
-	public Response getIngredientInPantry(GetIngredientData data) {
-
-		Transaction txn = datastore.newTransaction();
-
-		Key key = datastore.newKeyFactory().setKind(USER).newKey(data.username);
-
-		try {
-
-			Entity user = datastore.get(key);
-
-			if (user != null) {
-
-			}
-			return Response.ok(user).build();
-		} finally {
-			if (txn.isActive())
-				txn.rollback();
-
-		}
-
-	}
-
 	public String ingredientsToString(String[] ingredients) {
 		String aux = "";
 		for (int i = 0; i < ingredients.length; i++) {

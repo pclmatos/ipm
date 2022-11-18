@@ -259,17 +259,20 @@ public class UserResource {
 		}
 	}
 	
-	public String uploadPhoto(String id, byte[] data){
-		if (data == null || data.length == 0)
-			return "undefined";
-
-		Storage storage = StorageOptions.newBuilder().setProjectId(PROJECT_ID).build().getService();
-		BlobId blobId = BlobId.of(BUCKET_NAME, id);
-		BlobInfo blobInfo = BlobInfo.newBuilder(blobId).setContentType("image/jpeg").build();
-		storage.create(blobInfo, data);
-		storage.createAcl(blobId, Acl.of(Acl.User.ofAllUsers(), Acl.Role.READER));
+	@GET
+	@Path("/allRecipes")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response allRecipes() {
+		Query<Entity> recipeQuery = Query.newEntityQueryBuilder().setKind(RECIPE).build();
+		QueryResults<Entity> recipes = datastore.run(recipeQuery);
+		List<RecipeInfo> recipeList = new ArrayList<>();
 		
-		return URL + id;
+		recipes.forEachRemaining((recipe) -> {
+			recipeList.add(recipeInfoBuilder(recipe));
+		});
+		
+		
+		return Response.ok(g.toJson(recipeList)).build();
 	}
 	
 	@POST
@@ -298,76 +301,6 @@ public class UserResource {
 		}
 		
 		return Response.ok(g.toJson(filteredRecipes)).build();
-	}
-	
-	public List<RecipeInfo> filterCategory(List<RecipeInfo> recipes, boolean completeMeal, boolean lightMeal) {
-		for(int i=0; i<recipes.size(); i++) {
-			if(!completeMeal && !lightMeal) {
-				recipes.remove(i);
-				i--;
-			}
-			else if(!lightMeal && recipes.get(i).category.equals(LIGHTMEAL)) {
-				recipes.remove(i);
-				i--;
-			}
-			else if(!completeMeal && recipes.get(i).category.equals(COMPLETEMEAL)) {
-				recipes.remove(i);
-				i--;
-			}
-		}
-		return recipes;
-	}
-	
-	
-	public List<RecipeInfo> mainFilter(List<RecipeInfo> recipes, List<String> ingredients, boolean vegetarian, boolean vegan, boolean kosher, 
-			boolean lactoseFree, boolean glutenFree) {
-		if (recipes.size() == 0) {
-			return recipes;
-		}
-		
-		for(int i = 0; i < recipes.size(); i++) {
-			if(vegetarian && !recipes.get(i).isVegetarian) {
-				recipes.remove(i);
-				i--;
-			}
-			else if(vegan && !recipes.get(i).isVegan) {
-				recipes.remove(i);
-				i--;
-			}
-			else if(kosher && !recipes.get(i).isKosher) {
-				recipes.remove(i);
-				i--;
-			}
-			else if(lactoseFree && !recipes.get(i).isLactoseFree) {
-				recipes.remove(i);
-				i--;
-			}
-			else if(glutenFree && !recipes.get(i).isGlutenFree) {
-				recipes.remove(i);
-				i--;
-			}
-			
-		}
-		
-		for(int i=0; i<recipes.size(); i++) {
-			String[] auxIngredients = recipes.get(i).ingredients.split(" ");
-			List<String> tempIngredients = new ArrayList<>();
-			for(int j=0; j<auxIngredients.length; j++) {
-				tempIngredients.add(auxIngredients[j]);
-			}
-			if(!tempIngredients.containsAll(ingredients)) {
-				recipes.remove(i);
-				i--;
-			}
-		}
-		
-		return recipes;
-	}
-
-	public RecipeInfo recipeInfoBuilder(Entity recipe) {
-		return new RecipeInfo(recipe.getKey().getName(), recipe.getString(AUTHOR), recipe.getLong(CALORIES), recipe.getString(CATEGORY), recipe.getString(DESCRIPTION), 
-				recipe.getLong(DIFFICULTY), recipe.getString(INGREDIENTS), recipe.getString(RECIPENAME), recipe.getBoolean(ISGLUTENFREE), 
-				recipe.getBoolean(ISKOSHER), recipe.getBoolean(ISLACTOSEFREE),recipe.getBoolean(ISVEGAN), recipe.getBoolean(ISVEGETARIAN));	
 	}
 
 	@POST
@@ -524,7 +457,7 @@ public class UserResource {
 		}
 	}
 
-	@GET
+	@POST
 	@Path("/pantry")
 	@Produces(MediaType.APPLICATION_JSON)
 	@SuppressWarnings("unchecked")
@@ -599,6 +532,89 @@ public class UserResource {
 				txn.rollback();
 		}
 
+	}
+	
+	public String uploadPhoto(String id, byte[] data){
+		if (data == null || data.length == 0)
+			return "undefined";
+
+		Storage storage = StorageOptions.newBuilder().setProjectId(PROJECT_ID).build().getService();
+		BlobId blobId = BlobId.of(BUCKET_NAME, id);
+		BlobInfo blobInfo = BlobInfo.newBuilder(blobId).setContentType("image/jpeg").build();
+		storage.create(blobInfo, data);
+		storage.createAcl(blobId, Acl.of(Acl.User.ofAllUsers(), Acl.Role.READER));
+		
+		return URL + id;
+	}
+	
+	public List<RecipeInfo> filterCategory(List<RecipeInfo> recipes, boolean completeMeal, boolean lightMeal) {
+		for(int i=0; i<recipes.size(); i++) {
+			if(!completeMeal && !lightMeal) {
+				recipes.remove(i);
+				i--;
+			}
+			else if(!lightMeal && recipes.get(i).category.equals(LIGHTMEAL)) {
+				recipes.remove(i);
+				i--;
+			}
+			else if(!completeMeal && recipes.get(i).category.equals(COMPLETEMEAL)) {
+				recipes.remove(i);
+				i--;
+			}
+		}
+		return recipes;
+	}
+	
+	
+	public List<RecipeInfo> mainFilter(List<RecipeInfo> recipes, List<String> ingredients, boolean vegetarian, boolean vegan, boolean kosher, 
+			boolean lactoseFree, boolean glutenFree) {
+		if (recipes.size() == 0) {
+			return recipes;
+		}
+		
+		for(int i = 0; i < recipes.size(); i++) {
+			if(vegetarian && !recipes.get(i).isVegetarian) {
+				recipes.remove(i);
+				i--;
+			}
+			else if(vegan && !recipes.get(i).isVegan) {
+				recipes.remove(i);
+				i--;
+			}
+			else if(kosher && !recipes.get(i).isKosher) {
+				recipes.remove(i);
+				i--;
+			}
+			else if(lactoseFree && !recipes.get(i).isLactoseFree) {
+				recipes.remove(i);
+				i--;
+			}
+			else if(glutenFree && !recipes.get(i).isGlutenFree) {
+				recipes.remove(i);
+				i--;
+			}
+			
+		}
+		
+		for(int i=0; i<recipes.size(); i++) {
+			String[] auxIngredients = recipes.get(i).ingredients.split(" ");
+			List<String> tempIngredients = new ArrayList<>();
+			for(int j=0; j<auxIngredients.length; j++) {
+				tempIngredients.add(auxIngredients[j]);
+			}
+			if(!tempIngredients.containsAll(ingredients)) {
+				recipes.remove(i);
+				i--;
+			}
+		}
+		
+		return recipes;
+	}
+
+	public RecipeInfo recipeInfoBuilder(Entity recipe) {
+		return new RecipeInfo(recipe.getKey().getName(), recipe.getString(AUTHOR), recipe.getLong(CALORIES), recipe.getString(CATEGORY), recipe.getString(DESCRIPTION), 
+				recipe.getLong(DIFFICULTY), recipe.getString(INGREDIENTS), recipe.getString(RECIPENAME), recipe.getBoolean(ISGLUTENFREE), 
+				recipe.getBoolean(ISKOSHER), recipe.getBoolean(ISLACTOSEFREE),recipe.getBoolean(ISVEGAN), recipe.getBoolean(ISVEGETARIAN));	
 	}
 
 	public String ingredientsToString(String[] ingredients) {

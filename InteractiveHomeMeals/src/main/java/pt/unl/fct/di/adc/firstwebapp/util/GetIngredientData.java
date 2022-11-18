@@ -4,6 +4,8 @@ public class GetIngredientData {
 
 	public String username, ingredient;
 	
+	public GetIngredientData() {}
+	
 	public GetIngredientData(String username,String ingredient) {
 		this.ingredient = ingredient;
 		this.username = username;

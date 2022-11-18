@@ -4,6 +4,8 @@ public class GetPantryData {
 
     public String username;
 
+    public GetPantryData() {}
+    
     public GetPantryData(String username){
         this.username = username;
     } 

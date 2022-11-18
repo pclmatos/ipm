@@ -16,5 +16,12 @@ public class PantryEntry{
     public int getCount() {
         return Integer.parseInt(entry.split(" ")[1]);
     }
+    
+	@Override
+	public String toString() {
+		return getIngredient() + " " + getCount();
+	}
+    
+    
 
 }

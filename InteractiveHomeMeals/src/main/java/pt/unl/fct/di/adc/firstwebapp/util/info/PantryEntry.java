@@ -4,20 +4,20 @@ import pt.unl.fct.di.adc.firstwebapp.util.entity.Ingredient;
 
 public class PantryEntry{
 
-	private String ingredient;
+    private Ingredient ingredient;
 
     private int count;
 
-    public PantryEntry(String ingredient, int count) {
+    public PantryEntry(Ingredient ingredient, int count) {
         this.ingredient = ingredient;
         this.count = count;
     }
 
-    public String getIngredient() {
+    public Ingredient getIngredient() {
         return ingredient;
     }
 
-    public void setIngredient(String ingredient) {
+    public void setIngredient(Ingredient ingredient) {
         this.ingredient = ingredient;
     }
 

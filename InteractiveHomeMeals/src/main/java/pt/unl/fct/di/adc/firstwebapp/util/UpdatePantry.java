@@ -8,8 +8,6 @@ public class UpdatePantry {
     
     public String username;
     public List<PantryEntry> entries;
-    
-    public UpdatePantry() {}
 
     public UpdatePantry(String username,List<PantryEntry> entries){
         this.username = username;

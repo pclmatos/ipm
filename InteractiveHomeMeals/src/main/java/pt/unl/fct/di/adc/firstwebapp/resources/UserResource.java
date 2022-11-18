@@ -459,6 +459,7 @@ public class UserResource {
 
 	@POST
 	@Path("/pantry")
+	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
 	@SuppressWarnings("unchecked")
 	public Response getMyPantry(GetPantryData data) {
@@ -502,10 +503,18 @@ public class UserResource {
 
 			if(user != null){
 				List<PantryEntry> pantry = g.fromJson(user.getString(PANTRY), List.class);
-				for(PantryEntry entry: data.entries){
-					for(PantryEntry e: pantry){
-						if(entry.getIngredient().equals(e.getIngredient())){
-							e.setCount(e.getCount() + entry.getCount());
+				if(pantry == null) {
+					pantry = new ArrayList<>();
+					for(PantryEntry entry: data.entries) {
+						pantry.add(entry);
+					}
+				}
+				else {
+					for(PantryEntry entry: data.entries){
+						for(PantryEntry e: pantry){
+							if(entry.getIngredient().equals(e.getIngredient())){
+								e.setCount(e.getCount() + entry.getCount());
+							}
 						}
 					}
 				}

@@ -1,14 +1,10 @@
 package pt.unl.fct.di.adc.firstwebapp.resources;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 import java.util.UUID;
 import java.util.logging.Logger;
 
-import javax.print.attribute.standard.Media;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -16,30 +12,21 @@ import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import javax.ws.rs.core.Response.ResponseBuilder;
 import javax.ws.rs.core.Response.Status;
 
 import org.apache.commons.codec.digest.DigestUtils;
-import org.w3c.dom.stylesheets.MediaList;
 
-import com.google.appengine.api.datastore.Query.FilterOperator;
-import com.google.appengine.repackaged.com.google.common.base.Pair;
-import com.google.appengine.repackaged.com.google.protobuf.ListValue;
 import com.google.cloud.datastore.Datastore;
 import com.google.cloud.datastore.DatastoreOptions;
 import com.google.cloud.datastore.Entity;
-import com.google.cloud.datastore.EntityQuery.Builder;
 import com.google.cloud.datastore.Key;
 import com.google.cloud.datastore.Query;
 import com.google.cloud.datastore.QueryResults;
-import com.google.cloud.datastore.StructuredQuery.CompositeFilter;
-import com.google.cloud.datastore.StructuredQuery.Filter;
-import com.google.cloud.datastore.StructuredQuery.PropertyFilter;
 import com.google.cloud.datastore.Transaction;
-import com.google.cloud.datastore.Value;
 import com.google.gson.Gson;
 
 import pt.unl.fct.di.adc.firstwebapp.util.FilterData;
+import pt.unl.fct.di.adc.firstwebapp.util.GetIngredientData;
 import pt.unl.fct.di.adc.firstwebapp.util.GetPantryData;
 import pt.unl.fct.di.adc.firstwebapp.util.LoginData;
 import pt.unl.fct.di.adc.firstwebapp.util.RecipeData;
@@ -48,7 +35,6 @@ import pt.unl.fct.di.adc.firstwebapp.util.info.PantryEntry;
 import pt.unl.fct.di.adc.firstwebapp.util.info.RecipeInfo;
 import pt.unl.fct.di.adc.firstwebapp.util.SearchRecipeData;
 import pt.unl.fct.di.adc.firstwebapp.util.UpdatePantry;
-import pt.unl.fct.di.adc.firstwebapp.util.entity.Ingredient;
 import pt.unl.fct.di.adc.firstwebapp.util.entity.User;
 
 @Path("/user")
@@ -547,6 +533,42 @@ public class UserResource {
 				txn.rollback();
 		}
 
+	}
+	
+	@GET
+	@Path("/pantry/ingredient")
+	@Produces(MediaType.APPLICATION_JSON)
+	@SuppressWarnings("unchecked")
+	public Response getIngredientInPantry(GetIngredientData data) {
+		
+		Transaction txn = datastore.newTransaction();
+		
+		Key key = datastore.newKeyFactory().setKind(USER).newKey(data.username);
+		
+		try {
+			
+			Entity user = datastore.get(key);
+			
+			if(user != null) {
+				
+				List<PantryEntry> pantry = g.fromJson(user.getString(PANTRY), List.class);
+
+				for(PantryEntry entry: pantry){
+					if(entry.getIngredient().equalsIgnoreCase(data.ingredient)){
+						txn.commit();
+						return Response.ok(entry).build();
+					}
+				}
+
+			}
+
+			return Response.status(Status.NOT_FOUND).build();
+			
+		} finally {
+			if(txn.isActive())
+				txn.rollback();
+		}
+		
 	}
 
 	public String ingredientsToString(String[] ingredients) {

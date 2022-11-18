@@ -1,23 +1,21 @@
 package pt.unl.fct.di.adc.firstwebapp.util.info;
 
-import pt.unl.fct.di.adc.firstwebapp.util.entity.Ingredient;
-
 public class PantryEntry{
 
-    private Ingredient ingredient;
+    private String ingredient;
 
     private int count;
 
-    public PantryEntry(Ingredient ingredient, int count) {
+    public PantryEntry(String ingredient, int count) {
         this.ingredient = ingredient;
         this.count = count;
     }
 
-    public Ingredient getIngredient() {
+    public String getIngredient() {
         return ingredient;
     }
 
-    public void setIngredient(Ingredient ingredient) {
+    public void setIngredient(String ingredient) {
         this.ingredient = ingredient;
     }
 

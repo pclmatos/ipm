@@ -15,6 +15,7 @@ export default function SearchRecipesPage() {
     const [completeMeal, setCompleteMeal] = useState("true")
     const [lightMeal, setLightMeal] = useState("true")
     const [ingredients, setIngredients] = useState()
+    const [searchText, setSearchText] = useState(null)
 
     var recipes = JSON.parse(localStorage.getItem('recipes'));
 
@@ -78,9 +79,13 @@ export default function SearchRecipesPage() {
         setIngredients(data);
     }
 
+    function searchTextHandler(e) {
+        setSearchText(e.target.value);
+    }
+
     function searchRecipeManager(e) {
         e.preventDefault();
-        restCalls.searchRecipe(vegetarian, vegan, kosher, glutenFree, lactoseFree, completeMeal, lightMeal, ingredients).then(() => window.location.reload(false))
+        restCalls.searchRecipe(vegetarian, vegan, kosher, glutenFree, lactoseFree, completeMeal, lightMeal, ingredients/*, searchText*/).then(() => window.location.reload(false))
 
         {/* .then(() => { restCalls.userInfo().then(() => { hasToModifyPassword(); setShowProgress(false) }) }) */ }
     }
@@ -228,7 +233,7 @@ export default function SearchRecipesPage() {
                             <RadioGroup
                                 value={completeMeal}
                                 onClick={completeMealHandler}>
-                                <FormControlLabel value="true" control={<Radio />} label={<Typography sx={{ fontFamily: 'Verdana', fontSize: 18 }}>Compete Meal</Typography>} />
+                                <FormControlLabel value="true" control={<Radio />} label={<Typography sx={{ fontFamily: 'Verdana', fontSize: 18 }}>Complete Meal</Typography>} />
                             </RadioGroup>
                             <RadioGroup
                                 value={lightMeal}
@@ -280,84 +285,6 @@ export default function SearchRecipesPage() {
                         </Box>
                     </>
                 )}
-                {/*
-                <Box sx={{ p: 1, width: "33.3%" }}>
-                    <Card variant="outlined" sx={{ p: 1 }}>
-                        <CardContent >
-                            <Typography sx={{ fontFamily: 'Verdana', fontSize: 20, color: "black" }}>
-                                Receita 1
-                            </Typography>
-                        </CardContent>
-                        <CardMedia
-                            component="img"
-                            image={logoIHMcut}
-                            height="320"
-                            alt="green iguana"
-                        />
-                    </Card>
-                </Box>
-                
-                <Box sx={{ p: 1, width: "33.3%" }}>
-                    <Card variant="outlined" sx={{ p: 1 }}>
-                        <CardContent>
-                            <Typography sx={{ fontFamily: 'Verdana', fontSize: 20, color: "black" }}>
-                                Receita 2
-                            </Typography>
-                        </CardContent>
-                        <CardMedia
-                            component="img"
-                            image={logoIHMcut}
-                            height="320"
-                            alt="green iguana"
-                        />
-                    </Card>
-                </Box>
-                <Box sx={{ p: 1, width: "33.3%" }}>
-                    <Card variant="outlined" sx={{ p: 1 }}>
-                        <CardContent >
-                            <Typography sx={{ fontFamily: 'Verdana', fontSize: 20, color: "black" }}>
-                                Receita 3
-                            </Typography>
-                        </CardContent>
-                        <CardMedia
-                            component="img"
-                            image={logoIHMcut}
-                            height="320"
-                            alt="green iguana"
-                        />
-                    </Card>
-                </Box>
-                <Box sx={{ p: 1, width: "33.3%" }}>
-                    <Card variant="outlined" sx={{ p: 1 }}>
-                        <CardContent>
-                            <Typography sx={{ fontFamily: 'Verdana', fontSize: 20, color: "black" }}>
-                                Receita 4
-                            </Typography>
-                        </CardContent>
-                        <CardMedia
-                            component="img"
-                            image={logoIHMcut}
-                            height="320"
-                            alt="green iguana"
-                        />
-                    </Card>
-                </Box>
-                <Box sx={{ p: 1, width: "33.3%" }}>
-                    <Card variant="outlined" sx={{ p: 1 }}>
-                        <CardContent>
-                            <Typography sx={{ fontFamily: 'Verdana', fontSize: 20, color: "black" }}>
-                                Receita 5
-                            </Typography>
-                        </CardContent>
-                        <CardMedia
-                            component="img"
-                            image={logoIHMcut}
-                            height="320"
-                            alt="green iguana"
-                        />
-                    </Card>
-                </Box>
-            */}
             </Grid>
         </Grid>
     )

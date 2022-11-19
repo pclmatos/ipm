@@ -79,9 +79,9 @@ class restCalls {
         })
     }
 
-    searchRecipe(vegetarian, vegan, kosher, glutenFree, lactoseFree, completeMeal, lightMeal, ingredients) {
+    searchRecipe(vegetarian, vegan, kosher, glutenFree, lactoseFree, completeMeal, lightMeal, ingredients, searchText) {
         const ingredients2 = [];
-        if (ingredients != undefined) {
+        if (ingredients !== undefined) {
             for (var i = 0; i < ingredients.length; i++) {
                 ingredients2.push(ingredients[i].value)
             }
@@ -100,6 +100,7 @@ class restCalls {
                 completeMeal: completeMeal,
                 lightMeal: lightMeal,
                 ingredients: ingredients2,
+                searchText: searchText
             })
         }).then(function (response) {
             if (!response.ok) {
@@ -133,6 +134,55 @@ class restCalls {
             return response.text()
         }).then(function (text) {
             localStorage.setItem('recipes', text);
+            return text;
+        })
+    }
+
+    getPantry(username) {
+        return fetch("https://silent-blade-368222.appspot.com/rest/user/pantry", {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                username: username
+            })
+        }).then(function (response) {
+            if (!response.ok) {
+                return response.text().then((text) => {
+                    const error = new Error(text)
+                    error.code = response.status;
+                    throw error
+                })
+            }
+            return response.text()
+        }).then(function (text) {
+            //localStorage.setItem('user', text);
+            return text;
+        })
+    }
+
+    updatePantry(username, entries) {
+        return fetch("https://silent-blade-368222.appspot.com/rest/user/pantry", {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                username: username,
+                entries: entries
+            })
+        }).then(function (response) {
+            if (!response.ok) {
+                return response.text().then((text) => {
+                    const error = new Error(text)
+                    error.code = response.status;
+                    throw error
+                })
+            }
+            return response.text()
+        }).then(function (text) {
+            //localStorage.setItem('user', text);
             return text;
         })
     }

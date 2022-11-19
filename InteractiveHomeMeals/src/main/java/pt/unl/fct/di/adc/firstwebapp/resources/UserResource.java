@@ -6,6 +6,7 @@ import java.util.UUID;
 import java.util.logging.Logger;
 
 import javax.ws.rs.Consumes;
+import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
@@ -37,6 +38,7 @@ import pt.unl.fct.di.adc.firstwebapp.util.GetPantryData;
 import pt.unl.fct.di.adc.firstwebapp.util.LoginData;
 import pt.unl.fct.di.adc.firstwebapp.util.RecipeData;
 import pt.unl.fct.di.adc.firstwebapp.util.RegisterData;
+import pt.unl.fct.di.adc.firstwebapp.util.RemoveFromPantry;
 import pt.unl.fct.di.adc.firstwebapp.util.info.PantryEntry;
 import pt.unl.fct.di.adc.firstwebapp.util.info.RecipeInfo;
 import pt.unl.fct.di.adc.firstwebapp.util.SearchRecipeData;
@@ -451,16 +453,16 @@ public class UserResource {
 				List<String> pantry = g.fromJson(user.getString(PANTRY), List.class);
 				if (pantry == null) {
 					pantry = new ArrayList<>();
-					for(String entry: data.entries){
+					for (String entry : data.entries) {
 						pantry.add(entry);
 					}
 				} else {
-					if(pantry.contains("empty"))
+					if (pantry.contains("empty"))
 						pantry.remove("empty");
 					for (String entry : data.entries) {
 						PantryEntry p = new PantryEntry(entry);
 						String prevEntry = pantryContainsIngredient(p.getIngredient(), pantry);
-						if(prevEntry != null) {
+						if (prevEntry != null) {
 							PantryEntry prev = new PantryEntry(prevEntry);
 							int newCount = prev.getCount() + p.getCount();
 							String newEntry = prev.getIngredient() + " " + newCount;
@@ -468,9 +470,9 @@ public class UserResource {
 						} else {
 							pantry.add(entry);
 						}
-						
+
 					}
-					
+
 				}
 
 				String updatedPantry = g.toJson(pantry);
@@ -492,12 +494,12 @@ public class UserResource {
 				return Response.status(Status.BAD_REQUEST).build();
 			}
 
-		}finally
+		} finally
 
-	{
-		if (txn.isActive())
-			txn.rollback();
-	}
+		{
+			if (txn.isActive())
+				txn.rollback();
+		}
 
 	}
 
@@ -581,7 +583,7 @@ public class UserResource {
 				recipe.getBoolean(ISVEGETARIAN));
 	}
 
-	@PUT
+	@POST
 	@Path("/pantry/ingredient")
 	@Produces(MediaType.APPLICATION_JSON)
 	@SuppressWarnings("unchecked")
@@ -597,17 +599,71 @@ public class UserResource {
 
 			if (user != null) {
 
-				List<PantryEntry> pantry = g.fromJson(user.getString(PANTRY), List.class);
+				List<String> pantry = g.fromJson(user.getString(PANTRY), List.class);
 
-				for (PantryEntry entry : pantry) {
-					if (entry.getIngredient().equalsIgnoreCase(data.ingredient)) {
-						txn.commit();
-						return Response.ok(entry).build();
-					}
+				String entry = pantryContainsIngredient(data.ingredient, pantry);
+
+				if (entry != null) {
+					txn.commit();
+					return Response.ok(entry).build();
 				}
-
 			}
+			return Response.status(Status.NOT_FOUND).build();
 
+		} finally {
+			if (txn.isActive())
+				txn.rollback();
+		}
+
+	}
+
+	@POST
+	@Path("/pantry/ingredient/remove")
+	@Produces(MediaType.APPLICATION_JSON)
+	@SuppressWarnings("unchecked")
+	public Response getIngredientInPantry(RemoveFromPantry data) {
+
+		Transaction txn = datastore.newTransaction();
+
+		Key key = datastore.newKeyFactory().setKind(USER).newKey(data.username);
+
+		try {
+
+			Entity user = datastore.get(key);
+
+			if (user != null) {
+
+				List<String> pantry = g.fromJson(user.getString(PANTRY), List.class);
+
+				PantryEntry p = new PantryEntry(data.ingredient);
+
+				String entry = pantryContainsIngredient(p.getIngredient(), pantry);
+
+				if (entry != null) {
+					PantryEntry prev = new PantryEntry(entry);
+					PantryEntry rm = new PantryEntry(data.ingredient);
+
+					String newEntry = prev.getIngredient() + " " + (prev.getCount() - rm.getCount());
+
+					pantry.add(newEntry);
+
+					String updatedPantry = g.toJson(pantry);
+
+					Entity updatedUser = Entity.newBuilder(key)
+							.set(USERNAME, user.getString(USERNAME))
+							.set(PASSWORD, user.getString(PASSWORD))
+							.set(PANTRY, updatedPantry)
+							.build();
+
+					datastore.update(updatedUser);
+					txn.put(updatedUser);
+
+					txn.commit();
+					return Response.ok(updatedPantry).build();
+				} else {
+					return Response.status(Status.NOT_FOUND).build();
+				}
+			}
 			return Response.status(Status.NOT_FOUND).build();
 
 		} finally {

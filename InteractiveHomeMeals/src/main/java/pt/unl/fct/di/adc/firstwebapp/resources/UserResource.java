@@ -147,7 +147,7 @@ public class UserResource {
 
 					txn.commit();
 					LOG.info("User logged in: " + g.toJson(u));
-					return Response.ok("User logged in: " + g.toJson(u)).build();
+					return Response.ok(g.toJson(u)).build();
 
 				} else {
 					LOG.warning("Wrong password for user:" + data.username);
@@ -194,6 +194,14 @@ public class UserResource {
 				txn.rollback();
 				return Response.status(Status.FORBIDDEN).entity("User: " + data.author + " does not exist.").build();
 			} else {
+				String category = recipe.getString(CATEGORY);
+				
+				if(!category.equalsIgnoreCase(LIGHTMEAL) && !category.equalsIgnoreCase(COMPLETEMEAL)) {
+					return Response.status(Status.NOT_ACCEPTABLE).entity("Bad Category. Please use Light Meal or Complete Meal!").build();
+				} else if( recipe.getLong(DIFFICULTY) < 1 || recipe.getLong(DIFFICULTY) > 5) {
+					return Response.status(Status.NOT_ACCEPTABLE).entity("Difficulty must be between 1 and 5!").build();
+				}
+				
 				for (int i = 1; i < data.ingredients.length; i += 2) {
 					ingredientKey = datastore.newKeyFactory().setKind(INGREDIENT).newKey(data.ingredients[i]);
 					ingredient = datastore.get(ingredientKey);

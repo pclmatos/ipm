@@ -598,7 +598,7 @@ public class UserResource {
 				recipe.getString(CATEGORY), recipe.getString(DESCRIPTION), recipe.getLong(DIFFICULTY),
 				recipe.getString(INGREDIENTS), recipe.getString(RECIPENAME), recipe.getBoolean(ISGLUTENFREE),
 				recipe.getBoolean(ISKOSHER), recipe.getBoolean(ISLACTOSEFREE), recipe.getBoolean(ISVEGAN),
-				recipe.getBoolean(ISVEGETARIAN));
+				recipe.getBoolean(ISVEGETARIAN), recipe.getString(PHOTO));
 	}
 
 	@POST

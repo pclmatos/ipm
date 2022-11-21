@@ -2,12 +2,12 @@ package pt.unl.fct.di.adc.firstwebapp.util.info;
 
 public class RecipeInfo {
 	
-	public String author, category, description, ingredients, name, id;
+	public String author, category, description, ingredients, name, id, photo;
 	public long difficulty, calories;
 	public boolean isLactoseFree, isGlutenFree, isVegan, isVegetarian, isKosher;
 	
 	public RecipeInfo(String id, String author, long calories, String category, String description, long difficulty, String ingredients, 
-			String name, boolean isGlutenFree, boolean isKosher, boolean isLactoseFree, boolean isVegan, boolean isVegetarian) {
+			String name, boolean isGlutenFree, boolean isKosher, boolean isLactoseFree, boolean isVegan, boolean isVegetarian, String photo) {
 		this.id = id;
 		this.author = author;
 		this.calories = calories;
@@ -21,6 +21,7 @@ public class RecipeInfo {
 		this.isLactoseFree = isLactoseFree;
 		this.isVegan = isVegan;
 		this.isVegetarian = isVegetarian;
+		this.photo = photo;
 	}
 
 }

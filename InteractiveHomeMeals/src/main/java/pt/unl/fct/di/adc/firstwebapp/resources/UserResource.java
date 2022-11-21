@@ -1,6 +1,7 @@
 package pt.unl.fct.di.adc.firstwebapp.resources;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 import java.util.logging.Logger;
@@ -280,6 +281,15 @@ public class UserResource {
 		recipes.forEachRemaining((recipe) -> {
 			recipeList.add(recipeInfoBuilder(recipe));
 		});
+		
+		if(data.searchText != null) {
+			for(int i=recipeList.size()-1; i>=0; i--) {
+				if(!(recipeList.get(i).name).contains(data.searchText)) {
+					recipeList.remove(i);
+				}
+			}
+			return Response.ok(g.toJson(recipeList)).build();
+		}
 
 		filteredRecipes = mainFilter(recipeList, data.ingredients, data.vegetarian, data.vegan, data.kosher,
 				data.lactoseFree, data.glutenFree);

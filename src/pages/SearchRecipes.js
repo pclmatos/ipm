@@ -243,7 +243,9 @@ export default function SearchRecipesPage() {
                         </ThemeProvider>
                     </Box>
                     <Typography sx={{ fontFamily: 'Verdana', fontSize: 25, color: "black", pt: "5%", pb: "3%" }}>Ingredient Filtering</Typography>
-                    <Select
+                    
+                    <Box sx={{ width: "40%" }}>
+                        <Select
                         options={ingredientsList}
                         placeholder="Select ingredients"
                         value={ingredients}
@@ -251,6 +253,7 @@ export default function SearchRecipesPage() {
                         isSearchable={true}
                         isMulti
                     />
+                    </Box>
                     <Button
                         type="submit"
                         variant="outlined"
@@ -277,7 +280,7 @@ export default function SearchRecipesPage() {
                                 </CardContent>
                                 <CardMedia
                                     component="img"
-                                    image={logoIHMcut}
+                                    image={recipe.photo == "undefined" ? logoIHMcut : recipe.photo}
                                     height="320"
                                     alt="green iguana"
                                 />

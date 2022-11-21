@@ -67,7 +67,7 @@ class restCalls {
                 author: JSON.parse(localStorage.getItem('user')).username,
                 recipeName: recipeName,
                 description: description,
-                ingredients: ingredients,
+                ingredients: ingredients2,
                 difficulty: difficulty,
                 category: category,
                 calories: calories,

@@ -1,22 +1,22 @@
 package pt.unl.fct.di.adc.firstwebapp.util.entity;
 
+import java.util.ArrayList;
 import java.util.List;
-
-import pt.unl.fct.di.adc.firstwebapp.util.info.PantryEntry;
 
 public class User {
 
     private String username, password;
 
-    private List<PantryEntry> pantry;
+    private List<String> pantry;
 
     public User(String username, String password) {
         this.username = username;
         this.password = password;
-        this.pantry = null;
+        this.pantry = new ArrayList<>();
+        pantry.add("empty");
     }
 
-    public User(String username, String password, List<PantryEntry> pantry) {
+    public User(String username, String password, List<String> pantry) {
         this.username = username;
         this.password = password;
         this.pantry = pantry;
@@ -39,11 +39,11 @@ public class User {
 
     }
 
-    public List<PantryEntry> getPantry() {
+    public List<String> getPantry() {
         return pantry;
     }
 
-    public void setPantry(List<PantryEntry> pantry) {
+    public void setPantry(List<String> pantry) {
         this.pantry = pantry;
     }
 

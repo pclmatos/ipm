@@ -195,11 +195,11 @@ public class UserResource {
 				txn.rollback();
 				return Response.status(Status.FORBIDDEN).entity("User: " + data.author + " does not exist.").build();
 			} else {
-				String category = recipe.getString(CATEGORY);
+				String category = data.category;
 				
 				if(!category.equalsIgnoreCase(LIGHTMEAL) && !category.equalsIgnoreCase(COMPLETEMEAL)) {
 					return Response.status(Status.NOT_ACCEPTABLE).entity("Bad Category. Please use Light Meal or Complete Meal!").build();
-				} else if( recipe.getLong(DIFFICULTY) < 1 || recipe.getLong(DIFFICULTY) > 5) {
+				} else if( data.difficulty < 1 || data.difficulty > 5) {
 					return Response.status(Status.NOT_ACCEPTABLE).entity("Difficulty must be between 1 and 5!").build();
 				}
 				

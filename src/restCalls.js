@@ -49,21 +49,29 @@ class restCalls {
         })
     }
 
-    shareRecipe(author, recipeName, description, ingredients, difficulty, category, calories) {
+    shareRecipe(recipeName, description, ingredients, difficulty, category, calories, photo) {
+        
+        const ingredients2 = [];
+        if (ingredients !== undefined) {
+            for (var i = 0; i < ingredients.length; i++) {
+                ingredients2.push(ingredients[i].value +" 1")
+            }
+        }
+        console.log(ingredients2)
         return fetch("https://silent-blade-368222.appspot.com/rest/user/shareRecipe", {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json; charset=UTF-8',
             },
             body: JSON.stringify({
-                author: author,
+                author: JSON.parse(localStorage.getItem('user')).username,
                 recipeName: recipeName,
                 description: description,
                 ingredients: ingredients,
                 difficulty: difficulty,
                 category: category,
-                calories: calories
-
+                calories: calories,
+                photo: photo
             })
         }).then(function (response) {
             if (!response.ok) {

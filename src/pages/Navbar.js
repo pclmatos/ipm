@@ -23,11 +23,11 @@ export default function Navbar() {
                         variant="scrollable"
                         scrollButtons
                     >
-                        <Tab sx={{ bgcolor: "whitesmoke", fontFamily: 'Verdana', fontSize: 10 }} label="Search Recipes" />
-                        <Tab sx={{ bgcolor: "whitesmoke", fontFamily: 'Verdana', fontSize: 10 }} label="Share Recipes" />
-                        <Tab sx={{ bgcolor: "whitesmoke", fontFamily: 'Verdana', fontSize: 10 }} label="Add Pantry Ingredients" />
-                        <Tab sx={{ bgcolor: "whitesmoke", fontFamily: 'Verdana', fontSize: 10 }} label="Consult Pantry" />
-                        <Tab sx={{ bgcolor: "whitesmoke", fontFamily: 'Verdana', fontSize: 10 }} label="Top Rated" />
+                        <Tab sx={{ bgcolor: "whitesmoke", fontFamily: 'Verdana', fontSize: 10.5 }} label="Search Recipes" />
+                        <Tab sx={{ bgcolor: "whitesmoke", fontFamily: 'Verdana', fontSize: 10.5 }} label="Share Recipes" />
+                        <Tab sx={{ bgcolor: "whitesmoke", fontFamily: 'Verdana', fontSize: 10.5 }} label="Add Pantry Ingredients" />
+                        <Tab sx={{ bgcolor: "whitesmoke", fontFamily: 'Verdana', fontSize: 10.5 }} label="Consult Pantry" />
+                        <Tab sx={{ bgcolor: "whitesmoke", fontFamily: 'Verdana', fontSize: 10.5 }} label="Top Rated" />
 
                     </Tabs>
                 </Grid>

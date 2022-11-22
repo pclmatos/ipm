@@ -146,14 +146,14 @@ class restCalls {
         })
     }
 
-    getPantry(username) {
+    getPantry() {
         return fetch("https://silent-blade-368222.appspot.com/rest/user/pantry", {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify({
-                username: username
+                username: JSON.parse(localStorage.getItem('user')).username
             })
         }).then(function (response) {
             if (!response.ok) {
@@ -165,19 +165,19 @@ class restCalls {
             }
             return response.text()
         }).then(function (text) {
-            //localStorage.setItem('user', text);
+            localStorage.setItem('pantry', text);
             return text;
         })
     }
 
-    updatePantry(username, entries) {
+    updatePantry(entries) {
         return fetch("https://silent-blade-368222.appspot.com/rest/user/pantry", {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify({
-                username: username,
+                username: JSON.parse(localStorage.getItem('user')).username,
                 entries: entries
             })
         }).then(function (response) {

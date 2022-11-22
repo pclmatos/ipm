@@ -1,4 +1,4 @@
-import { Grid,Box, Typography, Card, CardContent, CardMedia, createTheme, ThemeProvider, FormControlLabel,RadioGroup, Radio, Divider } from "@mui/material";
+import { Grid,Box, Typography, Card, CardContent, CardMedia, createTheme, ThemeProvider, FormControlLabel,RadioGroup, Radio, Divider,Button } from "@mui/material";
 import Select from "react-select"
 import leite from "../images/leite.jpg"
 import { useState } from "react"
@@ -20,6 +20,8 @@ export default function ConsultPantry() {
     const [rice, setRice] = useState("false")
     const [seasonings, setSeasoning] = useState("false")
     const [ingredients, setIngredients] = useState()
+
+    var pantry = JSON.parse(localStorage.getItem('pantry'));
 
     function vegetablesHandler(e) {
         if (vegetables === "true") {
@@ -198,18 +200,11 @@ export default function ConsultPantry() {
         { value: "corn", label: "Corn" },
         { value: "lentils", label: "Lentils" },
     ];
-
-
-
-
-    /* FALTA LIGAR A BASE DE DADOS E IR BUSCAR O NECESSARIO
-
-
-    function searchRecipeManager(e) {
+    function getPantryManager(e) {
         e.preventDefault();
-        restCalls.ConsultPantry();
+        restCalls.getPantry()
     }
-    */
+
     const theme = createTheme({
         palette: {
             primary: {
@@ -295,20 +290,34 @@ export default function ConsultPantry() {
                     </ThemeProvider>
                 </Box>
                 <Typography sx={{ fontFamily: 'Verdana', fontSize: 25, color: "black", pt: "5%", pb: "3%" }}>Search </Typography>
-               <Select 
-                 options={ingredientsList}
-                 placeholder="Select ingredients"
-                 value={ingredients}
-                 onChange={ingredientsHandler}
-                 isSearchable={true}
-                 isMulti
-            />
+                <Box sx={{ width: "40%" }}>
+                        <Select
+                            options={ingredientsList}
+                            placeholder="Select ingredients"
+                            value={ingredients}
+                            onChange={ingredientsHandler}
+                            isSearchable={true}
+                            isMulti
+                        />
+                    </Box>
+                    <Button
+                        type="submit"
+                        variant="outlined"
+                        color='inherit'
+                        sx={{ mt: "8%", width: "20%" }}
+                        //onClick={(e) => { searchRecipeManager(e) }}
+                    >
+                        <Typography sx={{ fontFamily: 'Verdana', fontSize: 16, color: "black" }}> Filter! </Typography>
+                    </Button>
             </Box>
             </Grid>  
             <Grid container item xs={0.05} direction="column" alignItems="center" justifyContent="center">
                 <Divider orientation="vertical" sx={{ bgcolor: "#FFC86E", width: "20%" }} />
             </Grid>     
         <Grid container item xs = {9} direction= 'row'>
+
+
+
             <Box sx = {{ p:1, width : '20%'}}>
                     <Card variant='outlined' sx = {{p:1}}>
                     <CardContent>

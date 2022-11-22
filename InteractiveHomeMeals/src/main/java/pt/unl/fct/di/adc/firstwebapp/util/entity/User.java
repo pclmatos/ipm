@@ -13,7 +13,6 @@ public class User {
         this.username = username;
         this.password = password;
         this.pantry = new ArrayList<>();
-        pantry.add("empty");
     }
 
     public User(String username, String password, List<String> pantry) {

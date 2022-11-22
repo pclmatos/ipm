@@ -119,7 +119,7 @@ public class UserResource {
 				txn.add(user);
 				txn.commit();
 				LOG.fine("Successful registration");
-				return Response.ok("valid registration " + g.toJson(u)).build();
+				return Response.ok(g.toJson(u)).build();
 			}
 		} finally {
 			if (txn.isActive()) {
@@ -441,7 +441,7 @@ public class UserResource {
 			if (user != null) {
 				String pantryString = user.getString(PANTRY);
 				txn.commit();
-				return Response.ok("Pantry: " + pantryString).build();
+				return Response.ok(pantryString).build();
 			} else {
 				txn.rollback();
 				return Response.status(Status.NOT_FOUND).build();
@@ -475,8 +475,6 @@ public class UserResource {
 						pantry.add(entry);
 					}
 				} else {
-					if (pantry.contains("empty"))
-						pantry.remove("empty");
 					for (String entry : data.entries) {
 						PantryEntry p = new PantryEntry(entry);
 						String prevEntry = pantryContainsIngredient(p.getIngredient(), pantry);

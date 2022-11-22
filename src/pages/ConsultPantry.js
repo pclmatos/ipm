@@ -199,11 +199,12 @@ export default function ConsultPantry() {
         { value: "corn", label: "Corn" },
         { value: "lentils", label: "Lentils" },
     ];
+    /*
     function getPantryManager(e) {
         e.preventDefault();
         restCalls.getPantry()
     }
-
+*/
     const theme = createTheme({
         palette: {
             primary: {

@@ -1,5 +1,6 @@
 import { Box, Grid, TextField, Typography, InputLabel, MenuItem, FormControl, Button } from "@mui/material";
 import SelectMUI from "@mui/material/Select";
+import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
 import Select from "react-select"
 import { useState, useRef, useEffect } from "react"
 import restCalls from "../restCalls"
@@ -13,6 +14,18 @@ export default function ShareRecipe() {
     const [difficulty, setDifficulty] = useState("");
     const [ingredients, setIngredients] = useState();
     const [description, setDescription] = useState("");
+    const [ingredientsDescription, setIngredientsDescription] = useState();
+    const [noIngredients, setNoIngredients] = useState(1);
+    const [ingredientsListing, setIngredientsListing] = useState([<TextField
+        margin="normal"
+        label={"Ingredient " + noIngredients}
+        color="grey"
+        InputLabelProps={{
+            style: { fontFamily: 'Verdana', fontSize: 18 },
+        }}
+        sx={{ width: "70%", mt: "8%"}}
+        rows={12}
+        onChange={ingredientsDescriptionHandler} />]);
 
     const [image, setImage] = useState();
     const [preview, setPreview] = useState();
@@ -165,6 +178,26 @@ export default function ShareRecipe() {
         setDescription(e.target.value);
     }
 
+    function ingredientsDescriptionHandler(e) {
+        setIngredientsDescription(e.target.value);
+    }
+
+    function ingredientsListingHandler() {
+        setNoIngredients(noIngredients + 1)
+        setIngredientsListing(ingredientsListing.concat((
+            <TextField
+                margin="normal"
+                label={"Ingredient " + (noIngredients + 1)}
+                color="grey"
+                InputLabelProps={{
+                    style: { fontFamily: 'Verdana', fontSize: 18 },
+                }}
+                sx={{ width: "70%", mt:"0%"}}
+                rows={12}
+                onChange={ingredientsDescriptionHandler} />
+        )))
+    }
+
     function shareRecipeManager(e) {
         e.preventDefault();
         restCalls.shareRecipe(recipeName, description, ingredients, difficulty, category, calories, imageArray).then(() => { restCalls.allRecipes() })
@@ -245,6 +278,10 @@ export default function ShareRecipe() {
                             isMulti
                         />
                     </Box>
+
+                    {ingredientsListing}
+
+                    <Button onClick={ingredientsListingHandler}> <AddCircleOutlineIcon /> </Button>
                 </Box>
             </Grid>
             <Grid item xs={4}>

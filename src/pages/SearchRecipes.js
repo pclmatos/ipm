@@ -1,4 +1,4 @@
-import { Box, Grid, Typography, Card, CardMedia, CardContent, RadioGroup, FormControlLabel, Radio, ThemeProvider, createTheme, Button, Divider, Table, TableHead, TableRow, TableCell, Paper } from "@mui/material";
+import { Box, Grid, Typography, Card, CardMedia, CardContent, ListItem, Stack, RadioGroup, FormControlLabel, Radio, ThemeProvider, createTheme, Button, Divider, Table, TableHead, TableRow, TableCell, Paper } from "@mui/material";
 import Select from "react-select"
 import logoIHMcut from "../images/logoIHMcut.png"
 import { useState, useEffect } from "react"
@@ -19,7 +19,7 @@ export default function SearchRecipesPage() {
     const [searchText, setSearchText] = useState(null)
 
     const [showRecipe, setShowRecipe] = useState(false)
-    const [currentRecipe, setCurrentRecipe] = useState()
+    const [currentRecipe, setCurrentRecipe] = useState(null)
 
     var recipes = JSON.parse(localStorage.getItem('recipes'));
 
@@ -104,6 +104,17 @@ export default function SearchRecipesPage() {
         restCalls.searchRecipe(vegetarian, vegan, kosher, glutenFree, lactoseFree, completeMeal, lightMeal, ingredients/*, searchText*/).then(() => window.location.reload(false))
 
         {/* .then(() => { restCalls.userInfo().then(() => { hasToModifyPassword(); setShowProgress(false) }) }) */ }
+    }
+
+    function showIngredients() {
+        if (currentRecipe !== null) {
+            var tempList = currentRecipe.ingredients.split(" ")
+            var showIngredientsList = []
+            for (let i = 0; i < tempList.length; i += 2) {
+                showIngredientsList.push(tempList[i] + " " + tempList[i + 1])
+            }
+        }
+        return showIngredientsList
     }
 
     const ingredientsList = [
@@ -343,15 +354,11 @@ export default function SearchRecipesPage() {
                                 </CardContent>
                             </Card>
                         </Box>
-                        <Box sx={{ p: 1, width: "40%" }}>
-                            <Card variant="outlined" sx={{ p: 1 }}>
-                                <CardContent >
-                                    <Typography sx={{ fontFamily: 'Verdana', fontSize: 20, color: "black", textAlign: "center" }}>
-                                        {currentRecipe.name} (Shared by: {currentRecipe.author})
-                                    </Typography>
-                                </CardContent>
-                            </Card>
-                        </Box>
+                        <Stack spacing={1}>
+                            {showIngredients().map((ingredient) => {
+                                <ListItem>{ingredient}</ListItem>
+                            })}
+                        </Stack>
 
                     </>
                 }

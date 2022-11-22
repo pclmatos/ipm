@@ -1,6 +1,5 @@
-import { Grid,Box, Typography, Card, CardContent, CardMedia, createTheme, ThemeProvider, FormControlLabel,RadioGroup, Radio, Divider } from "@mui/material";
+import { Grid, Box, Typography, Card, CardContent, CardMedia, createTheme, ThemeProvider, FormControlLabel, RadioGroup, Radio, Divider, Button } from "@mui/material";
 import Select from "react-select"
-import leite from "../images/leite.jpg"
 import { useState } from "react"
 import restCalls from "../restCalls"
 import "./style.css"
@@ -20,6 +19,8 @@ export default function ConsultPantry() {
     const [rice, setRice] = useState("false")
     const [seasonings, setSeasoning] = useState("false")
     const [ingredients, setIngredients] = useState()
+
+    var pantry = JSON.parse(localStorage.getItem('pantry'));
 
     function vegetablesHandler(e) {
         if (vegetables === "true") {
@@ -181,7 +182,7 @@ export default function ConsultPantry() {
         { value: "tomato_sauce", label: "Tomato Sauce" },
         { value: "soy_sauce", label: "Soy Sauce" },
         { value: "hot_sauce", label: "Hot Sauce" },
-        {value : 'barbecue_sauce', label: 'Barbecue Sauce'},
+        { value: 'barbecue_sauce', label: 'Barbecue Sauce' },
         { value: "oregano", label: "Oregano" },
         { value: "paprika", label: "Paprika" },
         { value: "curry", label: "Curry" },
@@ -198,18 +199,12 @@ export default function ConsultPantry() {
         { value: "corn", label: "Corn" },
         { value: "lentils", label: "Lentils" },
     ];
-
-
-
-
-    /* FALTA LIGAR A BASE DE DADOS E IR BUSCAR O NECESSARIO
-
-
-    function searchRecipeManager(e) {
+    /*
+    function getPantryManager(e) {
         e.preventDefault();
-        restCalls.ConsultPantry();
+        restCalls.getPantry()
     }
-    */
+*/
     const theme = createTheme({
         palette: {
             primary: {
@@ -222,223 +217,127 @@ export default function ConsultPantry() {
 
 
     return (
-        <Grid container> 
-        <Grid item xs = {2.95}>
-            <Box sx = {{
-                display : 'flex',
-                flexDirection : 'column',
-                alignItems: 'center'
-            }}>
-               <Typography sx={{ fontFamily: 'Verdana', fontSize: 25, color: "black", pt: "6%", pb: "1%" }}>Types of ingredients</Typography>
-                <Box sx = {{pl: '6%'}}>
-                    <ThemeProvider theme = {theme}>
-                        <RadioGroup
-                            value = {vegetables}
-                            onClick = {vegetablesHandler}>
-                            <FormControlLabel value="true" control={<Radio />} label={<Typography sx={{ fontFamily: 'Verdana', fontSize: 18 }}>Vegetables</Typography>} />
-                        </RadioGroup>
-                        <RadioGroup
-                            value = {meat}
-                            onClick = {meatHandler}>
-                            <FormControlLabel value="true" control={<Radio />} label={<Typography sx={{ fontFamily: 'Verdana', fontSize: 18 }}>Meats</Typography>} />
-                        </RadioGroup> 
-                        <RadioGroup
-                            value = {fish}
-                            onClick = {fishHandler}>
-                            <FormControlLabel value="true" control={<Radio />} label={<Typography sx={{ fontFamily: 'Verdana', fontSize: 18 }}>Fishes</Typography>} />
-                        </RadioGroup>
-                        <RadioGroup
-                            value = {fruits}
-                            onClick = {fruitsHandler}>
-                            <FormControlLabel value="true" control={<Radio />} label={<Typography sx={{ fontFamily: 'Verdana', fontSize: 18 }}>Fruits</Typography>} />
-                        </RadioGroup>
-                        <RadioGroup
-                            value = {dairy}
-                            onClick = {dairyHandler}>
-                            <FormControlLabel value="true" control={<Radio />} label={<Typography sx={{ fontFamily: 'Verdana', fontSize: 18 }}>Dairy products</Typography>} />
-                        </RadioGroup>
-                        <RadioGroup
-                            value = {driedFruits}
-                            onClick = {driedFruitsHandler}>
-                            <FormControlLabel value="true" control={<Radio />} label={<Typography sx={{ fontFamily: 'Verdana', fontSize: 18 }}>Dried Fruits</Typography>} />
-                        </RadioGroup>
-                        <RadioGroup
-                            value = {sauces}
-                            onClick = {saucesHandler}>
-                            <FormControlLabel value="true" control={<Radio />} label={<Typography sx={{ fontFamily: 'Verdana', fontSize: 18 }}>Sauces</Typography>} />
-                        </RadioGroup>
-                        <RadioGroup
-                            value = {pastas}
-                            onClick = {pastasHandler}>
-                            <FormControlLabel value="true" control={<Radio />} label={<Typography sx={{ fontFamily: 'Verdana', fontSize: 18 }}>Pastas</Typography>} />
-                        </RadioGroup>
-                        <RadioGroup
-                            value = {fatsOils}
-                            onClick = {fatsOilsHandler}>
-                            <FormControlLabel value="true" control={<Radio />} label={<Typography sx={{ fontFamily: 'Verdana', fontSize: 18 }}>Fats and Oils</Typography>} />
-                        </RadioGroup>
-                        <RadioGroup
-                            value = {herbs}
-                            onClick = {herbsHandler}>
-                            <FormControlLabel value="true" control={<Radio />} label={<Typography sx={{ fontFamily: 'Verdana', fontSize: 18 }}>Herbs and Spices</Typography>} />
-                        </RadioGroup>
-                        <RadioGroup
-                            value = {rice}
-                            onClick = {riceHandler}>
-                            <FormControlLabel value="true" control={<Radio />} label={<Typography sx={{ fontFamily: 'Verdana', fontSize: 18 }}>Rice</Typography>} />
-                        </RadioGroup>
-                        <RadioGroup
-                            value = {seasonings}
-                            onClick = {seasoningHandler}>
-                            <FormControlLabel value="true" control={<Radio />} label={<Typography sx={{ fontFamily: 'Verdana', fontSize: 18 }}>Seasonings</Typography>} />
-                        </RadioGroup>
-                    </ThemeProvider>
+        <Grid container>
+            <Grid item xs={2.95}>
+                <Box sx={{
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'center'
+                }}>
+                    <Typography sx={{ fontFamily: 'Verdana', fontSize: 25, color: "black", pt: "6%", pb: "1%" }}>Types of ingredients</Typography>
+                    <Box sx={{ pl: '6%' }}>
+                        <ThemeProvider theme={theme}>
+                            <RadioGroup
+                                value={vegetables}
+                                onClick={vegetablesHandler}>
+                                <FormControlLabel value="true" control={<Radio />} label={<Typography sx={{ fontFamily: 'Verdana', fontSize: 18 }}>Vegetables</Typography>} />
+                            </RadioGroup>
+                            <RadioGroup
+                                value={meat}
+                                onClick={meatHandler}>
+                                <FormControlLabel value="true" control={<Radio />} label={<Typography sx={{ fontFamily: 'Verdana', fontSize: 18 }}>Meats</Typography>} />
+                            </RadioGroup>
+                            <RadioGroup
+                                value={fish}
+                                onClick={fishHandler}>
+                                <FormControlLabel value="true" control={<Radio />} label={<Typography sx={{ fontFamily: 'Verdana', fontSize: 18 }}>Fishes</Typography>} />
+                            </RadioGroup>
+                            <RadioGroup
+                                value={fruits}
+                                onClick={fruitsHandler}>
+                                <FormControlLabel value="true" control={<Radio />} label={<Typography sx={{ fontFamily: 'Verdana', fontSize: 18 }}>Fruits</Typography>} />
+                            </RadioGroup>
+                            <RadioGroup
+                                value={dairy}
+                                onClick={dairyHandler}>
+                                <FormControlLabel value="true" control={<Radio />} label={<Typography sx={{ fontFamily: 'Verdana', fontSize: 18 }}>Dairy products</Typography>} />
+                            </RadioGroup>
+                            <RadioGroup
+                                value={driedFruits}
+                                onClick={driedFruitsHandler}>
+                                <FormControlLabel value="true" control={<Radio />} label={<Typography sx={{ fontFamily: 'Verdana', fontSize: 18 }}>Dried Fruits</Typography>} />
+                            </RadioGroup>
+                            <RadioGroup
+                                value={sauces}
+                                onClick={saucesHandler}>
+                                <FormControlLabel value="true" control={<Radio />} label={<Typography sx={{ fontFamily: 'Verdana', fontSize: 18 }}>Sauces</Typography>} />
+                            </RadioGroup>
+                            <RadioGroup
+                                value={pastas}
+                                onClick={pastasHandler}>
+                                <FormControlLabel value="true" control={<Radio />} label={<Typography sx={{ fontFamily: 'Verdana', fontSize: 18 }}>Pastas</Typography>} />
+                            </RadioGroup>
+                            <RadioGroup
+                                value={fatsOils}
+                                onClick={fatsOilsHandler}>
+                                <FormControlLabel value="true" control={<Radio />} label={<Typography sx={{ fontFamily: 'Verdana', fontSize: 18 }}>Fats and Oils</Typography>} />
+                            </RadioGroup>
+                            <RadioGroup
+                                value={herbs}
+                                onClick={herbsHandler}>
+                                <FormControlLabel value="true" control={<Radio />} label={<Typography sx={{ fontFamily: 'Verdana', fontSize: 18 }}>Herbs and Spices</Typography>} />
+                            </RadioGroup>
+                            <RadioGroup
+                                value={rice}
+                                onClick={riceHandler}>
+                                <FormControlLabel value="true" control={<Radio />} label={<Typography sx={{ fontFamily: 'Verdana', fontSize: 18 }}>Rice</Typography>} />
+                            </RadioGroup>
+                            <RadioGroup
+                                value={seasonings}
+                                onClick={seasoningHandler}>
+                                <FormControlLabel value="true" control={<Radio />} label={<Typography sx={{ fontFamily: 'Verdana', fontSize: 18 }}>Seasonings</Typography>} />
+                            </RadioGroup>
+                        </ThemeProvider>
+                    </Box>
+                    <Typography sx={{ fontFamily: 'Verdana', fontSize: 25, color: "black", pt: "5%", pb: "3%" }}>Search </Typography>
+                    <Box sx={{ width: "40%" }}>
+                        <Select
+                            options={ingredientsList}
+                            placeholder="Select ingredients"
+                            value={ingredients}
+                            onChange={ingredientsHandler}
+                            isSearchable={true}
+                            isMulti
+                        />
+                    </Box>
+                    <Button
+                        type="submit"
+                        variant="outlined"
+                        color='inherit'
+                        sx={{ mt: "8%", width: "20%" }}
+                    //onClick={(e) => { searchRecipeManager(e) }}
+                    >
+                        <Typography sx={{ fontFamily: 'Verdana', fontSize: 16, color: "black" }}> Filter! </Typography>
+                    </Button>
                 </Box>
-                <Typography sx={{ fontFamily: 'Verdana', fontSize: 25, color: "black", pt: "5%", pb: "3%" }}>Search </Typography>
-               <Select 
-                 options={ingredientsList}
-                 placeholder="Select ingredients"
-                 value={ingredients}
-                 onChange={ingredientsHandler}
-                 isSearchable={true}
-                 isMulti
-            />
-            </Box>
-            </Grid>  
+            </Grid>
             <Grid container item xs={0.05} direction="column" alignItems="center" justifyContent="center">
                 <Divider orientation="vertical" sx={{ bgcolor: "#FFC86E", width: "20%" }} />
-            </Grid>     
-        <Grid container item xs = {9} direction= 'row'>
-            <Box sx = {{ p:1, width : '20%'}}>
-                    <Card variant='outlined' sx = {{p:1}}>
-                    <CardContent>
-                    <Typography sx={{ fontFamily: 'Verdana', fontSize: 20, color: "black" }}>
-                                Leite
-                            </Typography>
-                    <Typography sx={{ fontFamily: 'Verdana', fontSize: 20, color: "black" }}>
-                                Quantidade:
-                            </Typography>
-                    </CardContent>
-                    <CardMedia
-                        component ='img'
-                        image = {leite}
-                        height = "320"
-                        alt="green iguana"
-                    />
-                    </Card>
-            </Box>
-            <Box sx = {{ p:1, width : '20%'}}>
-                    <Card variant='outlined' sx = {{p:1}}>
-                    <CardContent>
-                    <Typography sx={{ fontFamily: 'Verdana', fontSize: 20, color: "black" }}>
-                                Ovos
-                            </Typography>
-                    <Typography sx={{ fontFamily: 'Verdana', fontSize: 20, color: "black" }}>
-                                Quantidade:
-                            </Typography>
-                    </CardContent>
-                    <CardMedia
-                        component ='img'
-                        image = {leite}
-                        height = "320"
-                        alt="green iguana"
-                    />
-                    </Card>
-            </Box>
-            <Box sx = {{ p:1, width : '20%'}}>
-                    <Card variant='outlined' sx = {{p:1}}>
-                    <CardContent>
-                    <Typography sx={{ fontFamily: 'Verdana', fontSize: 20, color: "black" }}>
-                                Milho
-                            </Typography>
-                    <Typography sx={{ fontFamily: 'Verdana', fontSize: 20, color: "black" }}>
-                                Quantidade:
-                            </Typography>
-                    </CardContent>
-                    <CardMedia
-                        component ='img'
-                        image = {leite}
-                        height = "320"
-                        alt="green iguana"
-                    />
-                    </Card>
-            </Box>
-            <Box sx = {{ p:1, width : '20%'}}>
-                    <Card variant='outlined' sx = {{p:1}}>
-                    <CardContent>
-                    <Typography sx={{ fontFamily: 'Verdana', fontSize: 20, color: "black" }}>
-                                Batatas
-                            </Typography>
-                    <Typography sx={{ fontFamily: 'Verdana', fontSize: 20, color: "black" }}>
-                                Quantidade:
-                            </Typography>
-                    </CardContent>
-                    <CardMedia
-                        component ='img'
-                        image = {leite}
-                        height = "320"
-                        alt="green iguana"
-                    />
-                    </Card>
-            </Box>
-            <Box sx = {{ p:1, width : '20%'}}>
-                    <Card variant='outlined' sx = {{p:1}}>
-                    <CardContent>
-                    <Typography sx={{ fontFamily: 'Verdana', fontSize: 20, color: "black" }}>
-                               Pão
-                            </Typography>
-                    <Typography sx={{ fontFamily: 'Verdana', fontSize: 20, color: "black" }}>
-                                Quantidade:
-                            </Typography>
-                    </CardContent>
-                    <CardMedia
-                        component ='img'
-                        image = {leite}
-                        height = "320"
-                        alt="green iguana"
-                    />
-                    </Card>
-            </Box>
-            <Box sx = {{ p:1, width : '20%'}}>
-                    <Card variant='outlined' sx = {{p:1}}>
-                    <CardContent>
-                    <Typography sx={{ fontFamily: 'Verdana', fontSize: 20, color: "black" }}>
-                               Açúcar
-                            </Typography>
-                    <Typography sx={{ fontFamily: 'Verdana', fontSize: 20, color: "black" }}>
-                                Quantidade:
-                            </Typography>
-                    </CardContent>
-                    <CardMedia
-                        component ='img'
-                        image = {leite}
-                        height = "320"
-                        alt="green iguana"
-                    />
-                    </Card>
-            </Box>
-            <Box sx = {{ p:1, width : '20%'}}>
-                    <Card variant='outlined' sx = {{p:1}}>
-                    <CardContent>
-                    <Typography sx={{ fontFamily: 'Verdana', fontSize: 20, color: "black" }}>
-                                Carapaus
-                            </Typography>
-                    <Typography sx={{ fontFamily: 'Verdana', fontSize: 20, color: "black" }}>
-                                Quantidade:
-                            </Typography>
-                    </CardContent>
-                    <CardMedia
-                        component ='img'
-                        image = {leite}
-                        height = "320"
-                        alt="green iguana"
-                    />
-                    </Card>
-            </Box>
-        </Grid>
+            </Grid>
+            <Grid container item xs={9} direction='row'>
 
+                {pantry.map((p) =>
+                    <Box sx={{ p: 1, width: "20%" }}>
+                        <Card variant="outlined" sx={{ p: 1 }}>
+                            <CardContent >
+                                <Typography sx={{ fontFamily: 'Verdana', fontSize: 20, color: "black" }}>
+                                   {p.split(" ")[0]}
+                                </Typography>
+                                <Typography sx={{ fontFamily: 'Verdana', fontSize: 20, color: "black" }}>
+                                    {p.split(" ")[1]}
+                                </Typography>
+                            </CardContent>
+                            <CardMedia
+                                component="img"
+                                //image={recipe.photo == "undefined" ? logoIHMcut : recipe.photo}
+                                height="320"
+                                alt="green iguana"
+                                sx={{ cursor: "pointer" }}
+                            />
+                        </Card>
+                    </Box>
+                )}
+            </Grid>
         </Grid>
-        
-       
     )
 }

@@ -50,11 +50,11 @@ class restCalls {
     }
 
     shareRecipe(recipeName, description, ingredients, difficulty, category, calories, photo) {
-        
+
         const ingredients2 = [];
         if (ingredients !== undefined) {
             for (var i = 0; i < ingredients.length; i++) {
-                ingredients2.push(ingredients[i].value +" 1")
+                ingredients2.push(ingredients[i].value + " 1")
             }
         }
         console.log(ingredients2)
@@ -146,14 +146,14 @@ class restCalls {
         })
     }
 
-    getPantry(username) {
+    getPantry() {
         return fetch("https://silent-blade-368222.appspot.com/rest/user/pantry", {
             method: 'POST',
             headers: {
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json; charset=UTF-8',
             },
             body: JSON.stringify({
-                username: username
+                username: JSON.parse(localStorage.getItem('user')).username
             })
         }).then(function (response) {
             if (!response.ok) {
@@ -165,19 +165,20 @@ class restCalls {
             }
             return response.text()
         }).then(function (text) {
-            //localStorage.setItem('user', text);
+            localStorage.setItem('pantry', text);
             return text;
         })
     }
 
-    updatePantry(username, entries) {
+    /*
+    updatePantry(entries) {
         return fetch("https://silent-blade-368222.appspot.com/rest/user/pantry", {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify({
-                username: username,
+                username: JSON.parse(localStorage.getItem('user')).username,
                 entries: entries
             })
         }).then(function (response) {
@@ -194,6 +195,7 @@ class restCalls {
             return text;
         })
     }
+    */
 }
 
 

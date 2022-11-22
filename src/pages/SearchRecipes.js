@@ -313,25 +313,46 @@ export default function SearchRecipesPage() {
                         <Button color="inherit" onClick={() => { showRecipeHandler() }}>
                             <KeyboardBackspaceIcon />
                         </Button>
-                        <Box sx={{ p: 1, width: "33.3%" }}>
-                            <Typography>{currentRecipe.name}</Typography>
-                            <CardMedia
-                                component="img"
-                                image={currentRecipe.photo == "undefined" ? logoIHMcut : currentRecipe.photo}
-                                height="320"
-                                alt="green iguana"
-                            />
+                        <Box sx={{ p: 1, width: "50%" }}>
+                            <Card variant="outlined" sx={{ p: 1 }}>
+                                <CardContent >
+                                    <Typography sx={{ fontFamily: 'Verdana', fontSize: 20, color: "black", textAlign: "center" }}>
+                                        {currentRecipe.name} (Shared by: {currentRecipe.author})
+                                    </Typography>
+                                </CardContent>
+                                <CardMedia
+                                    component="img"
+                                    image={currentRecipe.photo == "undefined" ? logoIHMcut : currentRecipe.photo}
+                                    height="450"
+                                    alt="green iguana"
+                                />
+                                <CardContent >
+                                    <Typography sx={{ fontFamily: 'Verdana', fontSize: 20, color: "black" }}>
+                                        Description: {currentRecipe.description}
+                                    </Typography>
+                                    <Typography sx={{ fontFamily: 'Verdana', fontSize: 20, color: "black" }}>
+                                        Category: {currentRecipe.category}
+                                    </Typography>
+                                    <Typography sx={{ fontFamily: 'Verdana', fontSize: 20, color: "black" }}>
+                                        Calories: {currentRecipe.calories}
+                                    </Typography>
+                                    <Typography sx={{ fontFamily: 'Verdana', fontSize: 20, color: "black" }}>
+                                        Difficulty: {currentRecipe.difficulty}
+                                    </Typography>
+
+                                </CardContent>
+                            </Card>
                         </Box>
-                        <Paper elevation={8} variant="outlined" sx={{ margin: 8, padding: 2 }}>
-                            <Table aria-label="simple table">
-                                <TableHead>
-                                    <TableRow>
-                                        <TableCell>BOAS</TableCell>
-                                        <TableCell>MTO BOAS</TableCell>
-                                    </TableRow>
-                                </TableHead>
-                            </Table>
-                        </Paper>
+                        <Box sx={{ p: 1, width: "40%" }}>
+                            <Card variant="outlined" sx={{ p: 1 }}>
+                                <CardContent >
+                                    <Typography sx={{ fontFamily: 'Verdana', fontSize: 20, color: "black", textAlign: "center" }}>
+                                        {currentRecipe.name} (Shared by: {currentRecipe.author})
+                                    </Typography>
+                                </CardContent>
+                            </Card>
+                        </Box>
+
                     </>
                 }
             </Grid>

@@ -150,7 +150,7 @@ class restCalls {
         return fetch("https://silent-blade-368222.appspot.com/rest/user/pantry", {
             method: 'POST',
             headers: {
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json; charset=UTF-8',
             },
             body: JSON.stringify({
                 username: JSON.parse(localStorage.getItem('user')).username
@@ -170,6 +170,7 @@ class restCalls {
         })
     }
 
+    /*
     updatePantry(entries) {
         return fetch("https://silent-blade-368222.appspot.com/rest/user/pantry", {
             method: 'POST',
@@ -194,6 +195,7 @@ class restCalls {
             return text;
         })
     }
+    */
 }
 
 

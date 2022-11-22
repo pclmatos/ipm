@@ -111,7 +111,7 @@ export default function SearchRecipesPage() {
             var tempList = currentRecipe.ingredients.split(" ")
             var showIngredientsList = []
             for (let i = 0; i < tempList.length; i += 2) {
-                showIngredientsList.push(tempList[i] + " " + tempList[i + 1])
+                showIngredientsList.push(tempList[i] + " " + tempList[i + 1] + " | ")
             }
         }
         return showIngredientsList
@@ -354,11 +354,7 @@ export default function SearchRecipesPage() {
                                 </CardContent>
                             </Card>
                         </Box>
-                        <Stack spacing={1}>
-                            {showIngredients().map((ingredient) => {
-                                <ListItem>{ingredient}</ListItem>
-                            })}
-                        </Stack>
+                        {showIngredients()}
 
                     </>
                 }

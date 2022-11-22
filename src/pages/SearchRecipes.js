@@ -1,8 +1,9 @@
-import { Box, Grid, Typography, Card, CardMedia, CardContent, RadioGroup, FormControlLabel, Radio, ThemeProvider, createTheme, Button, Divider } from "@mui/material";
+import { Box, Grid, Typography, Card, CardMedia, CardContent, RadioGroup, FormControlLabel, Radio, ThemeProvider, createTheme, Button, Divider, Table, TableHead, TableRow, TableCell, Paper } from "@mui/material";
 import Select from "react-select"
 import logoIHMcut from "../images/logoIHMcut.png"
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import restCalls from "../restCalls"
+import KeyboardBackspaceIcon from '@mui/icons-material/KeyboardBackspace';
 import "./style.css"
 
 
@@ -16,6 +17,9 @@ export default function SearchRecipesPage() {
     const [lightMeal, setLightMeal] = useState("true")
     const [ingredients, setIngredients] = useState()
     const [searchText, setSearchText] = useState(null)
+
+    const [showRecipe, setShowRecipe] = useState(false)
+    const [currentRecipe, setCurrentRecipe] = useState()
 
     var recipes = JSON.parse(localStorage.getItem('recipes'));
 
@@ -81,6 +85,18 @@ export default function SearchRecipesPage() {
 
     function searchTextHandler(e) {
         setSearchText(e.target.value);
+    }
+
+    function showRecipeHandler(e) {
+        if (!showRecipe) {
+            setShowRecipe(true);
+        } else {
+            setShowRecipe(false);
+        }
+    }
+
+    function updateCurrRecipe(recipe) {
+        setCurrentRecipe(recipe);
     }
 
     function searchRecipeManager(e) {
@@ -188,6 +204,7 @@ export default function SearchRecipesPage() {
         },
     });
 
+
     return (
 
         <Grid container className="container"  >
@@ -243,16 +260,16 @@ export default function SearchRecipesPage() {
                         </ThemeProvider>
                     </Box>
                     <Typography sx={{ fontFamily: 'Verdana', fontSize: 25, color: "black", pt: "5%", pb: "3%" }}>Ingredient Filtering</Typography>
-                    
+
                     <Box sx={{ width: "40%" }}>
                         <Select
-                        options={ingredientsList}
-                        placeholder="Select ingredients"
-                        value={ingredients}
-                        onChange={ingredientsHandler}
-                        isSearchable={true}
-                        isMulti
-                    />
+                            options={ingredientsList}
+                            placeholder="Select ingredients"
+                            value={ingredients}
+                            onChange={ingredientsHandler}
+                            isSearchable={true}
+                            isMulti
+                        />
                     </Box>
                     <Button
                         type="submit"
@@ -269,10 +286,11 @@ export default function SearchRecipesPage() {
                 <Divider orientation="vertical" sx={{ bgcolor: "#FFC86E", width: "20%" }} />
             </Grid>
             <Grid container item xs={9} direction="row">
-                {recipes.map((recipe) =>
+
+                {!showRecipe ? recipes.map((recipe) =>
                     <>
                         <Box sx={{ p: 1, width: "33.3%" }}>
-                            <Card variant="outlined" sx={{ p: 1 }}>
+                            <Card val variant="outlined" sx={{ p: 1 }}>
                                 <CardContent >
                                     <Typography sx={{ fontFamily: 'Verdana', fontSize: 20, color: "black" }}>
                                         {recipe.name}
@@ -283,11 +301,39 @@ export default function SearchRecipesPage() {
                                     image={recipe.photo == "undefined" ? logoIHMcut : recipe.photo}
                                     height="320"
                                     alt="green iguana"
+                                    onClick={() => { showRecipeHandler(); updateCurrRecipe(recipe); }}
+                                    sx={{ cursor: "pointer" }}
+
                                 />
                             </Card>
                         </Box>
                     </>
-                )}
+                ) :
+                    <>
+                        <Button color="inherit" onClick={() => { showRecipeHandler() }}>
+                            <KeyboardBackspaceIcon />
+                        </Button>
+                        <Box sx={{ p: 1, width: "33.3%" }}>
+                            <Typography>{currentRecipe.name}</Typography>
+                            <CardMedia
+                                component="img"
+                                image={currentRecipe.photo == "undefined" ? logoIHMcut : currentRecipe.photo}
+                                height="320"
+                                alt="green iguana"
+                            />
+                        </Box>
+                        <Paper elevation={8} variant="outlined" sx={{ margin: 8, padding: 2 }}>
+                            <Table aria-label="simple table">
+                                <TableHead>
+                                    <TableRow>
+                                        <TableCell>BOAS</TableCell>
+                                        <TableCell>MTO BOAS</TableCell>
+                                    </TableRow>
+                                </TableHead>
+                            </Table>
+                        </Paper>
+                    </>
+                }
             </Grid>
         </Grid>
     )

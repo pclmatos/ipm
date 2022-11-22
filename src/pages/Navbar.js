@@ -25,8 +25,7 @@ export default function Navbar() {
                     >
                         <Tab sx={{ bgcolor: "whitesmoke", fontFamily: 'Verdana', fontSize: 10.5 }} label="Search Recipes" />
                         <Tab sx={{ bgcolor: "whitesmoke", fontFamily: 'Verdana', fontSize: 10.5 }} label="Share Recipes" />
-                        <Tab sx={{ bgcolor: "whitesmoke", fontFamily: 'Verdana', fontSize: 10.5 }} label="Add Pantry Ingredients" />
-                        <Tab sx={{ bgcolor: "whitesmoke", fontFamily: 'Verdana', fontSize: 10.5 }} label="Consult Pantry" />
+                        <Tab sx={{ bgcolor: "whitesmoke", fontFamily: 'Verdana', fontSize: 10.5 }} label="Pantry" />
                         <Tab sx={{ bgcolor: "whitesmoke", fontFamily: 'Verdana', fontSize: 10.5 }} label="Top Rated" />
 
                     </Tabs>
@@ -38,9 +37,9 @@ export default function Navbar() {
                     <Box component="img" src={logoIHMcut} width="15%" sx={{ ml: "auto", display: "flex" }} />
                 </Grid>
             </Grid>
-            {selectedLeftTab == 0 && <SearchRecipesPage/> }
+            {selectedLeftTab == 0 && <SearchRecipesPage/>}
             {selectedLeftTab == 1 && <ShareRecipe/> }
-            {selectedLeftTab == 3 && <ConsultPantry/>}
+            {selectedLeftTab == 2 && <ConsultPantry/>}
         </>
     )
 }

@@ -33,6 +33,7 @@ export default function ShareRecipe() {
         }
     }, [image]);
 
+
     function loadPhoto(f) {
         const reader = new FileReader();
         const fileByteArray = [];
@@ -166,7 +167,7 @@ export default function ShareRecipe() {
 
     function shareRecipeManager(e) {
         e.preventDefault();
-        restCalls.shareRecipe(recipeName, description, ingredients, difficulty, category, calories, imageArray)
+        restCalls.shareRecipe(recipeName, description, ingredients, difficulty, category, calories, imageArray).then(() => { restCalls.allRecipes() })
     }
 
     return (
@@ -234,7 +235,7 @@ export default function ShareRecipe() {
                             <MenuItem value="5" >5</MenuItem>
                         </SelectMUI>
                     </FormControl>
-                    <Box sx={{ width: "70%", height: "25%", mt: "2.5%",  }}>
+                    <Box sx={{ width: "70%", height: "25%", mt: "2.5%", }}>
                         <Select
                             options={ingredientsList}
                             placeholder="Select ingredients"

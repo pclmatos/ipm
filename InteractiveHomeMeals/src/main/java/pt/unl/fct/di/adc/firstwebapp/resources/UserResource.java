@@ -87,6 +87,7 @@ public class UserResource {
 	private static final String CEREAL = "cereal";
 	private static final String RATING = "rating";
 	private static final String RATING_COUNT = "rating_count";
+	private static final String INGREDIENTSDESC = "ingredients_description";
 
 	// Bucket info
 	private static final String URL = "https://storage.googleapis.com/silent-blade-368222.appspot.com/";
@@ -242,7 +243,8 @@ public class UserResource {
 						.set(INGREDIENTS, ingredientsToString(data.ingredients))
 						.set(PHOTO, uploadPhoto(uniqueId, data.photo))
 						.set(RATING, 0.0)
-						.set(RATING_COUNT, 0.0).build();
+						.set(RATING_COUNT, 0.0)
+						.set(INGREDIENTSDESC, data.ingredientsDescription).build();
 
 				txn.add(recipe);
 				LOG.info(data.recipeName + " was successfully shared");
@@ -628,7 +630,7 @@ public class UserResource {
 				recipe.getString(CATEGORY), recipe.getString(DESCRIPTION), recipe.getLong(DIFFICULTY),
 				recipe.getString(INGREDIENTS), recipe.getString(RECIPENAME), recipe.getBoolean(ISGLUTENFREE),
 				recipe.getBoolean(ISKOSHER), recipe.getBoolean(ISLACTOSEFREE), recipe.getBoolean(ISVEGAN),
-				recipe.getBoolean(ISVEGETARIAN), recipe.getString(PHOTO));
+				recipe.getBoolean(ISVEGETARIAN), recipe.getString(PHOTO), recipe.getString(INGREDIENTSDESC));
 	}
 
 	@POST

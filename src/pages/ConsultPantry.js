@@ -21,7 +21,16 @@ export default function ConsultPantry() {
     const [ingredients, setIngredients] = useState()
 
     var pantry = JSON.parse(localStorage.getItem('pantry'));
+    var ingredientList = JSON.parse(localStorage.getItem('ingredientList'));
 
+    function searchIngredient(iName){
+        for (var i = 0 ; i < ingredientList.length; i++){
+            if(ingredientList[i].name == iName ){
+                return ingredientList[i];
+            }
+        }
+    }
+   
     function vegetablesHandler(e) {
         if (vegetables === "true") {
             setVegetables("false");
@@ -316,26 +325,25 @@ export default function ConsultPantry() {
             </Grid>
             <Grid container item xs={9} direction='row'>
 
-                {pantry.map((p) =>
-                    <Box sx={{ p: 1, width: "20%" }}>
-                        <Card variant="outlined" sx={{ p: 1 }}>
-                            <CardContent >
-                                <Typography sx={{ fontFamily: 'Verdana', fontSize: 20, color: "black" }}>
-                                   {p.split(" ")[0]}
-                                </Typography>
-                                <Typography sx={{ fontFamily: 'Verdana', fontSize: 20, color: "black" }}>
-                                    {p.split(" ")[1]}
-                                </Typography>
-                            </CardContent>
-                            <CardMedia
-                                component="img"
-                                //image={recipe.photo == "undefined" ? logoIHMcut : recipe.photo}
-                                height="320"
-                                alt="green iguana"
-                                sx={{ cursor: "pointer" }}
+                {pantry.map((p) => 
+                        <Box sx={{ p: 1, width: "20%" }}>
+                            <Card variant="outlined" sx={{ p: 1 }}>
+                                <CardContent >
+                                    <Typography sx={{ fontFamily: 'Verdana', fontSize: 20, color: "black" ,display: 'flex', justifyContent: 'center' }}>
+                                        {p.split(" ")[0]}
+                                    </Typography>
+                                    <Typography sx={{ fontFamily: 'Verdana', fontSize: 20, color: "black",display: 'flex', justifyContent: 'center' }}>
+                                        {p.split(" ")[1]}
+                                    </Typography>
+                                </CardContent>
+                                <CardMedia
+                                    component="img"
+                                    image={searchIngredient(p.split(" ")[0]).photo}
+                                    height="150"
+                                    alt="green iguana"
                             />
-                        </Card>
-                    </Box>
+                            </Card>
+                        </Box>
                 )}
             </Grid>
         </Grid>

@@ -10,14 +10,9 @@ export default function ConsultPantry() {
     const [meat, setMeat] = useState("false")
     const [fish, setFish] = useState("false")
     const [fruits, setFruits] = useState("false")
-    const [dairy, setDairy] = useState("false")
-    const [driedFruits, setDriedFruits] = useState("false")
-    const [sauces, setSauce] = useState("false")
-    const [pastas, setPastas] = useState("false")
-    const [fatsOils, setfatsOils] = useState("false")
-    const [herbs, setherbs] = useState("false")
-    const [rice, setRice] = useState("false")
-    const [seasonings, setSeasoning] = useState("false")
+    const [seafoods, setSeafoods] = useState("false")
+    const [others, setOthers] = useState("false")
+    const [cereals, setCereals] = useState("false")
     const [ingredients, setIngredients] = useState()
 
     var pantry = JSON.parse(localStorage.getItem('pantry'));
@@ -59,60 +54,25 @@ export default function ConsultPantry() {
             setFruits(e.target.value);
         }
     }
-    function dairyHandler(e) {
-        if (dairy === "true") {
-            setDairy("false");
+    function seafoodHandler(e) {
+        if (seafoods === "true") {
+            setSeafoods("false");
         } else {
-            setDairy(e.target.value);
+            setSeafoods(e.target.value);
         }
     }
-    function driedFruitsHandler(e) {
-        if (driedFruits === "true") {
-            setDriedFruits("false");
+    function othersHandler(e) {
+        if (others === "true") {
+            setOthers("false");
         } else {
-            setDriedFruits(e.target.value);
+            setOthers(e.target.value);
         }
     }
-    function saucesHandler(e) {
-        if (sauces === "true") {
-            setSauce("false");
+    function cerealsHandler(e) {
+        if (cereals === "true") {
+            setCereals("false");
         } else {
-            setSauce(e.target.value);
-        }
-    }
-    function pastasHandler(e) {
-        if (pastas === "true") {
-            setPastas("false");
-        } else {
-            setPastas(e.target.value);
-        }
-    }
-    function fatsOilsHandler(e) {
-        if (fatsOils === "true") {
-            setfatsOils("false");
-        } else {
-            setfatsOils(e.target.value);
-        }
-    }
-    function herbsHandler(e) {
-        if (herbs === "true") {
-            setherbs("false");
-        } else {
-            setherbs(e.target.value);
-        }
-    }
-    function riceHandler(e) {
-        if (rice === "true") {
-            setRice("false");
-        } else {
-            setRice(e.target.value);
-        }
-    }
-    function seasoningHandler(e) {
-        if (seasonings === "true") {
-            setSeasoning("false");
-        } else {
-            setSeasoning(e.target.value);
+            setCereals(e.target.value);
         }
     }
     function ingredientsHandler(data) {
@@ -208,12 +168,12 @@ export default function ConsultPantry() {
         { value: "corn", label: "Corn" },
         { value: "lentils", label: "Lentils" },
     ];
-    /*
-    function getPantryManager(e) {
+    
+    function getFiltersManager(e) {
         e.preventDefault();
-        restCalls.getPantry()
+        restCalls.filterIngredients(vegetables,meat,fish,fruits,cereals,others,seafoods).then(() => window.location.reload(false));
     }
-*/
+
     const theme = createTheme({
         palette: {
             primary: {
@@ -257,44 +217,19 @@ export default function ConsultPantry() {
                                 <FormControlLabel value="true" control={<Radio />} label={<Typography sx={{ fontFamily: 'Verdana', fontSize: 18 }}>Fruits</Typography>} />
                             </RadioGroup>
                             <RadioGroup
-                                value={dairy}
-                                onClick={dairyHandler}>
-                                <FormControlLabel value="true" control={<Radio />} label={<Typography sx={{ fontFamily: 'Verdana', fontSize: 18 }}>Dairy products</Typography>} />
+                                value={seafoods}
+                                onClick={seafoodHandler}>
+                                <FormControlLabel value="true" control={<Radio />} label={<Typography sx={{ fontFamily: 'Verdana', fontSize: 18 }}>Seafoods</Typography>} />
                             </RadioGroup>
                             <RadioGroup
-                                value={driedFruits}
-                                onClick={driedFruitsHandler}>
-                                <FormControlLabel value="true" control={<Radio />} label={<Typography sx={{ fontFamily: 'Verdana', fontSize: 18 }}>Dried Fruits</Typography>} />
+                                value={cereals}
+                                onClick={cerealsHandler}>
+                                <FormControlLabel value="true" control={<Radio />} label={<Typography sx={{ fontFamily: 'Verdana', fontSize: 18 }}>Cereals</Typography>} />
                             </RadioGroup>
                             <RadioGroup
-                                value={sauces}
-                                onClick={saucesHandler}>
-                                <FormControlLabel value="true" control={<Radio />} label={<Typography sx={{ fontFamily: 'Verdana', fontSize: 18 }}>Sauces</Typography>} />
-                            </RadioGroup>
-                            <RadioGroup
-                                value={pastas}
-                                onClick={pastasHandler}>
-                                <FormControlLabel value="true" control={<Radio />} label={<Typography sx={{ fontFamily: 'Verdana', fontSize: 18 }}>Pastas</Typography>} />
-                            </RadioGroup>
-                            <RadioGroup
-                                value={fatsOils}
-                                onClick={fatsOilsHandler}>
-                                <FormControlLabel value="true" control={<Radio />} label={<Typography sx={{ fontFamily: 'Verdana', fontSize: 18 }}>Fats and Oils</Typography>} />
-                            </RadioGroup>
-                            <RadioGroup
-                                value={herbs}
-                                onClick={herbsHandler}>
-                                <FormControlLabel value="true" control={<Radio />} label={<Typography sx={{ fontFamily: 'Verdana', fontSize: 18 }}>Herbs and Spices</Typography>} />
-                            </RadioGroup>
-                            <RadioGroup
-                                value={rice}
-                                onClick={riceHandler}>
-                                <FormControlLabel value="true" control={<Radio />} label={<Typography sx={{ fontFamily: 'Verdana', fontSize: 18 }}>Rice</Typography>} />
-                            </RadioGroup>
-                            <RadioGroup
-                                value={seasonings}
-                                onClick={seasoningHandler}>
-                                <FormControlLabel value="true" control={<Radio />} label={<Typography sx={{ fontFamily: 'Verdana', fontSize: 18 }}>Seasonings</Typography>} />
+                                value={others}
+                                onClick={othersHandler}>
+                                <FormControlLabel value="true" control={<Radio />} label={<Typography sx={{ fontFamily: 'Verdana', fontSize: 18 }}>Others</Typography>} />
                             </RadioGroup>
                         </ThemeProvider>
                     </Box>
@@ -306,7 +241,7 @@ export default function ConsultPantry() {
                             value={ingredients}
                             onChange={ingredientsHandler}
                             isSearchable={true}
-                            isMulti
+                            isMulti = {false}
                         />
                     </Box>
                     <Button
@@ -314,7 +249,7 @@ export default function ConsultPantry() {
                         variant="outlined"
                         color='inherit'
                         sx={{ mt: "8%", width: "20%" }}
-                    //onClick={(e) => { searchRecipeManager(e) }}
+                        onClick={(e) => { getFiltersManager(e) }}
                     >
                         <Typography sx={{ fontFamily: 'Verdana', fontSize: 16, color: "black" }}> Filter! </Typography>
                     </Button>

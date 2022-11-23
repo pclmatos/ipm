@@ -191,14 +191,14 @@ class restCalls {
             return text;
         })
     }
-    rateRecipe(rating) {
+    rateRecipe(rating,name) {
         return fetch("https://silent-blade-368222.appspot.com/rest/user/recipes/rate", {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json; charset=UTF-8',
             },
             body: JSON.stringify({
-                name: JSON.parse(localStorage.getItem('recipes')).name,
+                name: name,
                 rating: rating
             })
         }).then(function (response) {
@@ -211,11 +211,63 @@ class restCalls {
             }
             return response.text()
         }).then(function (text) {
-            localStorage.setItem('recipes', text);
             return text;
         })
     }
 
+    filterIngredients(vegetables,meat,fish,fruits,cereals,others,seafoods) {
+        const filter = [];
+        filter.push(vegetables);
+        filter.push(meat);
+        filter.push(fish);
+        filter.push(fruits);
+        filter.push(cereals);
+        filter.push(others);
+        filter.push(seafoods);
+        var type1 = null;
+        for(var i = 0; i < filter.length; i++){
+            if(filter[i] == false){
+              if(i == 0){
+                type1 = "vegetable";
+              }else if(i == 1){
+                type1 = "meat";
+              }else if (i == 2){
+                type1 = "fish";
+              }else if(i == 3){
+                type1 = "fruit"; 
+              }else if ( i == 4){
+                type1 = "cereal";
+              } else if (i == 5){
+                type1 = "other";
+              }else if (i == 6){
+                type1 = "sea_food";
+              }
+            }
+        }
+        console.log(type1);
+        return fetch("https://silent-blade-368222.appspot.com/rest/user/pantry/filter", {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json; charset=UTF-8',
+            },
+            body: JSON.stringify({
+                username: JSON.parse(localStorage.getItem('user')).username,
+                type: type1
+            })
+        }).then(function (response) {
+            if (!response.ok) {
+                return response.text().then((text) => {
+                    const error = new Error(text)
+                    error.code = response.status;
+                    throw error
+                })
+            }
+            return response.text()
+        }).then(function (text) {
+            localStorage.setItem('pantry', text);
+            return text;
+        })
+    }
     /*
     updatePantry(entries) {
         return fetch("https://silent-blade-368222.appspot.com/rest/user/pantry", {

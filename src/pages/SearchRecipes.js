@@ -108,7 +108,7 @@ export default function SearchRecipesPage() {
 
     function ratingManager(e) {
         e.preventDefault();
-        restCalls.rateRecipe(rating);
+        restCalls.rateRecipe(rating,currentRecipe.name);
     }
 
     function searchRecipeManager(e) {

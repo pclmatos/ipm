@@ -170,7 +170,27 @@ class restCalls {
             return text;
         })
     }
-
+    
+    allIngredients() {
+        return fetch("https://silent-blade-368222.appspot.com/rest/user/allIngredients", {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        }).then(function (response) {
+            if (!response.ok) {
+                return response.text().then((text) => {
+                    const error = new Error(text)
+                    error.code = response.status;
+                    throw error
+                })
+            }
+            return response.text()
+        }).then(function (text) {
+            localStorage.setItem('ingredientList', text);
+            return text;
+        })
+    }
     rateRecipe(rating) {
         return fetch("https://silent-blade-368222.appspot.com/rest/user/recipes/rate", {
             method: 'POST',

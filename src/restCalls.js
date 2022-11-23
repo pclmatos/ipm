@@ -226,7 +226,7 @@ class restCalls {
         filter.push(seafoods);
         var type1 = null;
         for(var i = 0; i < filter.length; i++){
-            if(filter[i] == false){
+            if(filter[i]){
               if(i == 0){
                 type1 = "vegetable";
               }else if(i == 1){

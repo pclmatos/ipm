@@ -6,13 +6,13 @@ import "./style.css"
 
 
 export default function ConsultPantry() {
-    const [vegetables, setVegetables] = useState("false")
-    const [meat, setMeat] = useState("false")
-    const [fish, setFish] = useState("false")
-    const [fruits, setFruits] = useState("false")
-    const [seafoods, setSeafoods] = useState("false")
-    const [others, setOthers] = useState("false")
-    const [cereals, setCereals] = useState("false")
+    const [vegetables, setVegetables] = useState(false)
+    const [meat, setMeat] = useState(false)
+    const [fish, setFish] = useState(false)
+    const [fruits, setFruits] = useState(false)
+    const [seafoods, setSeafoods] = useState(false)
+    const [others, setOthers] = useState(false)
+    const [cereals, setCereals] = useState(false)
     const [ingredients, setIngredients] = useState()
 
     var pantry = JSON.parse(localStorage.getItem('pantry'));
@@ -27,50 +27,50 @@ export default function ConsultPantry() {
     }
    
     function vegetablesHandler(e) {
-        if (vegetables === "true") {
-            setVegetables("false");
+        if (vegetables) {
+            setVegetables(false);
         } else {
             setVegetables(e.target.value);
         }
     }
     function meatHandler(e) {
-        if (meat === "true") {
-            setMeat("false");
+        if (meat) {
+            setMeat(false);
         } else {
             setMeat(e.target.value);
         }
     }
     function fishHandler(e) {
-        if (fish === "true") {
-            setFish("false");
+        if (fish) {
+            setFish(false);
         } else {
             setFish(e.target.value);
         }
     }
     function fruitsHandler(e) {
-        if (fruits === "true") {
-            setFruits("false");
+        if (fruits) {
+            setFruits(false);
         } else {
             setFruits(e.target.value);
         }
     }
     function seafoodHandler(e) {
-        if (seafoods === "true") {
-            setSeafoods("false");
+        if (seafoods) {
+            setSeafoods(false);
         } else {
             setSeafoods(e.target.value);
         }
     }
     function othersHandler(e) {
-        if (others === "true") {
-            setOthers("false");
+        if (others) {
+            setOthers(false);
         } else {
             setOthers(e.target.value);
         }
     }
     function cerealsHandler(e) {
-        if (cereals === "true") {
-            setCereals("false");
+        if (cereals) {
+            setCereals(false);
         } else {
             setCereals(e.target.value);
         }
@@ -171,7 +171,7 @@ export default function ConsultPantry() {
     
     function getFiltersManager(e) {
         e.preventDefault();
-        restCalls.filterIngredients(vegetables,meat,fish,fruits,cereals,others,seafoods).then(() => window.location.reload(false));
+        restCalls.filterIngredients(vegetables,meat,fish,fruits,cereals,others,seafoods);
     }
 
     const theme = createTheme({

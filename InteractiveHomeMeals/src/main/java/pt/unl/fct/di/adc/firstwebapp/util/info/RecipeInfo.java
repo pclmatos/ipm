@@ -10,7 +10,7 @@ public class RecipeInfo {
 	
 	public RecipeInfo(String id, String author, long calories, String category, String description, long difficulty, String ingredients, 
 			String name, boolean isGlutenFree, boolean isKosher, boolean isLactoseFree, boolean isVegan, boolean isVegetarian, 
-			String photo, double rating, long rateCount,String ingredientsDescription) {
+			String photo, double rating, long rateCount, String ingredientsDescription) {
 		this.id = id;
 		this.author = author;
 		this.calories = calories;

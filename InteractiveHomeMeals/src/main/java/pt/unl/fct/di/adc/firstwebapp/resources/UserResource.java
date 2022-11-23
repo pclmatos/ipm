@@ -243,7 +243,7 @@ public class UserResource {
 						.set(INGREDIENTS, ingredientsToString(data.ingredients))
 						.set(PHOTO, uploadPhoto(uniqueId, data.photo))
 						.set(RATING, 0.0)
-						.set(RATING_COUNT, 0.0)
+						.set(RATING_COUNT, 0)
 						.set(INGREDIENTSDESC, data.ingredientsDescription).build();
 
 				txn.add(recipe);

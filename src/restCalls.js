@@ -49,7 +49,7 @@ class restCalls {
         })
     }
 
-    shareRecipe(recipeName, description, ingredients, difficulty, category, calories, photo) {
+    shareRecipe(recipeName, description, ingredients, difficulty, category, calories, photo, ingredientsDescription) {
 
         const ingredients2 = [];
         if (ingredients !== undefined) {
@@ -71,7 +71,8 @@ class restCalls {
                 difficulty: difficulty,
                 category: category,
                 calories: calories,
-                photo: photo
+                photo: photo,
+                ingredientsDescription: ingredientsDescription
             })
         }).then(function (response) {
             if (!response.ok) {

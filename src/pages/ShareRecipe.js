@@ -15,17 +15,6 @@ export default function ShareRecipe() {
     const [ingredients, setIngredients] = useState();
     const [description, setDescription] = useState("");
     const [ingredientsDescription, setIngredientsDescription] = useState("");
-    const [noIngredients, setNoIngredients] = useState(1);
-    const [ingredientsListing, setIngredientsListing] = useState([<TextField
-        margin="normal"
-        label={"Ingredient " + noIngredients}
-        color="grey"
-        InputLabelProps={{
-            style: { fontFamily: 'Verdana', fontSize: 18 },
-        }}
-        sx={{ width: "70%", mt: "8%"}}
-        rows={12}
-        onChange={ingredientsDescriptionHandler} />]);
 
     const [image, setImage] = useState();
     const [preview, setPreview] = useState();
@@ -184,7 +173,7 @@ export default function ShareRecipe() {
 
     function shareRecipeManager(e) {
         e.preventDefault();
-        restCalls.shareRecipe(recipeName, description, ingredients, difficulty, category, calories, imageArray).then(() => { restCalls.allRecipes() })
+        restCalls.shareRecipe(recipeName, description, ingredients, difficulty, category, calories, imageArray, ingredientsDescription).then(() => { restCalls.allRecipes() })
     }
 
     return (
@@ -264,7 +253,6 @@ export default function ShareRecipe() {
                     </Box>
 
                     <TextField
-                        value={ingredientsDescription}
                         margin="normal"
                         required
                         label="Ingredients and quantities"
@@ -275,7 +263,7 @@ export default function ShareRecipe() {
                         sx={{ width: "70%", mt: "5%" }}
                         multiline
                         rows={12}
-                        onChange={descriptionHandler} />
+                        onChange={ingredientsDescriptionHandler} />
                 </Box>
             </Grid>
             <Grid item xs={4}>

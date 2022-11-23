@@ -54,7 +54,7 @@ class restCalls {
         const ingredients2 = [];
         if (ingredients !== undefined) {
             for (var i = 0; i < ingredients.length; i++) {
-                ingredients2.push(ingredients[i].value + " 1")
+                ingredients2.push(ingredients[i].value)
             }
         }
         console.log(ingredients2)

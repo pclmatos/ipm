@@ -14,7 +14,7 @@ export default function ShareRecipe() {
     const [difficulty, setDifficulty] = useState("");
     const [ingredients, setIngredients] = useState();
     const [description, setDescription] = useState("");
-    const [ingredientsDescription, setIngredientsDescription] = useState();
+    const [ingredientsDescription, setIngredientsDescription] = useState("");
     const [noIngredients, setNoIngredients] = useState(1);
     const [ingredientsListing, setIngredientsListing] = useState([<TextField
         margin="normal"
@@ -182,22 +182,6 @@ export default function ShareRecipe() {
         setIngredientsDescription(e.target.value);
     }
 
-    function ingredientsListingHandler() {
-        setNoIngredients(noIngredients + 1)
-        setIngredientsListing(ingredientsListing.concat((
-            <TextField
-                margin="normal"
-                label={"Ingredient " + (noIngredients + 1)}
-                color="grey"
-                InputLabelProps={{
-                    style: { fontFamily: 'Verdana', fontSize: 18 },
-                }}
-                sx={{ width: "70%", mt:"0%"}}
-                rows={12}
-                onChange={ingredientsDescriptionHandler} />
-        )))
-    }
-
     function shareRecipeManager(e) {
         e.preventDefault();
         restCalls.shareRecipe(recipeName, description, ingredients, difficulty, category, calories, imageArray).then(() => { restCalls.allRecipes() })
@@ -279,9 +263,19 @@ export default function ShareRecipe() {
                         />
                     </Box>
 
-                    {ingredientsListing}
-
-                    <Button onClick={ingredientsListingHandler}> <AddCircleOutlineIcon /> </Button>
+                    <TextField
+                        value={ingredientsDescription}
+                        margin="normal"
+                        required
+                        label="Ingredients and quantities"
+                        color="grey"
+                        InputLabelProps={{
+                            style: { fontFamily: 'Verdana', fontSize: 18 },
+                        }}
+                        sx={{ width: "70%", mt: "5%" }}
+                        multiline
+                        rows={12}
+                        onChange={descriptionHandler} />
                 </Box>
             </Grid>
             <Grid item xs={4}>

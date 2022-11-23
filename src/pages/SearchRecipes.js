@@ -321,9 +321,11 @@ export default function SearchRecipesPage() {
                     </>
                 ) :
                     <>
-                        <Button color="inherit" onClick={() => { showRecipeHandler() }}>
-                            <KeyboardBackspaceIcon />
-                        </Button>
+                        <Grid container item xs={2.5}>
+                            <Button color="inherit" onClick={() => { showRecipeHandler() }}>
+                                <KeyboardBackspaceIcon />
+                            </Button>
+                        </Grid>
                         <Box sx={{ p: 1, width: "50%" }}>
                             <Card variant="outlined" sx={{ p: 1 }}>
                                 <CardContent >
@@ -338,6 +340,9 @@ export default function SearchRecipesPage() {
                                     alt="green iguana"
                                 />
                                 <CardContent >
+                                    <Typography sx={{ fontFamily: 'Verdana', fontSize: 20, color: "black" }}>
+                                        Ingredients: {showIngredients()}
+                                    </Typography>
                                     <Typography sx={{ fontFamily: 'Verdana', fontSize: 20, color: "black" }}>
                                         Description: {currentRecipe.description}
                                     </Typography>
@@ -354,7 +359,7 @@ export default function SearchRecipesPage() {
                                 </CardContent>
                             </Card>
                         </Box>
-                        {showIngredients()}
+
 
                     </>
                 }

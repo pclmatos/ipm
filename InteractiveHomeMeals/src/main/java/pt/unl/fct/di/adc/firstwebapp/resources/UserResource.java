@@ -31,6 +31,7 @@ import com.google.cloud.storage.StorageOptions;
 import com.google.gson.Gson;
 
 import pt.unl.fct.di.adc.firstwebapp.util.FilterData;
+import pt.unl.fct.di.adc.firstwebapp.util.FilterIngredients;
 import pt.unl.fct.di.adc.firstwebapp.util.GetIngredientData;
 import pt.unl.fct.di.adc.firstwebapp.util.GetPantryData;
 import pt.unl.fct.di.adc.firstwebapp.util.LoginData;
@@ -38,6 +39,7 @@ import pt.unl.fct.di.adc.firstwebapp.util.RateRecipe;
 import pt.unl.fct.di.adc.firstwebapp.util.RecipeData;
 import pt.unl.fct.di.adc.firstwebapp.util.RegisterData;
 import pt.unl.fct.di.adc.firstwebapp.util.RemoveFromPantry;
+import pt.unl.fct.di.adc.firstwebapp.util.info.IngredientInfo;
 import pt.unl.fct.di.adc.firstwebapp.util.info.PantryEntry;
 import pt.unl.fct.di.adc.firstwebapp.util.info.RecipeInfo;
 import pt.unl.fct.di.adc.firstwebapp.util.SearchRecipeData;
@@ -769,12 +771,13 @@ public class UserResource {
 						.set(INGREDIENTS, recipe.ingredients)
 						.set(PHOTO, recipe.photo)
 						.set(RATING, newRate)
-						.set(RATING_COUNT, updatedRateCount).build();
+						.set(RATING_COUNT, updatedRateCount)
+						.set(INGREDIENTSDESC, recipe.ingredientsDescription).build();
 
 				txn.update(updatedRecipe);
 				txn.commit();
 
-				return Response.ok(recipe).build();
+				return Response.ok(updatedRecipe).build();
 			} else {
 				return Response.status(Status.NOT_FOUND).entity("Recipe doesn't exist!").build();
 			}
@@ -783,6 +786,69 @@ public class UserResource {
 			if (txn.isActive())
 				txn.rollback();
 		}
+	}
+
+
+	@POST
+	@Path("/pantry/filter")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	@SuppressWarnings("unchecked")
+	public Response filterIngredients(FilterIngredients data) {
+		LOG.info("filtering recipes");
+
+		Response getPantryResponse = getMyPantry(new GetPantryData(data.username));
+		Query<Entity> query = Query.newEntityQueryBuilder().setKind(INGREDIENT).build();
+		QueryResults<Entity> ingredients = datastore.run(query);
+		List<IngredientInfo> ingredientsList = new ArrayList<>();
+
+		String pantryString = (String)getPantryResponse.getEntity();
+
+		List<String> pantry = g.fromJson(pantryString, List.class);
+
+		ingredients.forEachRemaining((ingredient) -> {
+			IngredientInfo info = ingredientInfoBuilder(ingredient);
+			String contains = pantryContainsIngredient(info.name, pantry);
+			if(contains != null){
+				ingredientsList.add(ingredientInfoBuilder(ingredient));
+			}
+		});
+
+		if (data.type != null) {
+			for (int i = ingredientsList.size() - 1; i >= 0; i--) {
+				if (!((ingredientsList.get(i).type).equals(data.type)) ) {
+					ingredientsList.remove(i);
+				}
+			}
+			return Response.ok(g.toJson(ingredientsList)).build();
+		} else {
+			return Response.status(Status.NOT_FOUND).entity("No ingredient found for the current filter").build();
+		}
+
+
+	}
+
+	@GET
+	@Path("/allIngredients")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response allIngredients() {
+		Query<Entity> query = Query.newEntityQueryBuilder().setKind(INGREDIENT).build();
+		QueryResults<Entity> ingredients = datastore.run(query);
+		List<IngredientInfo> ingredientList = new ArrayList<>();
+
+		ingredients.forEachRemaining((ingredient) -> {
+			ingredientList.add(ingredientInfoBuilder(ingredient));
+		});
+
+		return Response.ok(g.toJson(ingredientList)).build();
+	}
+
+	public IngredientInfo ingredientInfoBuilder(Entity ingredient) {
+		return new IngredientInfo(ingredient.getKey().getName(), ingredient.getString(INGREDIENT_TYPE),
+				ingredient.getString(PHOTO), ingredient.getBoolean(ISGLUTENFREE), ingredient.getBoolean(ISKOSHER),
+				ingredient.getBoolean(ISLACTOSEFREE), ingredient.getBoolean(ISVEGAN),
+				ingredient.getBoolean(ISVEGETARIAN));
+
 	}
 
 	public String ingredientsToString(String[] ingredients) {

@@ -1,4 +1,4 @@
-import { Box, Grid, Typography, Card, CardMedia, CardContent, ListItem, Stack, RadioGroup, FormControlLabel, Radio, ThemeProvider, createTheme, Button, Divider, Table, TableHead, TableRow, TableCell, Paper } from "@mui/material";
+import { Box, Grid, Typography, Card, CardMedia, CardContent, TextField, ListItem, Stack, RadioGroup, FormControlLabel, Radio, ThemeProvider, createTheme, Button, Divider, Table, TableHead, TableRow, TableCell, Paper } from "@mui/material";
 import Select from "react-select"
 import logoIHMcut from "../images/logoIHMcut.png"
 import { useState, useEffect } from "react"
@@ -20,6 +20,9 @@ export default function SearchRecipesPage() {
 
     const [showRecipe, setShowRecipe] = useState(false)
     const [currentRecipe, setCurrentRecipe] = useState(null)
+
+    const [rating, setRating] = useState()
+
 
     var recipes = JSON.parse(localStorage.getItem('recipes'));
 
@@ -97,6 +100,15 @@ export default function SearchRecipesPage() {
 
     function updateCurrRecipe(recipe) {
         setCurrentRecipe(recipe);
+    }
+
+    function ratingHandler(e) {
+        setRating(e.target.value);
+    }
+
+    function ratingManager(e) {
+        e.preventDefault();
+        restCalls.rateRecipe(rating);
     }
 
     function searchRecipeManager(e) {
@@ -321,12 +333,12 @@ export default function SearchRecipesPage() {
                     </>
                 ) :
                     <>
-                        <Grid container item xs={2.5}>
+                        <Grid container item xs={3}>
                             <Button color="inherit" onClick={() => { showRecipeHandler() }}>
                                 <KeyboardBackspaceIcon />
                             </Button>
                         </Grid>
-                        <Box sx={{ p: 1, width: "50%" }}>
+                        <Box sx={{ p: 0.5, width: "45%" }}>
                             <Card variant="outlined" sx={{ p: 1 }}>
                                 <CardContent >
                                     <Typography sx={{ fontFamily: 'Verdana', fontSize: 20, color: "black", textAlign: "center" }}>
@@ -356,6 +368,31 @@ export default function SearchRecipesPage() {
                                         Difficulty: {currentRecipe.difficulty}
                                     </Typography>
 
+                                </CardContent>
+                            </Card>
+                            <Card>
+                                <CardContent>
+                                    <Typography sx={{ fontFamily: 'Verdana', fontSize: 20, color: "black" }}>
+                                        Rate this recipe 1-5! 
+                                    </Typography>
+                                    <TextField
+                                        placeholder="Ex: 3 | 4.4 | 2.5"
+                                        color="grey"
+                                        InputLabelProps={{
+                                            style: { fontFamily: 'Verdana', fontSize: 18 },
+                                        }}
+                                        sx={{ width: "23%" }}
+                                        onChange={ratingHandler}
+                                    />
+                                    <Button
+                                        type="submit"
+                                        variant="outlined"
+                                        color='inherit'
+                                        sx={{width: "10%", ml:"1%", mt:"1.5%" }}
+                                        onClick={(e) => { ratingManager(e) }}
+                                    >
+                                        <Typography sx={{ fontFamily: 'Verdana', fontSize: 16, color: "black" }}> Rate! </Typography>
+                                    </Button>
                                 </CardContent>
                             </Card>
                         </Box>

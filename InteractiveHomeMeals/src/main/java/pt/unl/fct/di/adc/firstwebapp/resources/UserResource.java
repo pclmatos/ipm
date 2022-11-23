@@ -404,7 +404,7 @@ public class UserResource {
 				if (ingredient == null) {
 					ingredient = Entity.newBuilder(ingredientKey).set(ISVEGETARIAN, true).set(ISVEGAN, true)
 							.set(ISKOSHER, true).set(ISGLUTENFREE, false).set(ISLACTOSEFREE, true)
-							.set(INGREDIENT_TYPE, cereals[i]).set(PHOTO, URL + cereals[i] + ".jpg").build();
+							.set(INGREDIENT_TYPE, CEREAL).set(PHOTO, URL + cereals[i] + ".jpg").build();
 
 					txn.add(ingredient);
 				}
@@ -628,7 +628,7 @@ public class UserResource {
 				recipe.getString(CATEGORY), recipe.getString(DESCRIPTION), recipe.getLong(DIFFICULTY),
 				recipe.getString(INGREDIENTS), recipe.getString(RECIPENAME), recipe.getBoolean(ISGLUTENFREE),
 				recipe.getBoolean(ISKOSHER), recipe.getBoolean(ISLACTOSEFREE), recipe.getBoolean(ISVEGAN),
-				recipe.getBoolean(ISVEGETARIAN), recipe.getString(PHOTO));
+				recipe.getBoolean(ISVEGETARIAN), recipe.getString(PHOTO), recipe.getDouble(RATING), recipe.getLong(RATING_COUNT));
 	}
 
 	@POST
@@ -728,29 +728,45 @@ public class UserResource {
 	public Response rateRecipe(RateRecipe data){
 		Transaction txn = datastore.newTransaction();
 
-		Key key = datastore.newKeyFactory().setKind(RECIPE).newKey(data.name);
+		Query<Entity> query = Query.newEntityQueryBuilder().setKind(RECIPE).build();
+		QueryResults<Entity> result = datastore.run(query);
+		List<RecipeInfo> list = new ArrayList<>();
+
+		result.forEachRemaining( (r)  -> {
+			if(r.getString(RECIPENAME).equals(data.name)){
+				list.add(recipeInfoBuilder(r));
+			}
+		});
+
 
 		try{
 
-			Entity recipe = datastore.get(key);
-
-			if(recipe != null){
-				double currRate = recipe.getDouble(RATING);
-				long nRates = recipe.getLong(RATING_COUNT);
+			
+			if(list.size() > 0){
+				if(data.rating > 5.0 && data.rating < 1.0){
+					return Response.status(Status.NOT_ACCEPTABLE).entity("Rating must be between 1 and 5!").build();
+				}
+				RecipeInfo recipe = list.get(0);
+			
+				double currRate = recipe.rating;
+			
+				long nRates = recipe.rateCount;
 				long updatedRateCount = nRates+1;
 
 				double newRate = ((currRate * (double)nRates) + data.rating) / (double)(updatedRateCount);
 
-				recipe = Entity.newBuilder(key).set(RECIPENAME, data.name).set(AUTHOR, recipe.getString(AUTHOR))
-						.set(DESCRIPTION, recipe.getString(DESCRIPTION)).set(ISVEGETARIAN, recipe.getBoolean(ISVEGETARIAN)).set(ISVEGAN, recipe.getBoolean(ISVEGAN))
-						.set(ISKOSHER, recipe.getBoolean(ISKOSHER)).set(ISGLUTENFREE, recipe.getBoolean(ISGLUTENFREE)).set(ISLACTOSEFREE, recipe.getBoolean(ISLACTOSEFREE))
-						.set(CATEGORY, recipe.getString(CATEGORY)).set(CALORIES, recipe.getLong(CALORIES)).set(DIFFICULTY, recipe.getLong(DIFFICULTY))
-						.set(INGREDIENTS, recipe.getString(INGREDIENTS))
-						.set(PHOTO, recipe.getString(PHOTO))
+				Key key = datastore.newKeyFactory().setKind(RECIPE).newKey(recipe.id);
+
+				Entity updatedRecipe = Entity.newBuilder(key).set(RECIPENAME, data.name).set(AUTHOR, recipe.author)
+						.set(DESCRIPTION, recipe.description).set(ISVEGETARIAN, recipe.isVegetarian).set(ISVEGAN, recipe.isVegan)
+						.set(ISKOSHER, recipe.isKosher).set(ISGLUTENFREE, recipe.isGlutenFree).set(ISLACTOSEFREE, recipe.isLactoseFree)
+						.set(CATEGORY, recipe.category).set(CALORIES, recipe.calories).set(DIFFICULTY, recipe.difficulty)
+						.set(INGREDIENTS, recipe.ingredients)
+						.set(PHOTO, recipe.photo)
 						.set(RATING, newRate)
 						.set(RATING_COUNT, updatedRateCount).build();
 
-				txn.update(recipe);
+				txn.update(updatedRecipe);
 				txn.commit();
 
 				return Response.ok(recipe).build();

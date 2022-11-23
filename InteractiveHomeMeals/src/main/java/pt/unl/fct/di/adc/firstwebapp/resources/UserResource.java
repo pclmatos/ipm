@@ -696,10 +696,15 @@ public class UserResource {
 				if (entry != null) {
 					PantryEntry prev = new PantryEntry(entry);
 					PantryEntry rm = new PantryEntry(data.ingredient);
+					int newCount = prev.getCount() - rm.getCount();
 
-					String newEntry = prev.getIngredient() + " " + (prev.getCount() - rm.getCount());
-
-					pantry.add(newEntry);
+					if(newCount == 0){
+						pantry.remove(entry);
+					} else {
+						String newEntry = prev.getIngredient() + " " + newCount;
+						pantry.remove(entry);
+						pantry.add(newEntry);
+					}
 
 					String updatedPantry = g.toJson(pantry);
 
@@ -871,7 +876,6 @@ public class UserResource {
 	private String pantryContainsIngredient(String ingredient, List<String> list) {
 		for (String s : list) {
 			if (s.contains(ingredient)) {
-				list.remove(s);
 				return s;
 			}
 		}

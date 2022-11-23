@@ -2,7 +2,7 @@ package pt.unl.fct.di.adc.firstwebapp.util;
 
 public class RecipeData {
 	
-	public String author, recipeName, description, category;
+	public String author, recipeName, description, category, ingredientsDescription;
 	public long difficulty, calories;
 	public String[] ingredients;
 	public byte[] photo;
@@ -11,7 +11,8 @@ public class RecipeData {
 	
 	public RecipeData() {}
 	
-	public RecipeData(String recipeName, String description, String author, long difficulty, String category, long calories, String[] ingredients, byte[] photo) {
+	public RecipeData(String recipeName, String description, String author, long difficulty, String category, long calories, 
+			String[] ingredients, byte[] photo, String ingredientsDescription) {
 		this.author = author;
 		this.recipeName = recipeName;
 		this.description = description;
@@ -20,5 +21,6 @@ public class RecipeData {
 		this.category = category;
 		this.calories = calories;
 		this.photo = photo;
+		this.ingredientsDescription = ingredientsDescription;
 	}
 }

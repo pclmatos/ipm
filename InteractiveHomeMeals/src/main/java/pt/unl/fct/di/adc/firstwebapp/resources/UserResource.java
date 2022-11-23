@@ -87,6 +87,7 @@ public class UserResource {
 	private static final String CEREAL = "cereal";
 	private static final String RATING = "rating";
 	private static final String RATING_COUNT = "rating_count";
+	private static final String INGREDIENTSDESC = "ingredients_description";
 
 	// Bucket info
 	private static final String URL = "https://storage.googleapis.com/silent-blade-368222.appspot.com/";
@@ -242,7 +243,8 @@ public class UserResource {
 						.set(INGREDIENTS, ingredientsToString(data.ingredients))
 						.set(PHOTO, uploadPhoto(uniqueId, data.photo))
 						.set(RATING, 0.0)
-						.set(RATING_COUNT, 0.0).build();
+						.set(RATING_COUNT, 0.0)
+						.set(INGREDIENTSDESC, data.ingredientsDescription).build();
 
 				txn.add(recipe);
 				LOG.info(data.recipeName + " was successfully shared");
@@ -320,7 +322,7 @@ public class UserResource {
 				"celery", "mushroom", "garlic", "spinach", "green_bean", "cabbage", "sweet_potato", "green_onion",
 				"cauliflower", "aspargo", "peas", "basil" };
 		String meat[] = { "pork", "chicken", "beef", "lamb", "goat", "turkey", "duck", "buffalo", "goose", "rabbit" };
-		String fish[] = {"tuna","salmon","catfish","cod"};
+		String fish[] = { "tuna", "salmon", "catfish", "cod" };
 		String seaFood[] = { "shrimp", "tilapia", "crab", "clam", "pangasius" };
 		String others[] = { "egg", "milk", "chocolate", "sugar", "salt", "pepper", "cinnamon", "cream", "olive_oil",
 				"tomato_sauce", "soy_sauce", "hot_sauce", "oregano", "paprika", "curry", "cheese", "butter", "yogurt" };
@@ -337,7 +339,8 @@ public class UserResource {
 				ingredient = datastore.get(ingredientKey);
 				if (ingredient == null) {
 					ingredient = Entity.newBuilder(ingredientKey).set(ISVEGETARIAN, true).set(ISVEGAN, true)
-							.set(ISKOSHER, true).set(ISGLUTENFREE, true).set(ISLACTOSEFREE, true).set(INGREDIENT_TYPE, FRUIT)
+							.set(ISKOSHER, true).set(ISGLUTENFREE, true).set(ISLACTOSEFREE, true)
+							.set(INGREDIENT_TYPE, FRUIT)
 							.set(PHOTO, URL + fruits[i] + ".jpg")
 							.build();
 
@@ -352,7 +355,7 @@ public class UserResource {
 				if (ingredient == null) {
 					ingredient = Entity.newBuilder(ingredientKey).set(ISVEGETARIAN, true).set(ISVEGAN, true)
 							.set(ISKOSHER, true).set(ISGLUTENFREE, true).set(ISLACTOSEFREE, true)
-							.set(INGREDIENT_TYPE,VEGETABLE).set(PHOTO, URL + vegetables[i] + ".jpg").build();
+							.set(INGREDIENT_TYPE, VEGETABLE).set(PHOTO, URL + vegetables[i] + ".jpg").build();
 
 					txn.add(ingredient);
 				}
@@ -365,7 +368,7 @@ public class UserResource {
 				if (ingredient == null) {
 					ingredient = Entity.newBuilder(ingredientKey).set(ISVEGETARIAN, false).set(ISVEGAN, false)
 							.set(ISKOSHER, true).set(ISGLUTENFREE, true).set(ISLACTOSEFREE, true)
-							.set(INGREDIENT_TYPE,MEAT).set(PHOTO,URL + meat[i] + ".jpg").build();
+							.set(INGREDIENT_TYPE, MEAT).set(PHOTO, URL + meat[i] + ".jpg").build();
 
 					txn.add(ingredient);
 				}
@@ -378,7 +381,7 @@ public class UserResource {
 				if (ingredient == null) {
 					ingredient = Entity.newBuilder(ingredientKey).set(ISVEGETARIAN, false).set(ISVEGAN, false)
 							.set(ISKOSHER, true).set(ISGLUTENFREE, true).set(ISLACTOSEFREE, true)
-							.set(INGREDIENT_TYPE,FISH).set(PHOTO,URL + fish[i] + ".jpg").build();
+							.set(INGREDIENT_TYPE, FISH).set(PHOTO, URL + fish[i] + ".jpg").build();
 
 					txn.add(ingredient);
 				}
@@ -417,7 +420,7 @@ public class UserResource {
 				if (ingredient == null) {
 					ingredient = Entity.newBuilder(ingredientKey).set(ISVEGETARIAN, true).set(ISVEGAN, true)
 							.set(ISKOSHER, true).set(ISGLUTENFREE, false).set(ISLACTOSEFREE, true)
-							.set(INGREDIENT_TYPE,OTHER).set(PHOTO, URL + others[i] + ".jpg").build();
+							.set(INGREDIENT_TYPE, OTHER).set(PHOTO, URL + others[i] + ".jpg").build();
 
 					txn.add(ingredient);
 				}
@@ -628,7 +631,8 @@ public class UserResource {
 				recipe.getString(CATEGORY), recipe.getString(DESCRIPTION), recipe.getLong(DIFFICULTY),
 				recipe.getString(INGREDIENTS), recipe.getString(RECIPENAME), recipe.getBoolean(ISGLUTENFREE),
 				recipe.getBoolean(ISKOSHER), recipe.getBoolean(ISLACTOSEFREE), recipe.getBoolean(ISVEGAN),
-				recipe.getBoolean(ISVEGETARIAN), recipe.getString(PHOTO), recipe.getDouble(RATING), recipe.getLong(RATING_COUNT));
+				recipe.getBoolean(ISVEGETARIAN), recipe.getString(PHOTO), recipe.getDouble(RATING),
+				recipe.getLong(RATING_COUNT), recipe.getString(INGREDIENTSDESC));
 	}
 
 	@POST
@@ -725,42 +729,43 @@ public class UserResource {
 	@Path("/recipes/rate")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response rateRecipe(RateRecipe data){
+	public Response rateRecipe(RateRecipe data) {
 		Transaction txn = datastore.newTransaction();
 
 		Query<Entity> query = Query.newEntityQueryBuilder().setKind(RECIPE).build();
 		QueryResults<Entity> result = datastore.run(query);
 		List<RecipeInfo> list = new ArrayList<>();
 
-		result.forEachRemaining( (r)  -> {
-			if(r.getString(RECIPENAME).equals(data.name)){
+		result.forEachRemaining((r) -> {
+			if (r.getString(RECIPENAME).equals(data.name)) {
 				list.add(recipeInfoBuilder(r));
 			}
 		});
 
+		try {
 
-		try{
-
-			
-			if(list.size() > 0){
-				if(data.rating > 5.0 && data.rating < 1.0){
+			if (list.size() > 0) {
+				if (data.rating > 5.0 && data.rating < 1.0) {
 					return Response.status(Status.NOT_ACCEPTABLE).entity("Rating must be between 1 and 5!").build();
 				}
 				RecipeInfo recipe = list.get(0);
-			
-				double currRate = recipe.rating;
-			
-				long nRates = recipe.rateCount;
-				long updatedRateCount = nRates+1;
 
-				double newRate = ((currRate * (double)nRates) + data.rating) / (double)(updatedRateCount);
+				double currRate = recipe.rating;
+
+				long nRates = recipe.rateCount;
+				long updatedRateCount = nRates + 1;
+
+				double newRate = ((currRate * (double) nRates) + data.rating) / (double) (updatedRateCount);
 
 				Key key = datastore.newKeyFactory().setKind(RECIPE).newKey(recipe.id);
 
 				Entity updatedRecipe = Entity.newBuilder(key).set(RECIPENAME, data.name).set(AUTHOR, recipe.author)
-						.set(DESCRIPTION, recipe.description).set(ISVEGETARIAN, recipe.isVegetarian).set(ISVEGAN, recipe.isVegan)
-						.set(ISKOSHER, recipe.isKosher).set(ISGLUTENFREE, recipe.isGlutenFree).set(ISLACTOSEFREE, recipe.isLactoseFree)
-						.set(CATEGORY, recipe.category).set(CALORIES, recipe.calories).set(DIFFICULTY, recipe.difficulty)
+						.set(DESCRIPTION, recipe.description).set(ISVEGETARIAN, recipe.isVegetarian)
+						.set(ISVEGAN, recipe.isVegan)
+						.set(ISKOSHER, recipe.isKosher).set(ISGLUTENFREE, recipe.isGlutenFree)
+						.set(ISLACTOSEFREE, recipe.isLactoseFree)
+						.set(CATEGORY, recipe.category).set(CALORIES, recipe.calories)
+						.set(DIFFICULTY, recipe.difficulty)
 						.set(INGREDIENTS, recipe.ingredients)
 						.set(PHOTO, recipe.photo)
 						.set(RATING, newRate)
@@ -774,10 +779,8 @@ public class UserResource {
 				return Response.status(Status.NOT_FOUND).entity("Recipe doesn't exist!").build();
 			}
 
-
-
-		}finally{
-			if(txn.isActive())
+		} finally {
+			if (txn.isActive())
 				txn.rollback();
 		}
 	}

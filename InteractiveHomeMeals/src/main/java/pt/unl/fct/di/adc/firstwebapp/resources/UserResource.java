@@ -806,6 +806,7 @@ public class UserResource {
 		Query<Entity> query = Query.newEntityQueryBuilder().setKind(INGREDIENT).build();
 		QueryResults<Entity> ingredients = datastore.run(query);
 		List<IngredientInfo> ingredientsList = new ArrayList<>();
+		List<String> filteredPantry = new ArrayList<>();
 
 		String pantryString = (String)getPantryResponse.getEntity();
 
@@ -825,7 +826,12 @@ public class UserResource {
 					ingredientsList.remove(i);
 				}
 			}
-			return Response.ok(g.toJson(ingredientsList)).build();
+
+			for(IngredientInfo info: ingredientsList){
+				String pantryEntry = pantryContainsIngredient(info.name, pantry);
+				filteredPantry.add(pantryEntry);
+			}
+			return Response.ok(g.toJson(filteredPantry)).build();
 		} else {
 			return Response.status(Status.NOT_FOUND).entity("No ingredient found for the current filter").build();
 		}

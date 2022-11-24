@@ -1,4 +1,4 @@
-import { Box, Grid, Typography, Card, CardMedia, CardContent, TextField, ListItem, Stack, RadioGroup, FormControlLabel, Radio, ThemeProvider, createTheme, Button, Divider, Table, TableHead, TableRow, TableCell, Paper } from "@mui/material";
+import { Box, Grid, Typography, Card, CardMedia, CardContent, TextField, ListItem, Stack, Rating, RadioGroup, FormControlLabel, Radio, ThemeProvider, createTheme, Button, Divider, Table, TableHead, TableRow, TableCell, Paper } from "@mui/material";
 import Select from "react-select"
 import logoIHMcut from "../images/logoIHMcut.png"
 import { useState, useEffect } from "react"
@@ -17,14 +17,22 @@ export default function SearchRecipesPage() {
     const [lightMeal, setLightMeal] = useState("true")
     const [ingredients, setIngredients] = useState()
     const [searchText, setSearchText] = useState(null)
+    const [readOnly, setReadOnly] = useState(false)
 
     const [showRecipe, setShowRecipe] = useState(false)
     const [currentRecipe, setCurrentRecipe] = useState(null)
 
     const [rating, setRating] = useState()
+    const [rate, setRate] = useState(false)
 
 
     var recipes = JSON.parse(localStorage.getItem('recipes'));
+
+    useEffect(() => {
+        if(currentRecipe != null && rate) {
+            ratingManager()
+        }
+    }, [rate])
 
     function vegetarianHandler(e) {
         if (vegetarian === "true") {
@@ -100,15 +108,11 @@ export default function SearchRecipesPage() {
 
     function updateCurrRecipe(recipe) {
         setCurrentRecipe(recipe);
+        setRating(Math.round(recipe.rating))
     }
 
-    function ratingHandler(e) {
-        setRating(e.target.value);
-    }
-
-    function ratingManager(e) {
-        e.preventDefault();
-        restCalls.rateRecipe(rating,currentRecipe.name);
+    function ratingManager() {
+        restCalls.rateRecipe(rating, currentRecipe.name);
     }
 
     function searchRecipeManager(e) {
@@ -324,7 +328,7 @@ export default function SearchRecipesPage() {
                                     image={recipe.photo == "undefined" ? logoIHMcut : recipe.photo}
                                     height="320"
                                     alt="green iguana"
-                                    onClick={() => { showRecipeHandler(); updateCurrRecipe(recipe); }}
+                                    onClick={() => { showRecipeHandler(); updateCurrRecipe(recipe); setReadOnly(false)}}
                                     sx={{ cursor: "pointer" }}
 
                                 />
@@ -334,7 +338,7 @@ export default function SearchRecipesPage() {
                 ) :
                     <>
                         <Grid container item xs={3}>
-                            <Button color="inherit" onClick={() => { showRecipeHandler() }}>
+                            <Button color="inherit" onClick={() => { showRecipeHandler(); setRate(false) }}>
                                 <KeyboardBackspaceIcon />
                             </Button>
                         </Grid>
@@ -372,27 +376,17 @@ export default function SearchRecipesPage() {
                             </Card>
                             <Card>
                                 <CardContent>
-                                    <Typography sx={{ fontFamily: 'Verdana', fontSize: 20, color: "black" }}>
-                                        Rate this recipe 1-5! 
-                                    </Typography>
-                                    <TextField
-                                        placeholder="Ex: 3 | 4.4 | 2.5"
-                                        color="grey"
-                                        InputLabelProps={{
-                                            style: { fontFamily: 'Verdana', fontSize: 18 },
+                                    <Rating
+                                        name="simple-controlled"
+                                        value={rating}
+                                        readOnly={readOnly}
+                                        precision = {0.5}
+                                        onChange={(event, newValue) => {
+                                            setRate(true)
+                                            setRating(newValue)
+                                            setReadOnly(true)
                                         }}
-                                        sx={{ width: "23%" }}
-                                        onChange={ratingHandler}
                                     />
-                                    <Button
-                                        type="submit"
-                                        variant="outlined"
-                                        color='inherit'
-                                        sx={{width: "10%", ml:"1%", mt:"1.5%" }}
-                                        onClick={(e) => { ratingManager(e) }}
-                                    >
-                                        <Typography sx={{ fontFamily: 'Verdana', fontSize: 16, color: "black" }}> Rate! </Typography>
-                                    </Button>
                                 </CardContent>
                             </Card>
                         </Box>

@@ -657,9 +657,13 @@ public class UserResource {
 
 				String entry = pantryContainsIngredient(data.ingredient, pantry);
 
+				List<String> ret = new ArrayList<>();
+
+				ret.add(entry);
+
 				if (entry != null) {
 					txn.commit();
-					return Response.ok(entry).build();
+					return Response.ok(g.toJson(ret)).build();
 				}
 			}
 			return Response.status(Status.NOT_FOUND).build();

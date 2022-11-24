@@ -1,6 +1,6 @@
 import { Grid, Box, Typography, Card, CardContent, CardMedia, createTheme, ThemeProvider, FormControlLabel, RadioGroup, Radio, Divider, Button } from "@mui/material";
 import Select from "react-select"
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import restCalls from "../restCalls"
 import "./style.css"
 
@@ -14,18 +14,19 @@ export default function ConsultPantry() {
     const [others, setOthers] = useState(false)
     const [cereals, setCereals] = useState(false)
     const [ingredients, setIngredients] = useState()
+    const [loaded, setLoaded] = useState(false);
 
     var pantry = JSON.parse(localStorage.getItem('pantry'));
     var ingredientList = JSON.parse(localStorage.getItem('ingredientList'));
 
-    function searchIngredient(iName){
-        for (var i = 0 ; i < ingredientList.length; i++){
-            if(ingredientList[i].name == iName ){
+    function searchIngredient(iName) {
+        for (var i = 0; i < ingredientList.length; i++) {
+            if (ingredientList[i].name == iName) {
                 return ingredientList[i];
             }
         }
     }
-   
+
     function vegetablesHandler(e) {
         if (vegetables) {
             setVegetables(false);
@@ -168,10 +169,13 @@ export default function ConsultPantry() {
         { value: "corn", label: "Corn" },
         { value: "lentils", label: "Lentils" },
     ];
-    
+
     function getFiltersManager(e) {
         e.preventDefault();
-        restCalls.filterIngredients(vegetables,meat,fish,fruits,cereals,others,seafoods);
+        restCalls.filterIngredients(vegetables, meat, fish, fruits, cereals, others, seafoods);
+    }
+    function clearFiltersManager(e){
+        restCalls.getPantry();
     }
 
     const theme = createTheme({
@@ -181,9 +185,38 @@ export default function ConsultPantry() {
             },
         },
     });
+    useEffect(() => {
+        generateIngredients();
+    }, []);
 
 
-
+    function generateIngredients() {
+        const ingredientCards = [];
+        pantry.map((p) => {
+            ingredientCards.push(
+                <>
+                    <Box sx={{ p: 1, width: "20%" }}>
+                        <Card variant="outlined" sx={{ p: 1 }}>
+                            <CardContent >
+                                <Typography sx={{ fontFamily: 'Verdana', fontSize: 20, color: "black", display: 'flex', justifyContent: 'center' }}>
+                                    {p.split(" ")[0]}
+                                </Typography>
+                                <Typography sx={{ fontFamily: 'Verdana', fontSize: 20, color: "black", display: 'flex', justifyContent: 'center' }}>
+                                    {p.split(" ")[1]}
+                                </Typography>
+                            </CardContent>
+                            <CardMedia
+                                component="img"
+                                image={searchIngredient(p.split(" ")[0]).photo}
+                                height="150"
+                                alt="green iguana"
+                            />
+                        </Card>
+                    </Box>
+                </>)
+        })
+        return ingredientCards;
+    }
 
     return (
         <Grid container>
@@ -241,7 +274,7 @@ export default function ConsultPantry() {
                             value={ingredients}
                             onChange={ingredientsHandler}
                             isSearchable={true}
-                            isMulti = {false}
+                            isMulti={false}
                         />
                     </Box>
                     <Button
@@ -253,33 +286,23 @@ export default function ConsultPantry() {
                     >
                         <Typography sx={{ fontFamily: 'Verdana', fontSize: 16, color: "black" }}> Filter! </Typography>
                     </Button>
-                </Box>
+                    <Button 
+                        type ="submit"
+                        variant= "outlined"
+                        color = 'inherit'
+                        sx={{ mt: "8%", width: "30%" }}
+                        onClick={(e) => {clearFiltersManager(e)}}
+                >
+                    <Typography sx={{ fontFamily: 'Verdana', fontSize: 16, color: "black" }}> Clear filters </Typography>
+                </Button>
+                        </Box>
             </Grid>
             <Grid container item xs={0.05} direction="column" alignItems="center" justifyContent="center">
                 <Divider orientation="vertical" sx={{ bgcolor: "#FFC86E", width: "20%" }} />
             </Grid>
             <Grid container item xs={9} direction='row'>
 
-                {pantry.map((p) => 
-                        <Box sx={{ p: 1, width: "20%" }}>
-                            <Card variant="outlined" sx={{ p: 1 }}>
-                                <CardContent >
-                                    <Typography sx={{ fontFamily: 'Verdana', fontSize: 20, color: "black" ,display: 'flex', justifyContent: 'center' }}>
-                                        {p.split(" ")[0]}
-                                    </Typography>
-                                    <Typography sx={{ fontFamily: 'Verdana', fontSize: 20, color: "black",display: 'flex', justifyContent: 'center' }}>
-                                        {p.split(" ")[1]}
-                                    </Typography>
-                                </CardContent>
-                                <CardMedia
-                                    component="img"
-                                    image={searchIngredient(p.split(" ")[0]).photo}
-                                    height="150"
-                                    alt="green iguana"
-                            />
-                            </Card>
-                        </Box>
-                )}
+                {generateIngredients()}
             </Grid>
         </Grid>
     )

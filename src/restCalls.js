@@ -252,7 +252,7 @@ class restCalls {
             },
             body: JSON.stringify({
                 username: JSON.parse(localStorage.getItem('user')).username,
-                type: type1
+                type : type1
             })
         }).then(function (response) {
             if (!response.ok) {

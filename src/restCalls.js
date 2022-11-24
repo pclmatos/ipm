@@ -268,6 +268,30 @@ class restCalls {
             return text;
         })
     }
+    filterTextIngredients(ingredient) {
+        return fetch("https://silent-blade-368222.appspot.com/rest/user/pantry/ingredient", {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json; charset=UTF-8',
+            },
+            body: JSON.stringify({
+                username: JSON.parse(localStorage.getItem('user')).username,
+                ingredient: ingredient
+            })
+        }).then(function (response) {
+            if (!response.ok) {
+                return response.text().then((text) => {
+                    const error = new Error(text)
+                    error.code = response.status;
+                    throw error
+                })
+            }
+            return response.text()
+        }).then(function (text) {
+            localStorage.setItem('pantry', text);
+            return text;
+        })
+    }
     /*
     updatePantry(entries) {
         return fetch("https://silent-blade-368222.appspot.com/rest/user/pantry", {

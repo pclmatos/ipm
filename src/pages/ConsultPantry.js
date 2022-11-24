@@ -14,7 +14,6 @@ export default function ConsultPantry() {
     const [others, setOthers] = useState(false)
     const [cereals, setCereals] = useState(false)
     const [ingredients, setIngredients] = useState()
-    const [loaded, setLoaded] = useState(false);
 
     var pantry = JSON.parse(localStorage.getItem('pantry'));
     var ingredientList = JSON.parse(localStorage.getItem('ingredientList'));
@@ -172,9 +171,20 @@ export default function ConsultPantry() {
 
     function getFiltersManager(e) {
         e.preventDefault();
-        restCalls.filterIngredients(vegetables, meat, fish, fruits, cereals, others, seafoods);
+        if(vegetables || meat || fish || fruits || cereals || others || seafoods ){
+            restCalls.filterIngredients(vegetables, meat, fish, fruits, cereals, others, seafoods);
+        }else {
+            restCalls.filterTextIngredients(ingredients.value.toString());
+        }
     }
     function clearFiltersManager(e){
+        setVegetables(false);
+        setMeat(false);
+        setFish(false);
+        setFruits(false);
+        setCereals(false);
+        setOthers(false);
+        setSeafoods(false);
         restCalls.getPantry();
     }
 
@@ -293,7 +303,7 @@ export default function ConsultPantry() {
                         sx={{ mt: "8%", width: "30%" }}
                         onClick={(e) => {clearFiltersManager(e)}}
                 >
-                    <Typography sx={{ fontFamily: 'Verdana', fontSize: 16, color: "black" }}> Clear filters </Typography>
+                    <Typography sx={{ fontFamily: 'Verdana', fontSize: 16, color: "black" }}> Clear filters! </Typography>
                 </Button>
                         </Box>
             </Grid>

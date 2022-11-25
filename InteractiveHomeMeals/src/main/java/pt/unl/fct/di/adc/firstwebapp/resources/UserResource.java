@@ -1,6 +1,8 @@
 package pt.unl.fct.di.adc.firstwebapp.resources;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.UUID;
 import java.util.logging.Logger;
@@ -506,9 +508,9 @@ public class UserResource {
 
 			if (user != null) {
 				List<String> pantry = g.fromJson(user.getString(PANTRY), List.class);
-				if (pantry == null) {
-					pantry = new ArrayList<>();
+				if (pantry.isEmpty()) {
 					for (String entry : data.entries) {
+						entry = entry + " " + 1;
 						pantry.add(entry);
 					}
 				} else {
@@ -517,17 +519,20 @@ public class UserResource {
 						String prevEntry = pantryContainsIngredient(p.getIngredient(), pantry);
 						if (prevEntry != null) {
 							PantryEntry prev = new PantryEntry(prevEntry);
-							int newCount = prev.getCount() + p.getCount();
+							int newCount = prev.getCount() + 1;
 							String newEntry = prev.getIngredient() + " " + newCount;
 							pantry.add(newEntry);
 							pantry.remove(prevEntry);
 						} else {
+							entry = entry + " " + 1;
 							pantry.add(entry);
 						}
 
 					}
 
 				}
+
+				pantry.sort(null);
 
 				String updatedPantry = g.toJson(pantry);
 
@@ -695,8 +700,7 @@ public class UserResource {
 				List<String> pantry = g.fromJson(user.getString(PANTRY), List.class);
 
 				for (String ingredient : data.ingredients) {
-					PantryEntry p = new PantryEntry(ingredient);
-					String entry = pantryContainsIngredient(p.getIngredient(), pantry);
+					String entry = pantryContainsIngredient(ingredient, pantry);
 
 					if (entry != null) {
 						PantryEntry prev = new PantryEntry(entry);
@@ -709,8 +713,12 @@ public class UserResource {
 							pantry.remove(entry);
 							pantry.add(newEntry);
 						}
+					} else {
+						return Response.status(Status.NOT_FOUND).entity("Ingredient not found in pantry!").build();
 					}
 				}
+
+				pantry.sort(null);
 
 				String updatedPantry = g.toJson(pantry);
 
@@ -833,6 +841,9 @@ public class UserResource {
 				String pantryEntry = pantryContainsIngredient(info.name, pantry);
 				filteredPantry.add(pantryEntry);
 			}
+
+			filteredPantry.sort(null);
+
 			return Response.ok(g.toJson(filteredPantry)).build();
 		} else {
 			return Response.status(Status.NOT_FOUND).entity("No ingredient found for the current filter").build();
@@ -854,6 +865,42 @@ public class UserResource {
 
 		return Response.ok(g.toJson(ingredientList)).build();
 	}
+
+	@GET
+	@Path("/recipes/top")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response getTopRated(){
+		Query<Entity> query = Query.newEntityQueryBuilder().setKind(RECIPE).build();
+		QueryResults<Entity> result = datastore.run(query);
+
+		List<RecipeInfo> recipes = new ArrayList<>();
+
+		result.forEachRemaining((recipe) -> {
+			RecipeInfo info = recipeInfoBuilder(recipe);
+			recipes.add(info);
+		});
+
+		if(recipes.isEmpty()){
+			return Response.status(Status.NOT_FOUND).entity("No recipes found!").build();
+		} else {
+			Collections.sort(recipes, new Comparator<RecipeInfo>(){
+				@Override
+				public int compare(RecipeInfo i1, RecipeInfo i2){
+					return Double.compare(i1.rating, i2.rating);
+				}
+			});
+
+			List<RecipeInfo> top3 = new ArrayList<>();
+
+			for(int i = recipes.size() - 1; i > recipes.size() - 4; i--){
+				top3.add(recipes.get(i));
+			}
+	
+			return Response.ok(g.toJson(top3)).build();
+		}
+
+	}
+
 
 	public IngredientInfo ingredientInfoBuilder(Entity ingredient) {
 		return new IngredientInfo(ingredient.getKey().getName(), ingredient.getString(INGREDIENT_TYPE),
@@ -882,7 +929,7 @@ public class UserResource {
 
 	private String pantryContainsIngredient(String ingredient, List<String> list) {
 		for (String s : list) {
-			if (s.contains(ingredient)) {
+			if (s.split(" ")[0].equals(ingredient)) {
 				return s;
 			}
 		}

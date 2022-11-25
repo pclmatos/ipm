@@ -292,16 +292,22 @@ class restCalls {
             return text;
         })
     }
-    /*
-    updatePantry(entries) {
-        return fetch("https://silent-blade-368222.appspot.com/rest/user/pantry", {
+
+    removeIngredient(ingredients) {
+        const ingredients2 = [];
+        if (ingredients !== undefined) {
+            for (var i = 0; i < ingredients.length; i++) {
+                ingredients2.push(ingredients[i].value)
+            }
+        }
+        return fetch("https://silent-blade-368222.appspot.com/rest/user/pantry/ingredient/remove", {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify({
                 username: JSON.parse(localStorage.getItem('user')).username,
-                entries: entries
+                ingredients: ingredients2
             })
         }).then(function (response) {
             if (!response.ok) {
@@ -313,11 +319,41 @@ class restCalls {
             }
             return response.text()
         }).then(function (text) {
-            //localStorage.setItem('user', text);
+            localStorage.setItem('pantry', text);
             return text;
         })
     }
-    */
+
+    addIngredient(ingredients) {
+        const ingredients2 = [];
+        if (ingredients !== undefined) {
+            for (var i = 0; i < ingredients.length; i++) {
+                ingredients2.push(ingredients[i].value)
+            }
+        }
+        return fetch("https://silent-blade-368222.appspot.com/rest/user/pantry/update", {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                username: JSON.parse(localStorage.getItem('user')).username,
+                entries: ingredients2
+            })
+        }).then(function (response) {
+            if (!response.ok) {
+                return response.text().then((text) => {
+                    const error = new Error(text)
+                    error.code = response.status;
+                    throw error
+                })
+            }
+            return response.text()
+        }).then(function (text) {
+            localStorage.setItem('pantry', text);
+            return text;
+        })
+    }
 }
 
 

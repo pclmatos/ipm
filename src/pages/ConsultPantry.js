@@ -193,9 +193,9 @@ export default function ConsultPantry() {
     function getFiltersManager(e) {
         e.preventDefault();
         if (vegetables || meat || fish || fruits || cereals || others || seafoods) {
-            restCalls.filterIngredients(vegetables, meat, fish, fruits, cereals, others, seafoods);
+            restCalls.filterIngredients(vegetables, meat, fish, fruits, cereals, others, seafoods).then(() => window.location.reload(false))
         } else {
-            restCalls.filterTextIngredients(ingredients.value.toString());
+            restCalls.filterTextIngredients(ingredients.value.toString()).then(() => window.location.reload(false))
         }
     }
     function clearFiltersManager(e) {
@@ -206,7 +206,7 @@ export default function ConsultPantry() {
         setCereals(false);
         setOthers(false);
         setSeafoods(false);
-        restCalls.getPantry();
+        restCalls.getPantry().then(() => window.location.reload(false))
     }
 
     const theme = createTheme({
@@ -251,6 +251,7 @@ export default function ConsultPantry() {
 
     const handleClose = () => {
         setOpen(false);
+        restCalls.addIngredient()
     };
 
     const handleClickOpen2 = () => {
@@ -259,6 +260,16 @@ export default function ConsultPantry() {
 
     const handleClose2 = () => {
         setOpen2(false);
+    };
+
+    const handleClickClose1 = () => {
+        setOpen(false);
+        restCalls.addIngredient(ingredients2).then(() => window.location.reload(false))
+    };
+
+    const handleClickClose2 = () => {
+        setOpen2(false);
+        restCalls.removeIngredient(ingredients3).then(() => window.location.reload(false))
     };
 
     return (
@@ -362,7 +373,7 @@ export default function ConsultPantry() {
                             </FormControl>
                         </DialogContent>
                         <DialogActions>
-                            <Button variant="outlined" color='inherit' onClick={handleClose}>Add!</Button>
+                            <Button variant="outlined" color='inherit' onClick={handleClickClose1}>Add!</Button>
                         </DialogActions>
                     </Dialog>
 
@@ -387,15 +398,9 @@ export default function ConsultPantry() {
                             </FormControl>
                         </DialogContent>
                         <DialogActions>
-                            <Button variant="outlined" color='inherit' onClick={handleClose2}>Remove!</Button>
+                            <Button variant="outlined" color='inherit' onClick={handleClickClose2}>Remove!</Button>
                         </DialogActions>
                     </Dialog>
-
-
-
-
-
-
 
                 </Box>
             </Grid>
@@ -403,7 +408,6 @@ export default function ConsultPantry() {
                 <Divider orientation="vertical" sx={{ bgcolor: "#FFC86E", width: "20%" }} />
             </Grid>
             <Grid container item xs={9} direction='row'>
-
                 {generateIngredients()}
             </Grid>
         </Grid>

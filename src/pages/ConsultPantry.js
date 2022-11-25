@@ -1,6 +1,6 @@
-import { Grid, Box, Typography, Card, CardContent, CardMedia, createTheme, ThemeProvider, FormControlLabel, RadioGroup, Radio, Divider, Button } from "@mui/material";
+import { Grid, Box, Typography, Card, CardContent, CardMedia, createTheme, ThemeProvider, FormControl, FormControlLabel, RadioGroup, Radio, Divider, Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle } from "@mui/material";
 import Select from "react-select"
-import { useState, useEffect } from "react"
+import React, { useState } from "react"
 import restCalls from "../restCalls"
 import "./style.css"
 
@@ -14,6 +14,11 @@ export default function ConsultPantry() {
     const [others, setOthers] = useState(false)
     const [cereals, setCereals] = useState(false)
     const [ingredients, setIngredients] = useState()
+    const [ingredients2, setIngredients2] = useState()
+    const [ingredients3, setIngredients3] = useState()
+
+    const [open, setOpen] = useState(false);
+    const [open2, setOpen2] = useState(false);
 
     var pantry = JSON.parse(localStorage.getItem('pantry'));
     var ingredientList = JSON.parse(localStorage.getItem('ingredientList'));
@@ -33,6 +38,7 @@ export default function ConsultPantry() {
             setVegetables(e.target.value);
         }
     }
+
     function meatHandler(e) {
         if (meat) {
             setMeat(false);
@@ -40,6 +46,7 @@ export default function ConsultPantry() {
             setMeat(e.target.value);
         }
     }
+
     function fishHandler(e) {
         if (fish) {
             setFish(false);
@@ -47,6 +54,7 @@ export default function ConsultPantry() {
             setFish(e.target.value);
         }
     }
+
     function fruitsHandler(e) {
         if (fruits) {
             setFruits(false);
@@ -54,6 +62,7 @@ export default function ConsultPantry() {
             setFruits(e.target.value);
         }
     }
+
     function seafoodHandler(e) {
         if (seafoods) {
             setSeafoods(false);
@@ -61,6 +70,7 @@ export default function ConsultPantry() {
             setSeafoods(e.target.value);
         }
     }
+
     function othersHandler(e) {
         if (others) {
             setOthers(false);
@@ -68,6 +78,7 @@ export default function ConsultPantry() {
             setOthers(e.target.value);
         }
     }
+
     function cerealsHandler(e) {
         if (cereals) {
             setCereals(false);
@@ -75,9 +86,19 @@ export default function ConsultPantry() {
             setCereals(e.target.value);
         }
     }
+
     function ingredientsHandler(data) {
         setIngredients(data);
     }
+
+    function ingredients2Handler(data) {
+        setIngredients2(data);
+    }
+
+    function ingredients3Handler(data) {
+        setIngredients3(data);
+    }
+
     const ingredientsList = [
         { value: "apple", label: "Apple" },
         { value: "banana", label: "Banana" },
@@ -171,13 +192,13 @@ export default function ConsultPantry() {
 
     function getFiltersManager(e) {
         e.preventDefault();
-        if(vegetables || meat || fish || fruits || cereals || others || seafoods ){
+        if (vegetables || meat || fish || fruits || cereals || others || seafoods) {
             restCalls.filterIngredients(vegetables, meat, fish, fruits, cereals, others, seafoods);
-        }else {
+        } else {
             restCalls.filterTextIngredients(ingredients.value.toString());
         }
     }
-    function clearFiltersManager(e){
+    function clearFiltersManager(e) {
         setVegetables(false);
         setMeat(false);
         setFish(false);
@@ -195,10 +216,6 @@ export default function ConsultPantry() {
             },
         },
     });
-    useEffect(() => {
-        generateIngredients();
-    }, []);
-
 
     function generateIngredients() {
         const ingredientCards = [];
@@ -227,6 +244,22 @@ export default function ConsultPantry() {
         })
         return ingredientCards;
     }
+
+    const handleClickOpen = () => {
+        setOpen(true);
+    };
+
+    const handleClose = () => {
+        setOpen(false);
+    };
+
+    const handleClickOpen2 = () => {
+        setOpen2(true);
+    };
+
+    const handleClose2 = () => {
+        setOpen2(false);
+    };
 
     return (
         <Grid container>
@@ -291,21 +324,80 @@ export default function ConsultPantry() {
                         type="submit"
                         variant="outlined"
                         color='inherit'
-                        sx={{ mt: "8%", width: "20%" }}
+                        sx={{ mt: "6%", width: "20%" }}
                         onClick={(e) => { getFiltersManager(e) }}
                     >
-                        <Typography sx={{ fontFamily: 'Verdana', fontSize: 16, color: "black" }}> Filter! </Typography>
+                        <Typography sx={{ fontFamily: 'Verdana', fontSize: 16, color: "black" }}> Filter </Typography>
                     </Button>
-                    <Button 
-                        type ="submit"
-                        variant= "outlined"
-                        color = 'inherit'
-                        sx={{ mt: "8%", width: "30%" }}
-                        onClick={(e) => {clearFiltersManager(e)}}
-                >
-                    <Typography sx={{ fontFamily: 'Verdana', fontSize: 16, color: "black" }}> Clear filters! </Typography>
-                </Button>
-                        </Box>
+                    <Button
+                        type="submit"
+                        variant="outlined"
+                        color='inherit'
+                        sx={{ mt: "4%", width: "40%" }}
+                        onClick={(e) => { clearFiltersManager(e) }}
+                    >
+                        <Typography sx={{ fontFamily: 'Verdana', fontSize: 16, color: "black" }}> Clear filters </Typography>
+                    </Button>
+
+
+
+                    <Button variant="outlined" color='inherit' sx={{ mt: "4%", width: "50%" }} onClick={handleClickOpen}>
+                        <Typography sx={{ fontFamily: 'Verdana', fontSize: 16, color: "black" }}> Add Ingredients</Typography>
+                    </Button>
+                    <Dialog
+                        open={open}
+                        onClose={handleClose}
+                    >
+                        <DialogTitle>Add ingredients to your pantry!</DialogTitle>
+                        <DialogContent>
+                            <FormControl sx={{ mt: 2, minWidth: 120, minHeight: 175 }}>
+                                <Select
+                                    options={ingredientsList}
+                                    placeholder="Select ingredients"
+                                    value={ingredients2}
+                                    onChange={ingredients2Handler}
+                                    isSearchable={true}
+                                    isMulti
+                                />
+                            </FormControl>
+                        </DialogContent>
+                        <DialogActions>
+                            <Button variant="outlined" color='inherit' onClick={handleClose}>Add!</Button>
+                        </DialogActions>
+                    </Dialog>
+
+                    <Button variant="outlined" color='inherit' sx={{ mt: "4%", width: "50%" }} onClick={handleClickOpen2}>
+                        <Typography sx={{ fontFamily: 'Verdana', fontSize: 16, color: "black" }}> Remove Ingredients</Typography>
+                    </Button>
+                    <Dialog
+                        open={open2}
+                        onClose={handleClose2}
+                    >
+                        <DialogTitle>Remove ingredients from your pantry!</DialogTitle>
+                        <DialogContent>
+                            <FormControl sx={{ mt: 2, minWidth: 120, minHeight: 175 }}>
+                                <Select
+                                    options={ingredientsList}
+                                    placeholder="Select ingredients"
+                                    value={ingredients3}
+                                    onChange={ingredients3Handler}
+                                    isSearchable={true}
+                                    isMulti
+                                />
+                            </FormControl>
+                        </DialogContent>
+                        <DialogActions>
+                            <Button variant="outlined" color='inherit' onClick={handleClose2}>Remove!</Button>
+                        </DialogActions>
+                    </Dialog>
+
+
+
+
+
+
+
+                </Box>
             </Grid>
             <Grid container item xs={0.05} direction="column" alignItems="center" justifyContent="center">
                 <Divider orientation="vertical" sx={{ bgcolor: "#FFC86E", width: "20%" }} />

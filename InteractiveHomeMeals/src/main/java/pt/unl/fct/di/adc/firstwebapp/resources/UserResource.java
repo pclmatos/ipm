@@ -520,6 +520,7 @@ public class UserResource {
 							int newCount = prev.getCount() + p.getCount();
 							String newEntry = prev.getIngredient() + " " + newCount;
 							pantry.add(newEntry);
+							pantry.remove(prevEntry);
 						} else {
 							pantry.add(entry);
 						}
@@ -693,42 +694,40 @@ public class UserResource {
 
 				List<String> pantry = g.fromJson(user.getString(PANTRY), List.class);
 
-				PantryEntry p = new PantryEntry(data.ingredient);
+				for (String ingredient : data.ingredients) {
+					PantryEntry p = new PantryEntry(ingredient);
+					String entry = pantryContainsIngredient(p.getIngredient(), pantry);
 
-				String entry = pantryContainsIngredient(p.getIngredient(), pantry);
+					if (entry != null) {
+						PantryEntry prev = new PantryEntry(entry);
+						int newCount = prev.getCount() - 1;
 
-				if (entry != null) {
-					PantryEntry prev = new PantryEntry(entry);
-					PantryEntry rm = new PantryEntry(data.ingredient);
-					int newCount = prev.getCount() - rm.getCount();
-
-					if(newCount == 0){
-						pantry.remove(entry);
-					} else {
-						String newEntry = prev.getIngredient() + " " + newCount;
-						pantry.remove(entry);
-						pantry.add(newEntry);
+						if (newCount == 0) {
+							pantry.remove(entry);
+						} else {
+							String newEntry = prev.getIngredient() + " " + newCount;
+							pantry.remove(entry);
+							pantry.add(newEntry);
+						}
 					}
-
-					String updatedPantry = g.toJson(pantry);
-
-					Entity updatedUser = Entity.newBuilder(key)
-							.set(USERNAME, user.getString(USERNAME))
-							.set(PASSWORD, user.getString(PASSWORD))
-							.set(PANTRY, updatedPantry)
-							.build();
-
-					datastore.update(updatedUser);
-					txn.put(updatedUser);
-
-					txn.commit();
-					return Response.ok(updatedPantry).build();
-				} else {
-					return Response.status(Status.NOT_FOUND).build();
 				}
-			}
-			return Response.status(Status.NOT_FOUND).build();
 
+				String updatedPantry = g.toJson(pantry);
+
+				Entity updatedUser = Entity.newBuilder(key)
+						.set(USERNAME, user.getString(USERNAME))
+						.set(PASSWORD, user.getString(PASSWORD))
+						.set(PANTRY, updatedPantry)
+						.build();
+
+				datastore.update(updatedUser);
+				txn.put(updatedUser);
+
+				txn.commit();
+				return Response.ok(updatedPantry).build();
+			} else {
+				return Response.status(Status.NOT_FOUND).entity("User doesn't exist!").build();
+			}
 		} finally {
 			if (txn.isActive())
 				txn.rollback();
@@ -797,7 +796,6 @@ public class UserResource {
 		}
 	}
 
-
 	@POST
 	@Path("/pantry/filter")
 	@Consumes(MediaType.APPLICATION_JSON)
@@ -812,26 +810,26 @@ public class UserResource {
 		List<IngredientInfo> ingredientsList = new ArrayList<>();
 		List<String> filteredPantry = new ArrayList<>();
 
-		String pantryString = (String)getPantryResponse.getEntity();
+		String pantryString = (String) getPantryResponse.getEntity();
 
 		List<String> pantry = g.fromJson(pantryString, List.class);
 
 		ingredients.forEachRemaining((ingredient) -> {
 			IngredientInfo info = ingredientInfoBuilder(ingredient);
 			String contains = pantryContainsIngredient(info.name, pantry);
-			if(contains != null){
+			if (contains != null) {
 				ingredientsList.add(ingredientInfoBuilder(ingredient));
 			}
 		});
 
 		if (data.type != null) {
 			for (int i = ingredientsList.size() - 1; i >= 0; i--) {
-				if (!((ingredientsList.get(i).type).equals(data.type)) ) {
+				if (!((ingredientsList.get(i).type).equals(data.type))) {
 					ingredientsList.remove(i);
 				}
 			}
 
-			for(IngredientInfo info: ingredientsList){
+			for (IngredientInfo info : ingredientsList) {
 				String pantryEntry = pantryContainsIngredient(info.name, pantry);
 				filteredPantry.add(pantryEntry);
 			}
@@ -839,7 +837,6 @@ public class UserResource {
 		} else {
 			return Response.status(Status.NOT_FOUND).entity("No ingredient found for the current filter").build();
 		}
-
 
 	}
 

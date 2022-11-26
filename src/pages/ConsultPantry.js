@@ -1,4 +1,4 @@
-import { Grid, Box, Typography, Card, CardContent, CardMedia, createTheme, ThemeProvider, FormControl, FormControlLabel, RadioGroup, Radio, Divider, Button, Dialog, DialogActions, DialogContent, DialogTitle } from "@mui/material";
+import { Grid, Box, Typography, Card, CardContent, CircularProgress, CardMedia, createTheme, ThemeProvider, FormControl, FormControlLabel, RadioGroup, Radio, Divider, Button, Dialog, DialogActions, DialogContent, DialogTitle } from "@mui/material";
 import Select from "react-select"
 import React, { useState } from "react"
 import restCalls from "../restCalls"
@@ -16,6 +16,7 @@ export default function ConsultPantry() {
     const [ingredients, setIngredients] = useState()
     const [ingredients2, setIngredients2] = useState()
     const [ingredients3, setIngredients3] = useState()
+    const [loading, setLoading] = useState(false)
 
     const [open, setOpen] = useState(false);
     const [open2, setOpen2] = useState(false);
@@ -192,13 +193,19 @@ export default function ConsultPantry() {
 
     function getFiltersManager(e) {
         e.preventDefault();
+        setLoading(true);
         if (vegetables || meat || fish || fruits || cereals || others || seafoods) {
-            restCalls.filterIngredients(vegetables, meat, fish, fruits, cereals, others, seafoods).then(() => window.location.reload(false))
+            restCalls.filterIngredients(vegetables, meat, fish, fruits, cereals, others, seafoods)
+                .then(() => { setLoading(false); /*window.location.reload(false)*/ })
+                .catch(() => { setLoading(false) })
         } else {
-            restCalls.filterTextIngredients(ingredients.value.toString()).then(() => window.location.reload(false))
+            restCalls.filterTextIngredients(ingredients.value.toString())
+                .then(() => { setLoading(false); /*window.location.reload(false)*/ })
+                .catch(() => { setLoading(false) })
         }
     }
     function clearFiltersManager(e) {
+        setLoading(true)
         setVegetables(false);
         setMeat(false);
         setFish(false);
@@ -206,7 +213,25 @@ export default function ConsultPantry() {
         setCereals(false);
         setOthers(false);
         setSeafoods(false);
-        restCalls.getPantry().then(() => window.location.reload(false))
+        setIngredients("")
+        restCalls.getPantry().then(() => { setLoading(false); /*window.location.reload(false)*/ })
+            .catch(() => { setLoading(false) })
+    }
+
+    function getLabel(valueStr) {
+        let foundIngredient = ingredientsList.find(ingredient => ingredient.value == valueStr)
+
+        return foundIngredient.label;
+    }
+
+    function getPantryList() {
+        const pantryList = []
+        for(let i=0; i<pantry.length; i++) {
+            let auxValue = pantry[i].split(" ")[0]
+            let auxLabel = getLabel(auxValue)
+            pantryList.push({ value: auxValue, label: auxLabel })
+        }
+        return pantryList
     }
 
     const theme = createTheme({
@@ -263,17 +288,24 @@ export default function ConsultPantry() {
     };
 
     const handleClickClose1 = () => {
+        setLoading(true)
         setOpen(false);
-        restCalls.addIngredient(ingredients2).then(() => window.location.reload(false))
+        setIngredients2()
+        restCalls.addIngredient(ingredients2).then(() => { setLoading(false); /*window.location.reload(false)*/ })
+            .catch(() => { setLoading(false) })
     };
 
     const handleClickClose2 = () => {
+        setLoading(true)
         setOpen2(false);
-        restCalls.removeIngredient(ingredients3).then(() => window.location.reload(false))
+        setIngredients3()
+        restCalls.removeIngredient(ingredients3).then(() => { setLoading(false); /*window.location.reload(false)*/ })
+            .catch(() => { setLoading(false) })
     };
 
     return (
         <Grid container>
+            {loading && <CircularProgress size='3rem' color="inherit" sx={{ position: "absolute", top: "50%", left: "50%", overflow: "auto" }} />}
             <Grid item xs={2.95}>
                 <Box sx={{
                     display: 'flex',
@@ -388,7 +420,7 @@ export default function ConsultPantry() {
                         <DialogContent>
                             <FormControl sx={{ mt: 2, minWidth: 120, minHeight: 175 }}>
                                 <Select
-                                    options={ingredientsList}
+                                    options={getPantryList()}
                                     placeholder="Select ingredients"
                                     value={ingredients3}
                                     onChange={ingredients3Handler}

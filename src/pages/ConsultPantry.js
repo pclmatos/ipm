@@ -193,7 +193,15 @@ export default function ConsultPantry() {
     function getFiltersManager(e) {
         e.preventDefault();
         if (vegetables || meat || fish || fruits || cereals || others || seafoods) {
+            if((vegetables && !meat && !fish && !fruits && !cereals && !others && !seafoods)
+            || (!vegetables && meat && !fish && !fruits && !cereals && !others && !seafoods)
+            || (!vegetables && !meat && fish && !fruits && !cereals && !others && !seafoods)   
+            || (!vegetables && !meat && !fish && fruits && !cereals && !others && !seafoods)
+            || (!vegetables && !meat && !fish && !fruits && cereals && !others && !seafoods)
+            || (!vegetables && !meat && !fish && !fruits && !cereals && others && !seafoods) 
+            || (!vegetables && !meat && !fish && !fruits && !cereals && !others && seafoods)  ){
             restCalls.filterIngredients(vegetables, meat, fish, fruits, cereals, others, seafoods).then(() => window.location.reload(false))
+            }
         } else {
             restCalls.filterTextIngredients(ingredients.value.toString()).then(() => window.location.reload(false))
         }
@@ -280,7 +288,7 @@ export default function ConsultPantry() {
                     flexDirection: 'column',
                     alignItems: 'center'
                 }}>
-                    <Typography sx={{ fontFamily: 'Verdana', fontSize: 25, color: "black", pt: "6%", pb: "1%" }}>Types of ingredients</Typography>
+                    <Typography sx={{ fontFamily: 'Verdana', fontSize: 25, color: "black", pt: "6%", pb: "1%" }}>Types of ingredients(select one)</Typography>
                     <Box sx={{ pl: '6%' }}>
                         <ThemeProvider theme={theme}>
                             <RadioGroup

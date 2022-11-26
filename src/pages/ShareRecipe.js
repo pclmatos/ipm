@@ -173,7 +173,10 @@ export default function ShareRecipe() {
 
     function shareRecipeManager(e) {
         e.preventDefault();
-        restCalls.shareRecipe(recipeName, description, ingredients, difficulty, category, calories, imageArray, ingredientsDescription).then(() => { restCalls.allRecipes() })
+
+        restCalls.shareRecipe(recipeName, description, ingredients, difficulty, category, calories, imageArray, ingredientsDescription).then(() => {
+            restCalls.allRecipes()
+        })
     }
 
     return (

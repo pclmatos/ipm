@@ -773,7 +773,9 @@ public class UserResource {
 				long nRates = recipe.rateCount;
 				long updatedRateCount = nRates + 1;
 
-				double newRate = ((currRate * (double) nRates) + data.rating) / (double) (updatedRateCount);
+				double tmpRate = ((currRate * (double) nRates) + data.rating) / (double) (updatedRateCount);
+
+				double newRate = (double)Math.round(tmpRate * 10)/10;
 
 				Key key = datastore.newKeyFactory().setKind(RECIPE).newKey(recipe.id);
 
@@ -869,7 +871,7 @@ public class UserResource {
 	@GET
 	@Path("/recipes/top")
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response getTopRated(){
+	public Response getTopRated() {
 		Query<Entity> query = Query.newEntityQueryBuilder().setKind(RECIPE).build();
 		QueryResults<Entity> result = datastore.run(query);
 
@@ -880,27 +882,26 @@ public class UserResource {
 			recipes.add(info);
 		});
 
-		if(recipes.isEmpty()){
+		if (recipes.isEmpty()) {
 			return Response.status(Status.NOT_FOUND).entity("No recipes found!").build();
 		} else {
-			Collections.sort(recipes, new Comparator<RecipeInfo>(){
+			Collections.sort(recipes, new Comparator<RecipeInfo>() {
 				@Override
-				public int compare(RecipeInfo i1, RecipeInfo i2){
+				public int compare(RecipeInfo i1, RecipeInfo i2) {
 					return Double.compare(i1.rating, i2.rating);
 				}
 			});
 
 			List<RecipeInfo> top3 = new ArrayList<>();
 
-			for(int i = recipes.size() - 1; i > recipes.size() - 4; i--){
+			for (int i = recipes.size() - 1; i > recipes.size() - 4; i--) {
 				top3.add(recipes.get(i));
 			}
-	
+
 			return Response.ok(g.toJson(top3)).build();
 		}
 
 	}
-
 
 	public IngredientInfo ingredientInfoBuilder(Entity ingredient) {
 		return new IngredientInfo(ingredient.getKey().getName(), ingredient.getString(INGREDIENT_TYPE),

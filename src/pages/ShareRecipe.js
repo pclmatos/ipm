@@ -1,4 +1,4 @@
-import { Box, Grid, TextField, Typography, InputLabel, MenuItem, FormControl, Button } from "@mui/material";
+import { Box, Grid, TextField, Typography, InputLabel, MenuItem, FormControl, Button, CircularProgress } from "@mui/material";
 import SelectMUI from "@mui/material/Select";
 import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
 import Select from "react-select"
@@ -15,6 +15,7 @@ export default function ShareRecipe() {
     const [ingredients, setIngredients] = useState();
     const [description, setDescription] = useState("");
     const [ingredientsDescription, setIngredientsDescription] = useState("");
+    const [loading, setLoading] = useState(false);
 
     const [image, setImage] = useState();
     const [preview, setPreview] = useState();
@@ -173,14 +174,17 @@ export default function ShareRecipe() {
 
     function shareRecipeManager(e) {
         e.preventDefault();
-
-        restCalls.shareRecipe(recipeName, description, ingredients, difficulty, category, calories, imageArray, ingredientsDescription).then(() => {
-            restCalls.allRecipes()
+        setLoading(true)
+        restCalls.shareRecipe(recipeName, description, ingredients, difficulty, category, calories, imageArray, ingredientsDescription)
+        .then(() => {
+            restCalls.allRecipes(); setLoading(false)
         })
+        .catch(() => {setLoading(false)})
     }
 
     return (
         <Grid item xs={12} container className="container2">
+            {loading && <CircularProgress size='3rem' color="inherit" sx={{ position: "absolute", top: "50%", left: "50%", overflow: "auto" }} />}
             <Grid item xs={4}>
                 <Box sx={{
                     display: 'flex',

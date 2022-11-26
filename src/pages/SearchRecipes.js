@@ -1,4 +1,4 @@
-import { Box, Grid, Typography, Card, CardMedia, CardContent, Rating, RadioGroup, FormControlLabel, Radio, ThemeProvider, createTheme, Button, Divider } from "@mui/material";
+import { Box, Grid, Typography, Card, CardMedia, CardContent, Rating, RadioGroup, CircularProgress, FormControlLabel, Radio, ThemeProvider, createTheme, Button, Divider } from "@mui/material";
 import Select from "react-select"
 import logoIHMcut from "../images/logoIHMcut.png"
 import { useState, useEffect } from "react"
@@ -18,6 +18,7 @@ export default function SearchRecipesPage() {
     const [ingredients, setIngredients] = useState()
     const [searchText, setSearchText] = useState(null)
     const [readOnly, setReadOnly] = useState(false)
+    const [loading, setLoading] = useState(false)
 
     const [showRecipe, setShowRecipe] = useState(false)
     const [currentRecipe, setCurrentRecipe] = useState(null)
@@ -117,7 +118,10 @@ export default function SearchRecipesPage() {
 
     function searchRecipeManager(e) {
         e.preventDefault();
-        restCalls.searchRecipe(vegetarian, vegan, kosher, glutenFree, lactoseFree, completeMeal, lightMeal, ingredients/*, searchText*/).then(() => window.location.reload(false))
+        setLoading(true)
+        restCalls.searchRecipe(vegetarian, vegan, kosher, glutenFree, lactoseFree, completeMeal, lightMeal, ingredients/*, searchText*/)
+            .then(() => { setLoading(false); /*window.location.reload(false)*/ })
+            .catch(() => { setLoading(false) })
 
         {/* .then(() => { restCalls.userInfo().then(() => { hasToModifyPassword(); setShowProgress(false) }) }) */ }
     }
@@ -235,6 +239,8 @@ export default function SearchRecipesPage() {
     return (
 
         <Grid container className="container"  >
+
+            {loading && <CircularProgress size='3rem' color="inherit" sx={{ position: "absolute", top: "50%", left: "50%", overflow: "auto" }} />}
             <Grid item xs={2.95}>
                 <Box sx={{
                     display: 'flex',

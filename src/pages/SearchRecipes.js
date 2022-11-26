@@ -1,4 +1,4 @@
-import { Box, Grid, Typography, Card, CardMedia, CardContent, TextField, ListItem, Stack, Rating, RadioGroup, FormControlLabel, Radio, ThemeProvider, createTheme, Button, Divider, Table, TableHead, TableRow, TableCell, Paper } from "@mui/material";
+import { Box, Grid, Typography, Card, CardMedia, CardContent, Rating, RadioGroup, FormControlLabel, Radio, ThemeProvider, createTheme, Button, Divider } from "@mui/material";
 import Select from "react-select"
 import logoIHMcut from "../images/logoIHMcut.png"
 import { useState, useEffect } from "react"
@@ -29,7 +29,7 @@ export default function SearchRecipesPage() {
     var recipes = JSON.parse(localStorage.getItem('recipes'));
 
     useEffect(() => {
-        if(currentRecipe != null && rate) {
+        if (currentRecipe != null && rate) {
             ratingManager()
         }
     }, [rate])
@@ -112,7 +112,7 @@ export default function SearchRecipesPage() {
     }
 
     function ratingManager() {
-        restCalls.rateRecipe(rating, currentRecipe.name);
+        restCalls.rateRecipe(rating, currentRecipe.name).then(() => restCalls.topRatedRecipes())
     }
 
     function searchRecipeManager(e) {
@@ -328,7 +328,7 @@ export default function SearchRecipesPage() {
                                     image={recipe.photo == "undefined" ? logoIHMcut : recipe.photo}
                                     height="320"
                                     alt="green iguana"
-                                    onClick={() => { showRecipeHandler(); updateCurrRecipe(recipe); setReadOnly(false)}}
+                                    onClick={() => { showRecipeHandler(); updateCurrRecipe(recipe); setReadOnly(false) }}
                                     sx={{ cursor: "pointer" }}
 
                                 />
@@ -345,31 +345,31 @@ export default function SearchRecipesPage() {
                         <Box sx={{ p: 0.5, width: "45%" }}>
                             <Card variant="outlined" sx={{ p: 1 }}>
                                 <CardContent >
-                                    <Typography sx={{ fontFamily: 'Verdana', fontSize: 20, color: "black", textAlign: "center" }}>
+                                    <Typography sx={{ fontFamily: 'Verdana', fontSize: 19, color: "black", textAlign: "center" }}>
                                         {currentRecipe.name} (Shared by: {currentRecipe.author})
                                     </Typography>
                                 </CardContent>
                                 <CardMedia
                                     component="img"
                                     image={currentRecipe.photo == "undefined" ? logoIHMcut : currentRecipe.photo}
-                                    height="450"
+                                    height="350"
                                     alt="green iguana"
                                 />
-                                <CardContent >
-                                    <Typography sx={{ fontFamily: 'Verdana', fontSize: 20, color: "black" }}>
-                                        Ingredients: {showIngredients()}
+                                <CardContent>
+                                    <Typography sx={{ fontFamily: 'Verdana', fontSize: 19, color: "black" }}>
+                                        Ingredients (specification):<Typography sx={{ fontFamily: 'Verdana', fontSize: 18, color: "#BA852D" }}> - {currentRecipe.ingredientsDescription}</Typography>
                                     </Typography>
-                                    <Typography sx={{ fontFamily: 'Verdana', fontSize: 20, color: "black" }}>
-                                        Description: {currentRecipe.description}
+                                    <Typography sx={{ fontFamily: 'Verdana', fontSize: 19, color: "black" }}>
+                                        Description:<Typography sx={{ fontFamily: 'Verdana', fontSize: 18, color: "#BA852D" }}> - {currentRecipe.description}</Typography>
                                     </Typography>
-                                    <Typography sx={{ fontFamily: 'Verdana', fontSize: 20, color: "black" }}>
-                                        Category: {currentRecipe.category}
+                                    <Typography sx={{ fontFamily: 'Verdana', fontSize: 19, color: "black" }}>
+                                        Category:<Typography sx={{ fontFamily: 'Verdana', fontSize: 18, color: "#BA852D" }}> - {currentRecipe.category}</Typography>
                                     </Typography>
-                                    <Typography sx={{ fontFamily: 'Verdana', fontSize: 20, color: "black" }}>
-                                        Calories: {currentRecipe.calories}
+                                    <Typography sx={{ fontFamily: 'Verdana', fontSize: 19, color: "black" }}>
+                                        Calories:<Typography sx={{ fontFamily: 'Verdana', fontSize: 18, color: "#BA852D" }}> - {currentRecipe.calories}</Typography>
                                     </Typography>
-                                    <Typography sx={{ fontFamily: 'Verdana', fontSize: 20, color: "black" }}>
-                                        Difficulty: {currentRecipe.difficulty}
+                                    <Typography sx={{ fontFamily: 'Verdana', fontSize: 19, color: "black" }}>
+                                        Difficulty (1-5):<Typography sx={{ fontFamily: 'Verdana', fontSize: 18, color: "#BA852D" }}> - {currentRecipe.difficulty}</Typography>
                                     </Typography>
 
                                 </CardContent>
@@ -380,7 +380,7 @@ export default function SearchRecipesPage() {
                                         name="simple-controlled"
                                         value={rating}
                                         readOnly={readOnly}
-                                        precision = {0.5}
+                                        precision={0.5}
                                         onChange={(event, newValue) => {
                                             setRate(true)
                                             setRating(newValue)
@@ -390,8 +390,6 @@ export default function SearchRecipesPage() {
                                 </CardContent>
                             </Card>
                         </Box>
-
-
                     </>
                 }
             </Grid>

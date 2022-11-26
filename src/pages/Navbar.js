@@ -4,6 +4,7 @@ import logoIHMcut from "../images/logoIHMcut.png"
 import SearchRecipesPage from "./SearchRecipes";
 import ShareRecipe from "./ShareRecipe";
 import ConsultPantry from "./ConsultPantry";
+import TopRated from "./TopRated";
 
 export default function Navbar() {
     const [selectedLeftTab, setSelectedLeftTab] = useState(0);
@@ -40,6 +41,7 @@ export default function Navbar() {
             {selectedLeftTab == 0 && <SearchRecipesPage/>}
             {selectedLeftTab == 1 && <ShareRecipe/> }
             {selectedLeftTab == 2 && <ConsultPantry/>}
+            {selectedLeftTab == 3 && <TopRated/>}
         </>
     )
 }

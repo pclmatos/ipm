@@ -352,7 +352,7 @@ export default function ConsultPantry() {
 
 
 
-                    <Button variant="outlined" color='inherit' sx={{ mt: "4%", width: "50%" }} onClick={handleClickOpen}>
+                    <Button variant="outlined" color='inherit' sx={{ mt: "10%", width: "50%" }} onClick={handleClickOpen}>
                         <Typography sx={{ fontFamily: 'Verdana', fontSize: 16, color: "black" }}> Add Ingredients</Typography>
                     </Button>
                     <Dialog

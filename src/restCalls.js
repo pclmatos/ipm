@@ -354,6 +354,27 @@ class restCalls {
             return text;
         })
     }
+
+    topRatedRecipes() {
+        return fetch("https://silent-blade-368222.appspot.com/rest/user/recipes/top", {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        }).then(function (response) {
+            if (!response.ok) {
+                return response.text().then((text) => {
+                    const error = new Error(text)
+                    error.code = response.status;
+                    throw error
+                })
+            }
+            return response.text()
+        }).then(function (text) {
+            localStorage.setItem('topRatedRecipes', text);
+            return text;
+        })
+    }
 }
 
 

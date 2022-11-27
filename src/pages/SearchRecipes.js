@@ -1,9 +1,11 @@
-import { Box, Grid, Typography, Card, CardMedia, TextField, CardContent, Rating, RadioGroup, CircularProgress, FormControlLabel, Radio, ThemeProvider, createTheme, Button, Divider } from "@mui/material";
+import { Box, Grid, Typography, Card, CardMedia, TextField, CardContent, Fab, Rating, RadioGroup, CircularProgress, FormControlLabel, Radio, ThemeProvider, createTheme, Button, Divider } from "@mui/material";
 import Select from "react-select"
 import logoIHMcut from "../images/logoIHMcut.png"
 import { useState, useEffect } from "react"
+import { useNavigate } from "react-router-dom"
 import restCalls from "../restCalls"
 import KeyboardBackspaceIcon from '@mui/icons-material/KeyboardBackspace';
+import LogoutIcon from '@mui/icons-material/Logout';
 import "./style.css"
 
 
@@ -28,12 +30,22 @@ export default function SearchRecipesPage() {
 
 
     var recipes = JSON.parse(localStorage.getItem('recipes'));
+    let navigate = useNavigate();
 
     useEffect(() => {
         if (currentRecipe != null && rate) {
             ratingManager()
         }
     }, [rate])
+
+    function logout() {
+        navigate("/")
+        localStorage.removeItem('ingredientList')
+        localStorage.removeItem('pantry')
+        localStorage.removeItem('recipes')
+        localStorage.removeItem('topRatedRecipes')
+        localStorage.removeItem('user')
+    }
 
     function vegetarianHandler(e) {
         if (vegetarian === "true") {
@@ -113,7 +125,7 @@ export default function SearchRecipesPage() {
     }
 
     function ratingManager() {
-        restCalls.rateRecipe(rating, currentRecipe.name).then(() => {restCalls.searchRecipe(vegetarian, vegan, kosher, glutenFree, lactoseFree, completeMeal, lightMeal, ingredients, searchText); restCalls.topRatedRecipes()})
+        restCalls.rateRecipe(rating, currentRecipe.name).then(() => { restCalls.searchRecipe(vegetarian, vegan, kosher, glutenFree, lactoseFree, completeMeal, lightMeal, ingredients, searchText); restCalls.topRatedRecipes() })
     }
 
     function handleSearchText(e) {
@@ -265,8 +277,18 @@ export default function SearchRecipesPage() {
     return (
 
         <Grid container className="container"  >
-
             {loading && <CircularProgress size='3rem' color="inherit" sx={{ position: "absolute", top: "50%", left: "50%", overflow: "auto" }} />}
+            <Fab
+                variant="extended"
+                sx={{
+                    position: "fixed", top: "92%", left: "92%", overflow: "auto", bgcolor: "#FFC86E", "&:hover": {
+                        bgcolor: "#ffba4d"
+                    }
+                }}
+                onClick={logout}
+            >
+                <LogoutIcon sx={{ mr: 1, color: "black" }} />  <Typography sx={{ fontFamily: 'Verdana', fontSize: 15, color: "black" }}>Logout</Typography>
+            </Fab>
             <Grid item xs={2.95}>
                 <Box sx={{
                     display: 'flex',

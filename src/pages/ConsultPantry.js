@@ -1,7 +1,9 @@
-import { Grid, Box, Typography, Card, CardContent, CircularProgress, CardMedia, createTheme, ThemeProvider, FormControl, FormControlLabel, RadioGroup, Radio, Divider, Button, Dialog, DialogActions, DialogContent, DialogTitle } from "@mui/material";
+import { Grid, Box, Typography, Card, CardContent, Fab, CircularProgress, CardMedia, createTheme, ThemeProvider, FormControl, FormControlLabel, RadioGroup, Radio, Divider, Button, Dialog, DialogActions, DialogContent, DialogTitle } from "@mui/material";
 import Select from "react-select"
 import React, { useState } from "react"
 import restCalls from "../restCalls"
+import LogoutIcon from '@mui/icons-material/Logout';
+import { useNavigate } from "react-router-dom"
 import "./style.css"
 
 
@@ -21,6 +23,7 @@ export default function ConsultPantry() {
     const [open, setOpen] = useState(false);
     const [open2, setOpen2] = useState(false);
 
+    let navigate = useNavigate();
     var pantry = JSON.parse(localStorage.getItem('pantry'));
     var ingredientList = JSON.parse(localStorage.getItem('ingredientList'));
 
@@ -260,6 +263,15 @@ export default function ConsultPantry() {
             .catch(() => { setLoading(false) })
     }
 
+    function logout() {
+        navigate("/")
+        localStorage.removeItem('ingredientList')
+        localStorage.removeItem('pantry')
+        localStorage.removeItem('recipes')
+        localStorage.removeItem('topRatedRecipes')
+        localStorage.removeItem('user')
+    }
+
     function getLabel(valueStr) {
         let foundIngredient = ingredientsList.find(ingredient => ingredient.value == valueStr)
 
@@ -318,7 +330,6 @@ export default function ConsultPantry() {
 
     const handleClose = () => {
         setOpen(false);
-        restCalls.addIngredient()
     };
 
     const handleClickOpen2 = () => {
@@ -333,7 +344,7 @@ export default function ConsultPantry() {
         setLoading(true)
         setOpen(false);
         setIngredients2()
-        restCalls.addIngredient(ingredients2).then(() => { setLoading(false); /*window.location.reload(false)*/ })
+        restCalls.addIngredient(ingredients2).then(() => { setLoading(false); })
             .catch(() => { setLoading(false) })
     };
 
@@ -341,13 +352,25 @@ export default function ConsultPantry() {
         setLoading(true)
         setOpen2(false);
         setIngredients3()
-        restCalls.removeIngredient(ingredients3).then(() => { setLoading(false); /*window.location.reload(false)*/ })
+        restCalls.removeIngredient(ingredients3).then(() => { setLoading(false); })
             .catch(() => { setLoading(false) })
     };
 
     return (
         <Grid container>
             {loading && <CircularProgress size='3rem' color="inherit" sx={{ position: "absolute", top: "50%", left: "50%", overflow: "auto" }} />}
+            
+            <Fab
+                variant="extended"
+                sx={{
+                    position: "fixed", top: "92%", left: "92%", overflow: "auto", bgcolor: "#FFC86E", "&:hover": {
+                        bgcolor: "#ffba4d"
+                    }
+                }}
+                onClick={logout}
+            >
+                <LogoutIcon sx={{ mr: 1, color: "black" }} />  <Typography sx={{ fontFamily: 'Verdana', fontSize: 15, color: "black" }}>Logout</Typography>
+            </Fab>
             <Grid item xs={2.95}>
                 <Box sx={{
                     display: 'flex',

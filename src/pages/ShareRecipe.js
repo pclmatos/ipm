@@ -1,9 +1,11 @@
-import { Box, Grid, TextField, Typography, InputLabel, MenuItem, FormControl, Button, CircularProgress, Snackbar } from "@mui/material";
+import { Box, Grid, TextField, Fab, Typography, InputLabel, MenuItem, FormControl, Button, CircularProgress, Snackbar } from "@mui/material";
 import MuiAlert from '@mui/material/Alert';
 import SelectMUI from "@mui/material/Select";
 import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
+import LogoutIcon from '@mui/icons-material/Logout';
 import Select from "react-select"
 import { useState, useRef, useEffect, forwardRef } from "react"
+import { useNavigate } from "react-router-dom"
 import restCalls from "../restCalls"
 import "./style.css"
 
@@ -26,6 +28,7 @@ export default function ShareRecipe() {
     const [imageArray, setImageArray] = useState();
     const fileInputRef = useRef();
 
+    let navigate = useNavigate();
     var user = JSON.parse(localStorage.getItem('user'));
 
     useEffect(() => {
@@ -185,7 +188,15 @@ export default function ShareRecipe() {
             })
             .catch(() => { setLoading(false); setOpen2(true) })
     }
-
+    
+    function logout() {
+        navigate("/")
+        localStorage.removeItem('ingredientList')
+        localStorage.removeItem('pantry')
+        localStorage.removeItem('recipes')
+        localStorage.removeItem('topRatedRecipes')
+        localStorage.removeItem('user')
+    }
 
     const handleClose = (event, reason) => {
         if (reason === 'clickaway') {
@@ -210,6 +221,18 @@ export default function ShareRecipe() {
     return (
         <Grid item xs={12} container className="container2">
             {loading && <CircularProgress size='3rem' color="inherit" sx={{ position: "absolute", top: "50%", left: "50%", overflow: "auto" }} />}
+
+            <Fab
+                variant="extended"
+                sx={{
+                    position: "fixed", top: "92%", left: "92%", overflow: "auto", bgcolor: "#FFC86E", "&:hover": {
+                        bgcolor: "#ffba4d"
+                    }
+                }}
+                onClick={logout}
+            >
+                <LogoutIcon sx={{ mr: 1, color: "black" }} />  <Typography sx={{ fontFamily: 'Verdana', fontSize: 15, color: "black" }}>Logout</Typography>
+            </Fab>
             <Grid item xs={4}>
                 <Box sx={{
                     display: 'flex',

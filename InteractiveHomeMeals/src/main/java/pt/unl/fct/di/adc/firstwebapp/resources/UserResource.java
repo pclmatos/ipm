@@ -296,7 +296,7 @@ public class UserResource {
 
 		if (data.searchText != null) {
 			for (int i = recipeList.size() - 1; i >= 0; i--) {
-				if (!(recipeList.get(i).name).contains(data.searchText)) {
+				if (!recipeList.get(i).name.toUpperCase().contains(data.searchText.toUpperCase())) {
 					recipeList.remove(i);
 				}
 			}

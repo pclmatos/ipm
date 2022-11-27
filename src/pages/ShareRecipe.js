@@ -271,7 +271,7 @@ export default function ShareRecipe() {
                     <TextField
                         margin="normal"
                         required
-                        label="Calories"
+                        label="Calories per dose"
                         color="grey"
                         InputLabelProps={{
                             style: { fontFamily: 'Verdana', fontSize: 18 },

@@ -37,6 +37,12 @@ export default function ConsultPantry() {
             setVegetables(false);
         } else {
             setVegetables(e.target.value);
+            setMeat(false)
+            setCereals(false)
+            setFish(false)
+            setFruits(false)
+            setSeafoods(false)
+            setOthers(false)
         }
     }
 
@@ -45,6 +51,12 @@ export default function ConsultPantry() {
             setMeat(false);
         } else {
             setMeat(e.target.value);
+            setVegetables(false)
+            setCereals(false)
+            setFish(false)
+            setFruits(false)
+            setSeafoods(false)
+            setOthers(false)
         }
     }
 
@@ -53,6 +65,12 @@ export default function ConsultPantry() {
             setFish(false);
         } else {
             setFish(e.target.value);
+            setMeat(false)
+            setCereals(false)
+            setVegetables(false)
+            setFruits(false)
+            setSeafoods(false)
+            setOthers(false)
         }
     }
 
@@ -61,6 +79,12 @@ export default function ConsultPantry() {
             setFruits(false);
         } else {
             setFruits(e.target.value);
+            setMeat(false)
+            setCereals(false)
+            setFish(false)
+            setVegetables(false)
+            setSeafoods(false)
+            setOthers(false)
         }
     }
 
@@ -69,6 +93,12 @@ export default function ConsultPantry() {
             setSeafoods(false);
         } else {
             setSeafoods(e.target.value);
+            setMeat(false)
+            setCereals(false)
+            setFish(false)
+            setFruits(false)
+            setVegetables(false)
+            setOthers(false)
         }
     }
 
@@ -77,6 +107,12 @@ export default function ConsultPantry() {
             setOthers(false);
         } else {
             setOthers(e.target.value);
+            setMeat(false)
+            setCereals(false)
+            setFish(false)
+            setFruits(false)
+            setSeafoods(false)
+            setVegetables(false)
         }
     }
 
@@ -85,6 +121,12 @@ export default function ConsultPantry() {
             setCereals(false);
         } else {
             setCereals(e.target.value);
+            setMeat(false)
+            setVegetables(false)
+            setFish(false)
+            setFruits(false)
+            setSeafoods(false)
+            setOthers(false)
         }
     }
 
@@ -312,7 +354,7 @@ export default function ConsultPantry() {
                     flexDirection: 'column',
                     alignItems: 'center'
                 }}>
-                    <Typography sx={{ fontFamily: 'Verdana', fontSize: 25, color: "black", pt: "6%", pb: "1%" }}>Types of ingredients(select one)</Typography>
+                    <Typography sx={{ fontFamily: 'Verdana', fontSize: 25, color: "black", pt: "6%", pb: "1%" }}>Types of ingredients</Typography>
                     <Box sx={{ pl: '6%' }}>
                         <ThemeProvider theme={theme}>
                             <RadioGroup

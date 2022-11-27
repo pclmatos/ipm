@@ -5,6 +5,11 @@
 	version="3.1">
 
 	<display-name>My First Application</display-name>
+	
+	<error-page>
+    	<error-code>404</error-code>
+    	<location>/index.html</location>
+  	</error-page>
 
 	<welcome-file-list>
 		<welcome-file>index.html</welcome-file>

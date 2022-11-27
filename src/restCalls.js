@@ -170,7 +170,7 @@ class restCalls {
             return text;
         })
     }
-    
+
     allIngredients() {
         return fetch("https://silent-blade-368222.appspot.com/rest/user/allIngredients", {
             method: 'GET',
@@ -191,7 +191,7 @@ class restCalls {
             return text;
         })
     }
-    rateRecipe(rating,name) {
+    rateRecipe(rating, name) {
         return fetch("https://silent-blade-368222.appspot.com/rest/user/recipes/rate", {
             method: 'POST',
             headers: {
@@ -215,7 +215,7 @@ class restCalls {
         })
     }
 
-    filterIngredients(vegetables,meat,fish,fruits,cereals,others,seafoods) {
+    filterIngredients(vegetables, meat, fish, fruits, cereals, others, seafoods) {
         const filter = [];
         filter.push(vegetables);
         filter.push(meat);
@@ -225,23 +225,23 @@ class restCalls {
         filter.push(others);
         filter.push(seafoods);
         var type1 = null;
-        for(var i = 0; i < filter.length; i++){
-            if(filter[i]){
-              if(i == 0){
-                type1 = "vegetable";
-              }else if(i == 1){
-                type1 = "meat";
-              }else if (i == 2){
-                type1 = "fish";
-              }else if(i == 3){
-                type1 = "fruit"; 
-              }else if ( i == 4){
-                type1 = "cereal";
-              } else if (i == 5){
-                type1 = "other";
-              }else if (i == 6){
-                type1 = "sea_food";
-              }
+        for (var i = 0; i < filter.length; i++) {
+            if (filter[i]) {
+                if (i == 0) {
+                    type1 = "vegetable";
+                } else if (i == 1) {
+                    type1 = "meat";
+                } else if (i == 2) {
+                    type1 = "fish";
+                } else if (i == 3) {
+                    type1 = "fruit";
+                } else if (i == 4) {
+                    type1 = "cereal";
+                } else if (i == 5) {
+                    type1 = "other";
+                } else if (i == 6) {
+                    type1 = "sea_food";
+                }
             }
         }
         console.log(type1);
@@ -252,7 +252,7 @@ class restCalls {
             },
             body: JSON.stringify({
                 username: JSON.parse(localStorage.getItem('user')).username,
-                type : type1
+                type: type1
             })
         }).then(function (response) {
             if (!response.ok) {
@@ -268,6 +268,7 @@ class restCalls {
             return text;
         })
     }
+
     filterTextIngredients(ingredient) {
         return fetch("https://silent-blade-368222.appspot.com/rest/user/pantry/ingredient", {
             method: 'POST',
@@ -376,8 +377,6 @@ class restCalls {
         })
     }
 }
-
-
 
 const restCallsExport = new restCalls();
 export default restCallsExport;

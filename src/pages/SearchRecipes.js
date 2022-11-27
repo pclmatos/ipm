@@ -353,7 +353,7 @@ export default function SearchRecipesPage() {
                         type="submit"
                         variant="outlined"
                         color='inherit'
-                        sx={{ mt: "8%", width: "20%" }}
+                        sx={{ mt: "4%", width: "20%" }}
                         onClick={(e) => { searchRecipeManager(e) }}
                     >
                         <Typography sx={{ fontFamily: 'Verdana', fontSize: 16, color: "black" }}> Filter! </Typography>

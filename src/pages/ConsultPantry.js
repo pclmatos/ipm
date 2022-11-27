@@ -418,7 +418,7 @@ export default function ConsultPantry() {
                         type="submit"
                         variant="outlined"
                         color='inherit'
-                        sx={{ mt: "6%", width: "20%" }}
+                        sx={{ mt: "4%", width: "20%" }}
                         onClick={(e) => { getFiltersManager(e) }}
                     >
                         <Typography sx={{ fontFamily: 'Verdana', fontSize: 16, color: "black" }}> Filter </Typography>

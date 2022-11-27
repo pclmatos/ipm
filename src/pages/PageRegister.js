@@ -1,5 +1,5 @@
 import logoIHMcut from "../images/logoIHMcut.png"
-import { Box, Grid, Typography, TextField, Button, Link, Snackbar } from "@mui/material";
+import { Box, Grid, Typography, TextField, Button, Link, Snackbar, CircularProgress } from "@mui/material";
 import MuiAlert from '@mui/material/Alert';
 import "./style.css"
 import { useNavigate } from "react-router-dom"
@@ -13,6 +13,7 @@ export default function PageRegister() {
     const [password, setPassword] = useState("");
     const [passwordConfirmation, setPasswordConfirmation] = useState("");
 
+    const [loading, setLoading] = useState(false)
     const [open, setOpen] = useState(false);
     const [open2, setOpen2] = useState(false);
 
@@ -30,7 +31,8 @@ export default function PageRegister() {
 
     function registerManager(e) {
         e.preventDefault();
-        restCalls.register(username, password, passwordConfirmation).then(() => setOpen(true)).catch(() => { setOpen2(true) })
+        setLoading(true)
+        restCalls.register(username, password, passwordConfirmation).then(() => { setLoading(false); setOpen(true) }).catch(() => { setLoading(false); setOpen2(true) })
     }
 
     const handleClose = (event, reason) => {
@@ -55,6 +57,7 @@ export default function PageRegister() {
 
     return (
         <Grid item xs={12} container className="main-container" >
+            {loading && <CircularProgress size='3rem' color="inherit" sx={{ position: "absolute", top: "50%", left: "50%", overflow: "auto" }} />}
             <Grid item xs={3.5} />
             <Grid item xs={5} align="center">
                 <Box component="img" pt="35%" src={logoIHMcut} width="30%" />

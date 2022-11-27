@@ -1,5 +1,5 @@
 import logoIHMcut from "../images/logoIHMcut.png"
-import { Box, Grid, Typography, TextField, Button, Link, Snackbar } from "@mui/material";
+import { Box, Grid, Typography, TextField, Button, Link, Snackbar, CircularProgress } from "@mui/material";
 import MuiAlert from '@mui/material/Alert';
 import { useNavigate } from "react-router-dom"
 import { useState, forwardRef } from "react"
@@ -12,6 +12,7 @@ export default function PageLogin() {
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
 
+    const [loading, setLoading] = useState(false);
     const [open, setOpen] = useState(false);
 
     const handleClose = (event, reason) => {
@@ -36,13 +37,15 @@ export default function PageLogin() {
 
     function loginManager(e) {
         e.preventDefault();
+        setLoading(true)
         restCalls.login(username, password).then(() => {
-            restCalls.allRecipes().then(() => { restCalls.getPantry(); restCalls.allIngredients(); restCalls.topRatedRecipes(); navigate("/loggedin") })
-        }).catch(() => { setOpen(true) })
+            setLoading(false);restCalls.allRecipes().then(() => { restCalls.getPantry(); restCalls.allIngredients(); restCalls.topRatedRecipes(); navigate("/loggedin") })
+        }).catch(() => { setOpen(true); setLoading(false) })
     }
 
     return (
         <Grid item xs={12} container className="main-container" >
+            {loading && <CircularProgress size='3rem' color="inherit" sx={{ position: "absolute", top: "50%", left: "50%", overflow: "auto" }} />}
             <Grid item xs={3.5} />
             <Grid item xs={5} align="center">
                 <Box component="img" pt="35%" src={logoIHMcut} width="30%" />

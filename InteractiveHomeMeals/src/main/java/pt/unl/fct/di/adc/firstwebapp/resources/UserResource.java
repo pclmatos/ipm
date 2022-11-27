@@ -217,7 +217,7 @@ public class UserResource {
 					return Response.status(Status.NOT_ACCEPTABLE).entity("Difficulty must be between 1 and 5!").build();
 				}
 
-				for (int i = 1; i < data.ingredients.length; i += 2) {
+				for (int i = 0; i < data.ingredients.length; i ++) {
 					ingredientKey = datastore.newKeyFactory().setKind(INGREDIENT).newKey(data.ingredients[i]);
 					ingredient = datastore.get(ingredientKey);
 

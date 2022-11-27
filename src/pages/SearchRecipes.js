@@ -1,4 +1,4 @@
-import { Box, Grid, Typography, Card, CardMedia, CardContent, Rating, RadioGroup, CircularProgress, FormControlLabel, Radio, ThemeProvider, createTheme, Button, Divider } from "@mui/material";
+import { Box, Grid, Typography, Card, CardMedia, TextField, CardContent, Rating, RadioGroup, CircularProgress, FormControlLabel, Radio, ThemeProvider, createTheme, Button, Divider } from "@mui/material";
 import Select from "react-select"
 import logoIHMcut from "../images/logoIHMcut.png"
 import { useState, useEffect } from "react"
@@ -116,11 +116,20 @@ export default function SearchRecipesPage() {
         restCalls.rateRecipe(rating, currentRecipe.name).then(() => restCalls.topRatedRecipes())
     }
 
+    function handleSearchText(e) {
+        if (e.target.value == "") {
+            setSearchText(null)
+        } else {
+            setSearchText(e.target.value)
+        }
+    }
+
     function searchRecipeManager(e) {
         e.preventDefault();
         setLoading(true)
-        restCalls.searchRecipe(vegetarian, vegan, kosher, glutenFree, lactoseFree, completeMeal, lightMeal, ingredients/*, searchText*/)
-            .then(() => { setLoading(false); /*window.location.reload(false)*/ })
+        console.log(searchText)
+        restCalls.searchRecipe(vegetarian, vegan, kosher, glutenFree, lactoseFree, completeMeal, lightMeal, ingredients, searchText)
+            .then(() => { setLoading(false) })
             .catch(() => { setLoading(false) })
 
         {/* .then(() => { restCalls.userInfo().then(() => { hasToModifyPassword(); setShowProgress(false) }) }) */ }
@@ -247,6 +256,15 @@ export default function SearchRecipesPage() {
                     flexDirection: 'column',
                     alignItems: 'center',
                 }} >
+                    <TextField
+                        sx={{"mt":4}}
+                        id="standard-search"
+                        value={searchText}
+                        onChange={handleSearchText}
+                        label="Search field"
+                        type="search"
+                    />
+
                     <Typography sx={{ fontFamily: 'Verdana', fontSize: 25, color: "black", pt: "6%", pb: "1%" }}>Diet Filtering</Typography>
                     <Box sx={{ pl: "6%" }}>
                         <ThemeProvider theme={theme}>

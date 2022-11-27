@@ -241,11 +241,11 @@ export default function ConsultPantry() {
         setLoading(true);
         if (vegetables || meat || fish || fruits || cereals || others || seafoods) {
             restCalls.filterIngredients(vegetables, meat, fish, fruits, cereals, others, seafoods)
-                .then(() => { setLoading(false); /*window.location.reload(false)*/ })
+                .then(() => { setLoading(false); })
                 .catch(() => { setLoading(false) })
         } else {
             restCalls.filterTextIngredients(ingredients.value.toString())
-                .then(() => { setLoading(false); /*window.location.reload(false)*/ })
+                .then(() => { setLoading(false); })
                 .catch(() => { setLoading(false) })
         }
     }
@@ -259,7 +259,7 @@ export default function ConsultPantry() {
         setOthers(false);
         setSeafoods(false);
         setIngredients("")
-        restCalls.getPantry().then(() => { setLoading(false); /*window.location.reload(false)*/ })
+        restCalls.getPantry().then(() => { setLoading(false); })
             .catch(() => { setLoading(false) })
     }
 

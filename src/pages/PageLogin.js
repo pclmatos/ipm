@@ -1,7 +1,8 @@
 import logoIHMcut from "../images/logoIHMcut.png"
-import { Box, Grid, Typography, TextField, Button, Link } from "@mui/material";
+import { Box, Grid, Typography, TextField, Button, Link, Snackbar } from "@mui/material";
+import MuiAlert from '@mui/material/Alert';
 import { useNavigate } from "react-router-dom"
-import { useState } from "react"
+import { useState, forwardRef } from "react"
 import restCalls from "../restCalls"
 import "./style.css"
 
@@ -10,6 +11,21 @@ export default function PageLogin() {
 
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
+
+    const [open, setOpen] = useState(false);
+
+
+    const handleClose = (event, reason) => {
+        if (reason === 'clickaway') {
+            return;
+        }
+
+        setOpen(false);
+    };
+
+    const Alert = forwardRef(function Alert(props, ref) {
+        return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
+    });
 
     function usernameHandler(e) {
         setUsername(e.target.value);
@@ -23,7 +39,7 @@ export default function PageLogin() {
         e.preventDefault();
         restCalls.login(username, password).then(() => {
             restCalls.allRecipes().then(() => { restCalls.getPantry(); restCalls.allIngredients(); restCalls.topRatedRecipes(); navigate("/loggedin") })
-        })
+        }).catch(() => { setOpen(true) })
     }
 
 
@@ -72,6 +88,11 @@ export default function PageLogin() {
                     >
                         <Typography sx={{ fontFamily: 'Verdana', fontSize: 15, color: "black" }}> Login </Typography>
                     </Button>
+                    <Snackbar open={open} autoHideDuration={4000} onClose={handleClose}>
+                        <Alert severity="error" sx={{ width: '100%' }}>
+                            <Typography sx={{ fontFamily: 'Verdana', fontSize: 14 }}>Login failed. Wrong username or password.</Typography>
+                        </Alert>
+                    </Snackbar>
                     <Typography sx={{ fontFamily: 'Verdana', fontSize: 16, color: "black", mb: 3 }}>
                         Don't have an account?
                         <Link onClick={() => { navigate("/register") }} sx={{ ml: 1, cursor: "pointer" }}>Register now!</Link>

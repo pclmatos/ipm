@@ -109,11 +109,11 @@ export default function SearchRecipesPage() {
 
     function updateCurrRecipe(recipe) {
         setCurrentRecipe(recipe);
-        setRating(Math.round(recipe.rating))
+        setRating(recipe.rating)
     }
 
     function ratingManager() {
-        restCalls.rateRecipe(rating, currentRecipe.name).then(() => restCalls.topRatedRecipes())
+        restCalls.rateRecipe(rating, currentRecipe.name).then(() => {restCalls.searchRecipe(vegetarian, vegan, kosher, glutenFree, lactoseFree, completeMeal, lightMeal, ingredients, searchText); restCalls.topRatedRecipes()})
     }
 
     function handleSearchText(e) {
@@ -156,9 +156,11 @@ export default function SearchRecipesPage() {
         setKosher(false)
         setGlutenFree(false)
         setLactoseFree(false)
+        setIngredients("")
+        setSearchText("")
         restCalls.allRecipes()
-        .then(() => {setLoading(false)})
-        .catch(() => {setLoading(false)})
+            .then(() => { setLoading(false) })
+            .catch(() => { setLoading(false) })
     }
 
     const ingredientsList = [
@@ -276,7 +278,7 @@ export default function SearchRecipesPage() {
                         id="standard-search"
                         value={searchText}
                         onChange={handleSearchText}
-                        label="Search field"
+                        label="Search Recipe"
                         type="search"
                     />
 
@@ -421,11 +423,9 @@ export default function SearchRecipesPage() {
                                         Difficulty (1-5):<Typography sx={{ fontFamily: 'Verdana', fontSize: 18, color: "#BA852D" }}> - {currentRecipe.difficulty}</Typography>
                                     </Typography>
 
-                                </CardContent>
-                            </Card>
-                            <Card>
-                                <CardContent>
                                     <Rating
+                                        sx={{ "mt": 2, "ml": "75%" }}
+                                        size="large"
                                         name="simple-controlled"
                                         value={rating}
                                         readOnly={readOnly}

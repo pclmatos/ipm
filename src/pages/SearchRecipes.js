@@ -8,7 +8,6 @@ import KeyboardBackspaceIcon from '@mui/icons-material/KeyboardBackspace';
 import LogoutIcon from '@mui/icons-material/Logout';
 import "./style.css"
 
-
 export default function SearchRecipesPage() {
     const [vegetarian, setVegetarian] = useState("false")
     const [vegan, setVegan] = useState("false")
@@ -27,7 +26,6 @@ export default function SearchRecipesPage() {
 
     const [rating, setRating] = useState()
     const [rate, setRate] = useState(false)
-
 
     var recipes = JSON.parse(localStorage.getItem('recipes'));
     let navigate = useNavigate();
@@ -107,10 +105,6 @@ export default function SearchRecipesPage() {
         setIngredients(data);
     }
 
-    function searchTextHandler(e) {
-        setSearchText(e.target.value);
-    }
-
     function showRecipeHandler(e) {
         if (!showRecipe) {
             setShowRecipe(true);
@@ -129,7 +123,7 @@ export default function SearchRecipesPage() {
     }
 
     function handleSearchText(e) {
-        if (e.target.value == "") {
+        if (e.target.value === "") {
             setSearchText(null)
         } else {
             setSearchText(e.target.value)
@@ -143,19 +137,6 @@ export default function SearchRecipesPage() {
         restCalls.searchRecipe(vegetarian, vegan, kosher, glutenFree, lactoseFree, completeMeal, lightMeal, ingredients, searchText)
             .then(() => { setLoading(false) })
             .catch(() => { setLoading(false) })
-
-        {/* .then(() => { restCalls.userInfo().then(() => { hasToModifyPassword(); setShowProgress(false) }) }) */ }
-    }
-
-    function showIngredients() {
-        if (currentRecipe !== null) {
-            var tempList = currentRecipe.ingredients.split(" ")
-            var showIngredientsList = []
-            for (let i = 0; i < tempList.length; i += 2) {
-                showIngredientsList.push(tempList[i] + " " + tempList[i + 1] + " | ")
-            }
-        }
-        return showIngredientsList
     }
 
     function clearFiltersManager() {
@@ -273,9 +254,7 @@ export default function SearchRecipesPage() {
         },
     });
 
-
     return (
-
         <Grid container className="container"  >
             {loading && <CircularProgress size='3rem' color="inherit" sx={{ position: "absolute", top: "50%", left: "50%", overflow: "auto" }} />}
             <Fab
@@ -386,7 +365,6 @@ export default function SearchRecipesPage() {
                 <Divider orientation="vertical" sx={{ bgcolor: "#FFC86E", width: "20%" }} />
             </Grid>
             <Grid container item xs={9} direction="row">
-
                 {!showRecipe ? recipes.map((recipe) =>
                     <>
                         <Box sx={{ p: 1, width: "33.3%" }}>
@@ -398,7 +376,7 @@ export default function SearchRecipesPage() {
                                 </CardContent>
                                 <CardMedia
                                     component="img"
-                                    image={recipe.photo == "undefined" ? logoIHMcut : recipe.photo}
+                                    image={recipe.photo === "undefined" ? logoIHMcut : recipe.photo}
                                     height="320"
                                     alt="green iguana"
                                     onClick={() => { showRecipeHandler(); updateCurrRecipe(recipe); setReadOnly(false) }}
@@ -424,7 +402,7 @@ export default function SearchRecipesPage() {
                                 </CardContent>
                                 <CardMedia
                                     component="img"
-                                    image={currentRecipe.photo == "undefined" ? logoIHMcut : currentRecipe.photo}
+                                    image={currentRecipe.photo === "undefined" ? logoIHMcut : currentRecipe.photo}
                                     height="350"
                                     alt="green iguana"
                                 />

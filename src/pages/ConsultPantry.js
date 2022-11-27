@@ -6,7 +6,6 @@ import LogoutIcon from '@mui/icons-material/Logout';
 import { useNavigate } from "react-router-dom"
 import "./style.css"
 
-
 export default function ConsultPantry() {
     const [vegetables, setVegetables] = useState(false)
     const [meat, setMeat] = useState(false)
@@ -29,7 +28,7 @@ export default function ConsultPantry() {
 
     function searchIngredient(iName) {
         for (var i = 0; i < ingredientList.length; i++) {
-            if (ingredientList[i].name == iName) {
+            if (ingredientList[i].name === iName) {
                 return ingredientList[i];
             }
         }
@@ -249,6 +248,7 @@ export default function ConsultPantry() {
                 .catch(() => { setLoading(false) })
         }
     }
+    
     function clearFiltersManager(e) {
         setLoading(true)
         setVegetables(false);
@@ -273,7 +273,7 @@ export default function ConsultPantry() {
     }
 
     function getLabel(valueStr) {
-        let foundIngredient = ingredientsList.find(ingredient => ingredient.value == valueStr)
+        let foundIngredient = ingredientsList.find(ingredient => ingredient.value === valueStr)
 
         return foundIngredient.label;
     }
@@ -359,7 +359,7 @@ export default function ConsultPantry() {
     return (
         <Grid container>
             {loading && <CircularProgress size='3rem' color="inherit" sx={{ position: "absolute", top: "50%", left: "50%", overflow: "auto" }} />}
-            
+
             <Fab
                 variant="extended"
                 sx={{

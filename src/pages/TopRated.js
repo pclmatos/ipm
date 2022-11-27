@@ -30,7 +30,7 @@ export default function TopRated() {
             setShowRecipe(false);
         }
     }
-    
+
     function logout() {
         navigate("/")
         localStorage.removeItem('ingredientList')
@@ -73,7 +73,7 @@ export default function TopRated() {
                             </CardContent>
                             <CardMedia
                                 component="img"
-                                image={recipe.photo == "undefined" ? logoIHMcut : recipe.photo}
+                                image={recipe.photo === "undefined" ? logoIHMcut : recipe.photo}
                                 height="375"
                                 onClick={() => { showRecipeHandler(); updateCurrRecipe(recipe) }}
                                 alt="green iguana"
@@ -102,7 +102,6 @@ export default function TopRated() {
                         </Card>
                     </Box>
                 </>
-
             ) :
                 <>
                     <Grid container item xs={3}>
@@ -119,7 +118,7 @@ export default function TopRated() {
                             </CardContent>
                             <CardMedia
                                 component="img"
-                                image={currentRecipe.photo == "undefined" ? logoIHMcut : currentRecipe.photo}
+                                image={currentRecipe.photo === "undefined" ? logoIHMcut : currentRecipe.photo}
                                 height="350"
                                 alt="green iguana"
                             />
@@ -152,7 +151,6 @@ export default function TopRated() {
                                         setReadOnly(true)
                                     }}
                                 />
-
                             </CardContent>
                         </Card>
                     </Box>

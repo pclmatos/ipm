@@ -42,7 +42,6 @@ export default function ShareRecipe() {
         }
     }, [image]);
 
-
     function loadPhoto(f) {
         const reader = new FileReader();
         const fileByteArray = [];
@@ -187,7 +186,7 @@ export default function ShareRecipe() {
             })
             .catch(() => { setLoading(false); setOpen2(true) })
     }
-    
+
     function logout() {
         navigate("/")
         localStorage.removeItem('ingredientList')
@@ -339,6 +338,7 @@ export default function ShareRecipe() {
                                     onClick={() => {
                                         setImage(null);
                                     }}
+                                    alt="green iguana"
                                 />
                             ) : (
                                 <button

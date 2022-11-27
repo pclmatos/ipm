@@ -14,7 +14,6 @@ export default function PageLogin() {
 
     const [open, setOpen] = useState(false);
 
-
     const handleClose = (event, reason) => {
         if (reason === 'clickaway') {
             return;
@@ -41,7 +40,6 @@ export default function PageLogin() {
             restCalls.allRecipes().then(() => { restCalls.getPantry(); restCalls.allIngredients(); restCalls.topRatedRecipes(); navigate("/loggedin") })
         }).catch(() => { setOpen(true) })
     }
-
 
     return (
         <Grid item xs={12} container className="main-container" >

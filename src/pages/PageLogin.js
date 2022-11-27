@@ -12,15 +12,15 @@ export default function PageLogin() {
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
 
-    const [open2, setOpen2] = useState(false);
+    const [open, setOpen] = useState(false);
 
 
-    const handleClose2 = (event, reason) => {
+    const handleClose = (event, reason) => {
         if (reason === 'clickaway') {
             return;
         }
 
-        setOpen2(false);
+        setOpen(false);
     };
 
     const Alert = forwardRef(function Alert(props, ref) {
@@ -39,7 +39,7 @@ export default function PageLogin() {
         e.preventDefault();
         restCalls.login(username, password).then(() => {
             restCalls.allRecipes().then(() => { restCalls.getPantry(); restCalls.allIngredients(); restCalls.topRatedRecipes(); navigate("/loggedin") })
-        }).catch(() => { setOpen2(true) })
+        }).catch(() => { setOpen(true) })
     }
 
 
@@ -88,7 +88,7 @@ export default function PageLogin() {
                     >
                         <Typography sx={{ fontFamily: 'Verdana', fontSize: 15, color: "black" }}> Login </Typography>
                     </Button>
-                    <Snackbar open={open2} autoHideDuration={4000} onClose={handleClose2}>
+                    <Snackbar open={open} autoHideDuration={4000} onClose={handleClose}>
                         <Alert severity="error" sx={{ width: '100%' }}>
                             <Typography sx={{ fontFamily: 'Verdana', fontSize: 14 }}>Login failed. Wrong username or password.</Typography>
                         </Alert>

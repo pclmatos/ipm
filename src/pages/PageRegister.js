@@ -1,8 +1,9 @@
 import logoIHMcut from "../images/logoIHMcut.png"
-import { Box, Grid, Typography, TextField, Button, Link } from "@mui/material";
+import { Box, Grid, Typography, TextField, Button, Link, Snackbar } from "@mui/material";
+import MuiAlert from '@mui/material/Alert';
 import "./style.css"
 import { useNavigate } from "react-router-dom"
-import { useState } from "react"
+import { useState, forwardRef } from "react"
 import restCalls from "../restCalls"
 
 export default function PageRegister() {
@@ -11,6 +12,9 @@ export default function PageRegister() {
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
     const [passwordConfirmation, setPasswordConfirmation] = useState("");
+
+    const [open, setOpen] = useState(false);
+    const [open2, setOpen2] = useState(false);
 
     function usernameHandler(e) {
         setUsername(e.target.value);
@@ -26,8 +30,28 @@ export default function PageRegister() {
 
     function registerManager(e) {
         e.preventDefault();
-        restCalls.register(username, password, passwordConfirmation)
+        restCalls.register(username, password, passwordConfirmation).then(() => setOpen(true)).catch(() => { setOpen2(true) })
     }
+
+    const handleClose = (event, reason) => {
+        if (reason === 'clickaway') {
+            return;
+        }
+
+        setOpen(false);
+    };
+
+    const handleClose2 = (event, reason) => {
+        if (reason === 'clickaway') {
+            return;
+        }
+
+        setOpen2(false);
+    };
+
+    const Alert = forwardRef(function Alert(props, ref) {
+        return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
+    });
 
     return (
         <Grid item xs={12} container className="main-container" >
@@ -86,6 +110,17 @@ export default function PageRegister() {
                     >
                         <Typography sx={{ fontFamily: 'Verdana', fontSize: 15, color: "black" }}> Register </Typography>
                     </Button>
+                    <Snackbar open={open} autoHideDuration={4000} onClose={handleClose}>
+                        <Alert severity="success" sx={{ width: '100%' }}>
+                            <Typography sx={{ fontFamily: 'Verdana', fontSize: 14 }}>Account created successfully!</Typography>
+                        </Alert>
+                    </Snackbar>
+
+                    <Snackbar open={open2} autoHideDuration={4000} onClose={handleClose2}>
+                        <Alert severity="error" sx={{ width: '100%' }}>
+                            <Typography sx={{ fontFamily: 'Verdana', fontSize: 14 }}>Account was not created. Please verify the filled in information.</Typography>
+                        </Alert>
+                    </Snackbar>
                     <Typography sx={{ fontFamily: 'Verdana', fontSize: 16, color: "black", pb: 5 }}>
                         Already have an account?
                         <Link onClick={() => { navigate("/") }} sx={{ ml: 1, cursor: "pointer" }}>Login now!</Link>

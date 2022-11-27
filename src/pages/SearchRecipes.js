@@ -146,6 +146,21 @@ export default function SearchRecipesPage() {
         return showIngredientsList
     }
 
+    function clearFiltersManager() {
+        setLoading(true)
+        setCompleteMeal(true)
+        setLightMeal(true)
+        setSearchText(null)
+        setVegetarian(false)
+        setVegan(false)
+        setKosher(false)
+        setGlutenFree(false)
+        setLactoseFree(false)
+        restCalls.allRecipes()
+        .then(() => {setLoading(false)})
+        .catch(() => {setLoading(false)})
+    }
+
     const ingredientsList = [
         { value: "apple", label: "Apple" },
         { value: "banana", label: "Banana" },
@@ -257,7 +272,7 @@ export default function SearchRecipesPage() {
                     alignItems: 'center',
                 }} >
                     <TextField
-                        sx={{"mt":4}}
+                        sx={{ "mt": 4 }}
                         id="standard-search"
                         value={searchText}
                         onChange={handleSearchText}
@@ -322,6 +337,16 @@ export default function SearchRecipesPage() {
                             isMulti
                         />
                     </Box>
+                    <Button
+                        type="submit"
+                        variant="outlined"
+                        color='inherit'
+                        sx={{ mt: "4%", width: "40%" }}
+                        onClick={(e) => { clearFiltersManager(e) }}
+                    >
+                        <Typography sx={{ fontFamily: 'Verdana', fontSize: 16, color: "black" }}> Clear filters </Typography>
+                    </Button>
+
                     <Button
                         type="submit"
                         variant="outlined"

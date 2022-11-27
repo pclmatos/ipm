@@ -268,7 +268,7 @@ export default function ConsultPantry() {
 
     function getPantryList() {
         const pantryList = []
-        for(let i=0; i<pantry.length; i++) {
+        for (let i = 0; i < pantry.length; i++) {
             let auxValue = pantry[i].split(" ")[0]
             let auxLabel = getLabel(auxValue)
             pantryList.push({ value: auxValue, label: auxLabel })
@@ -409,19 +409,19 @@ export default function ConsultPantry() {
                         type="submit"
                         variant="outlined"
                         color='inherit'
-                        sx={{ mt: "6%", width: "20%" }}
-                        onClick={(e) => { getFiltersManager(e) }}
+                        sx={{ mt: "4%", width: "40%" }}
+                        onClick={(e) => { clearFiltersManager(e) }}
                     >
-                        <Typography sx={{ fontFamily: 'Verdana', fontSize: 16, color: "black" }}> Filter </Typography>
+                        <Typography sx={{ fontFamily: 'Verdana', fontSize: 16, color: "black" }}> Clear filters </Typography>
                     </Button>
                     <Button
                         type="submit"
                         variant="outlined"
                         color='inherit'
-                        sx={{ mt: "4%", width: "40%" }}
-                        onClick={(e) => { clearFiltersManager(e) }}
+                        sx={{ mt: "6%", width: "20%" }}
+                        onClick={(e) => { getFiltersManager(e) }}
                     >
-                        <Typography sx={{ fontFamily: 'Verdana', fontSize: 16, color: "black" }}> Clear filters </Typography>
+                        <Typography sx={{ fontFamily: 'Verdana', fontSize: 16, color: "black" }}> Filter </Typography>
                     </Button>
 
 

@@ -1,8 +1,9 @@
-import { Box, Grid, TextField, Typography, InputLabel, MenuItem, FormControl, Button, CircularProgress } from "@mui/material";
+import { Box, Grid, TextField, Typography, InputLabel, MenuItem, FormControl, Button, CircularProgress, Snackbar } from "@mui/material";
+import MuiAlert from '@mui/material/Alert';
 import SelectMUI from "@mui/material/Select";
 import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
 import Select from "react-select"
-import { useState, useRef, useEffect } from "react"
+import { useState, useRef, useEffect, forwardRef } from "react"
 import restCalls from "../restCalls"
 import "./style.css"
 
@@ -16,6 +17,9 @@ export default function ShareRecipe() {
     const [description, setDescription] = useState("");
     const [ingredientsDescription, setIngredientsDescription] = useState("");
     const [loading, setLoading] = useState(false);
+
+    const [open, setOpen] = useState(false);
+    const [open2, setOpen2] = useState(false);
 
     const [image, setImage] = useState();
     const [preview, setPreview] = useState();
@@ -174,13 +178,34 @@ export default function ShareRecipe() {
 
     function shareRecipeManager(e) {
         e.preventDefault();
-        setLoading(true)
+        setLoading(true);
         restCalls.shareRecipe(recipeName, description, ingredients, difficulty, category, calories, imageArray, ingredientsDescription)
-        .then(() => {
-            restCalls.allRecipes(); setLoading(false)
-        })
-        .catch(() => {setLoading(false)})
+            .then(() => {
+                restCalls.allRecipes(); setLoading(false); setOpen(true);
+            })
+            .catch(() => { setLoading(false); setOpen2(true) })
     }
+
+
+    const handleClose = (event, reason) => {
+        if (reason === 'clickaway') {
+            return;
+        }
+
+        setOpen(false);
+    };
+
+    const handleClose2 = (event, reason) => {
+        if (reason === 'clickaway') {
+            return;
+        }
+
+        setOpen2(false);
+    };
+
+    const Alert = forwardRef(function Alert(props, ref) {
+        return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
+      });
 
     return (
         <Grid item xs={12} container className="container2">
@@ -334,6 +359,17 @@ export default function ShareRecipe() {
                     >
                         <Typography sx={{ fontFamily: 'Verdana', fontSize: 17, color: "black" }}> Share Recipe! </Typography>
                     </Button>
+                    <Snackbar open={open} autoHideDuration={4000} onClose={handleClose}>
+                        <Alert severity="success" onClose={handleClose} sx={{ width: '100%' }}>
+                            <Typography sx={{ fontFamily: 'Verdana', fontSize: 14 }}>Recipe shared successfully!</Typography>
+                        </Alert>
+                    </Snackbar>
+
+                    <Snackbar open={open2} autoHideDuration={4000} onClose={handleClose2}>
+                        <Alert severity="error" sx={{ width: '100%' }}>
+                            <Typography sx={{ fontFamily: 'Verdana', fontSize: 14 }}>Recipe was not shared. Please verify the filled in information.</Typography>
+                        </Alert>
+                    </Snackbar>
                 </Box>
             </Grid>
             <Grid item xs={4}>

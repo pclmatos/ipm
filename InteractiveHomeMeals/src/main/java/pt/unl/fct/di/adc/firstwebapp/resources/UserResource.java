@@ -664,15 +664,15 @@ public class UserResource {
 				String entry = pantryContainsIngredient(data.ingredient, pantry);
 
 				List<String> ret = new ArrayList<>();
-
-				ret.add(entry);
-
 				if (entry != null) {
-					txn.commit();
-					return Response.ok(g.toJson(ret)).build();
+					ret.add(entry);
 				}
+				txn.commit();
+				return Response.ok(g.toJson(ret)).build();
+			} else {
+
+				return Response.status(Status.NOT_FOUND).build();
 			}
-			return Response.status(Status.NOT_FOUND).build();
 
 		} finally {
 			if (txn.isActive())
@@ -775,7 +775,7 @@ public class UserResource {
 
 				double tmpRate = ((currRate * (double) nRates) + data.rating) / (double) (updatedRateCount);
 
-				double newRate = (double)Math.round(tmpRate * 10)/10;
+				double newRate = (double) Math.round(tmpRate * 10) / 10;
 
 				Key key = datastore.newKeyFactory().setKind(RECIPE).newKey(recipe.id);
 

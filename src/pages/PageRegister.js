@@ -124,7 +124,7 @@ export default function PageRegister() {
                             <Typography sx={{ fontFamily: 'Verdana', fontSize: 14 }}>Account was not created. Please verify the filled in information.</Typography>
                         </Alert>
                     </Snackbar>
-                    <Typography sx={{ fontFamily: 'Verdana', fontSize: 16, color: "black", pb: 5 }}>
+                    <Typography sx={{ fontFamily: 'Verdana', fontSize: 16, color: "black", pb: 10.5 }}>
                         Already have an account?
                         <Link onClick={() => { navigate("/") }} sx={{ ml: 1, cursor: "pointer" }}>Login now!</Link>
                     </Typography>

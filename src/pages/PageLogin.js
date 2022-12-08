@@ -72,7 +72,7 @@ export default function PageLogin() {
                         margin="normal"
                         required
                         label="Password"
-                        color="info"
+                        color="grey"
                         type="password"
                         InputLabelProps={{
                             style: { fontFamily: 'Verdana', fontSize: 18, color: "black" },
@@ -99,7 +99,7 @@ export default function PageLogin() {
                         <Link onClick={() => { navigate("/register") }} sx={{ ml: 1, cursor: "pointer" }}>Register now!</Link>
                     </Typography>
                     <Typography sx={{ fontFamily: 'Verdana', fontSize: 18 }}>Search for various recipes and upload your own!</Typography>
-                    <Typography sx={{ fontFamily: 'Verdana', fontSize: 18, pb: 5 }}>Efficiently manage your pantry!</Typography>
+                    <Typography sx={{ fontFamily: 'Verdana', fontSize: 18, pb: 11 }}>Efficiently manage your pantry!</Typography>
                 </Box>
             </Grid>
             <Grid item xs={3.5} />

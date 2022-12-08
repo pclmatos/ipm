@@ -105,7 +105,12 @@ export default function TopRated() {
             ) :
                 <>
                     <Grid container item xs={3}>
-                        <Button color="inherit" onClick={() => { showRecipeHandler(); setRate(false); setReadOnly(false) }}>
+                        <Button color="inherit" onClick={() => { showRecipeHandler(); setRate(false); setReadOnly(false) }} sx={{
+                            display: 'flex',
+                            flexDirection: 'column',
+                            alignItems: 'center',
+                        }} >
+                            <Typography sx={{ fontFamily: 'Verdana', fontSize: 14, color: "black" }}>Go Back</Typography>
                             <KeyboardBackspaceIcon />
                         </Button>
                     </Grid>

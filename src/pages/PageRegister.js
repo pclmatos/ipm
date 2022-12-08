@@ -77,7 +77,7 @@ export default function PageRegister() {
                         InputLabelProps={{
                             style: { fontFamily: 'Verdana', fontSize: 18, color: "black" },
                         }}
-                        sx={{ width: "40%" }}
+                        sx={{ width: "40%", bgcolor: "#EBD9BC", opacity: "0.8" }}
                         onChange={usernameHandler}
                     />
                     <TextField
@@ -89,7 +89,7 @@ export default function PageRegister() {
                         InputLabelProps={{
                             style: { fontFamily: 'Verdana', fontSize: 18, color: "black" },
                         }}
-                        sx={{ width: "40%" }}
+                        sx={{ width: "40%", bgcolor: "#EBD9BC", opacity: "0.8" }}
                         onChange={passwordHandler}
                     />
                     <TextField
@@ -101,7 +101,7 @@ export default function PageRegister() {
                         InputLabelProps={{
                             style: { fontFamily: 'Verdana', fontSize: 18, color: "black" },
                         }}
-                        sx={{ width: "40%" }}
+                        sx={{ width: "40%", bgcolor: "#EBD9BC", opacity: "0.8" }}
                         onChange={passwordConfirmationHandler}
                     />
                     <Button

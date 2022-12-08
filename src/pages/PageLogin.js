@@ -65,19 +65,19 @@ export default function PageLogin() {
                         InputLabelProps={{
                             style: { fontFamily: 'Verdana', fontSize: 18, color: "black" },
                         }}
-                        sx={{ width: "40%" }}
+                        sx={{ width: "40%", bgcolor: "#EBD9BC", opacity: "0.8" }}
                         onChange={usernameHandler}
                     />
                     <TextField
                         margin="normal"
                         required
                         label="Password"
-                        color="grey"
+                        color="info"
                         type="password"
                         InputLabelProps={{
                             style: { fontFamily: 'Verdana', fontSize: 18, color: "black" },
                         }}
-                        sx={{ width: "40%" }}
+                        sx={{ width: "40%", bgcolor: "#EBD9BC", opacity: "0.8" }}
                         onChange={passwordHandler}
                     />
                     <Button

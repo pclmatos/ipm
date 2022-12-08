@@ -18,6 +18,7 @@ export default function ShareRecipe() {
     const [description, setDescription] = useState("");
     const [ingredientsDescription, setIngredientsDescription] = useState("");
     const [loading, setLoading] = useState(false);
+    const [caloriesErr, setCaloriesErr] = useState(false);
 
     const [open, setOpen] = useState(false);
     const [open2, setOpen2] = useState(false);
@@ -157,8 +158,17 @@ export default function ShareRecipe() {
         setCategory(e.target.value);
     }
 
+    function containsOnlyNumbers(str) {
+        return /^\d+$/.test(str);
+      }
+
     function caloriesHandler(e) {
         setCalories(e.target.value);
+        if(!containsOnlyNumbers(e.target.value) && e.target.value != "") {
+            setCaloriesErr(true)
+        }else {
+            setCaloriesErr(false)
+        }
     }
 
     function difficultyHandler(e) {
@@ -270,7 +280,7 @@ export default function ShareRecipe() {
                     <TextField
                         margin="normal"
                         required
-                        label="Calories per dose"
+                        label="Calories per dose (kcal)"
                         color="grey"
                         InputLabelProps={{
                             style: { fontFamily: 'Verdana', fontSize: 18 },
@@ -278,6 +288,7 @@ export default function ShareRecipe() {
                         sx={{ width: "70%" }}
                         onChange={caloriesHandler}
                     />
+                    {caloriesErr && <Typography color="error">You should only include numbers in this field</Typography>}
                     <FormControl required margin="normal" sx={{ width: "70%" }}>
                         <InputLabel id="demo-simple-select-label" color="grey" sx={{ fontFamily: 'Verdana', fontSize: 18 }}>Execution Difficulty (0-5)</InputLabel>
                         <SelectMUI

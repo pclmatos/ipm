@@ -1,6 +1,7 @@
-import { Grid, Box, Typography, Card, CardContent, Fab, CircularProgress, CardMedia, createTheme, ThemeProvider, FormControl, FormControlLabel, RadioGroup, Radio, Divider, Button, Dialog, DialogActions, DialogContent, DialogTitle } from "@mui/material";
+import { Grid, Box, Typography, Card, CardContent, Fab, CircularProgress, CardMedia, createTheme, ThemeProvider, FormControl, FormControlLabel, RadioGroup, Radio, Divider, Button, Dialog, DialogActions, DialogContent, DialogTitle, Snackbar } from "@mui/material";
 import Select from "react-select"
-import React, { useState } from "react"
+import React, { useState, forwardRef } from "react"
+import MuiAlert from '@mui/material/Alert';
 import restCalls from "../restCalls"
 import LogoutIcon from '@mui/icons-material/Logout';
 import { useNavigate } from "react-router-dom"
@@ -21,6 +22,7 @@ export default function ConsultPantry() {
 
     const [open, setOpen] = useState(false);
     const [open2, setOpen2] = useState(false);
+    const [open3, setOpen3] = useState(false);
 
     let navigate = useNavigate();
     var pantry = JSON.parse(localStorage.getItem('pantry'));
@@ -235,8 +237,25 @@ export default function ConsultPantry() {
         { value: "lentils", label: "Lentils" },
     ];
 
+    const Alert = forwardRef(function Alert(props, ref) {
+        return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
+    });
+
+    const handleClose3 = (event, reason) => {
+        if (reason === 'clickaway') {
+            return;
+        }
+
+        setOpen3(false);
+    };
+
     function getFiltersManager(e) {
         e.preventDefault();
+        console.log(ingredients);
+        if (!vegetables && !meat && !fish && !fruits && !cereals && !others && !seafoods && (ingredients == undefined || ingredients == "") ) {
+            setLoading(false);
+            setOpen3(true);
+        }else {
         setLoading(true);
         if (vegetables || meat || fish || fruits || cereals || others || seafoods) {
             restCalls.filterIngredients(vegetables, meat, fish, fruits, cereals, others, seafoods)
@@ -247,8 +266,9 @@ export default function ConsultPantry() {
                 .then(() => { setLoading(false); })
                 .catch(() => { setLoading(false) })
         }
+        }
     }
-    
+
     function clearFiltersManager(e) {
         setLoading(true)
         setVegetables(false);
@@ -506,6 +526,11 @@ export default function ConsultPantry() {
             </Grid>
             <Grid container item xs={9} direction='row'>
                 {generateIngredients()}
+                <Snackbar open={open3} autoHideDuration={4000} onClose={handleClose3}>
+                <Alert severity="error" sx={{ width: '100%' }}>
+                    <Typography sx={{ fontFamily: 'Verdana', fontSize: 14 }}>No filters selected. Please select one!</Typography>
+                </Alert>
+            </Snackbar> 
             </Grid>
         </Grid>
     )
